@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e44d9c1df2e38aa4982432aeaa271920, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: 
+  rowSpacing: 2.2
+  playHalfWidth: 4
+  blockWidth: 1
+  blockHeight: 0.68
+  playerSize: {x: 0.72, y: 0.95}
+  gravity: 55
+  jumpApex: 3
+  jumpBuffer: 0.12
+  landPad: 0.12
+  groundBlocks: 7
+  difficultyCsv: {fileID: 4900000, guid: 9ac185a2c272c2b42ab3c56a622e8062, type: 3}
+  difficultyBands:
+  - upToMeters: 100
+    minBlocks: 4
+    maxBlocks: 6
+    timer: 7
+    moveSpeed: 1
+  - upToMeters: 200
+    minBlocks: 4
+    maxBlocks: 5
+    timer: 7
+    moveSpeed: 1.5
+  - upToMeters: 300
+    minBlocks: 3
+    maxBlocks: 5
+    timer: 7
+    moveSpeed: 2
+  - upToMeters: 400
+    minBlocks: 3
+    maxBlocks: 4
+    timer: 5
+    moveSpeed: 2.5
+  - upToMeters: 500
+    minBlocks: 2
+    maxBlocks: 4
+    timer: 5
+    moveSpeed: 3
+  - upToMeters: 600
+    minBlocks: 2
+    maxBlocks: 3
+    timer: 5
+    moveSpeed: 3.5
+  - upToMeters: 700
+    minBlocks: 1
+    maxBlocks: 3
+    timer: 4
+    moveSpeed: 4
+  - upToMeters: 800
+    minBlocks: 1
+    maxBlocks: 3
+    timer: 4
+    moveSpeed: 4.5
+  - upToMeters: 900
+    minBlocks: 1
+    maxBlocks: 2
+    timer: 4
+    moveSpeed: 5
+  - upToMeters: 1000
+    minBlocks: 1
+    maxBlocks: 2
+    timer: 3
+    moveSpeed: 6
+  - upToMeters: 1100
+    minBlocks: 1
+    maxBlocks: 1
+    timer: 2
+    moveSpeed: 7
+  - upToMeters: 1200
+    minBlocks: 1
+    maxBlocks: 1
+    timer: 1
+    moveSpeed: 8
+  - upToMeters: 1300
+    minBlocks: 1
+    maxBlocks: 1
+    timer: 1
+    moveSpeed: 9
+  - upToMeters: 1400
+    minBlocks: 1
+    maxBlocks: 1
+    timer: 1
+    moveSpeed: 10
+  - upToMeters: 1500
+    minBlocks: 1
+    maxBlocks: 1
+    timer: 1
+    moveSpeed: 11
+  - upToMeters: 9999
+    minBlocks: 1
+    maxBlocks: 1
+    timer: 1
+    moveSpeed: 12
+  drainPerSecond: 1
+  scorePerRow: 100
+  comboScoreStep: 0.1
+  scoreComboCap: 20
+  metersPerUnit: 1
+  orthoSize: 8
+  cameraPlayerOffset: 4
+  cameraSmooth: 8
+  deathMargin: 1
+  backdropParallax: 0.5
+  backdropTileWidth: 10.4
+  backdropBands:
+  - fromMeters: 0
+    sprite: {fileID: 21300000, guid: 4191dc28381974f4cac64c5dfa6a3c64, type: 3}
+  - fromMeters: 200
+    sprite: {fileID: 21300000, guid: 476e63f5b6a20eb42a9c517046c5e8af, type: 3}
+  - fromMeters: 500
+    sprite: {fileID: 21300000, guid: 487296443159c824d9cef49bc273a76f, type: 3}
+  backdropBlendMeters: 30
+  squashStrength: 0.012
+  squashMax: 0.35
+  idleBobAmount: 0.035
+  idleBobSpeed: 4.5
+  landSquash: 0.32
+  jumpStretch: 0.26
+  squashRecovery: 11
+  rowsAhead: 8

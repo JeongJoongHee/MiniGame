@@ -1,0 +1,241 @@
+<title>구간별 배경 이미지 준비 가이드</title>
+<meta charset="utf-8">
+<style>
+  :root{
+    --bg:#f7f6f3; --card:#fff; --ink:#1c1b19; --muted:#6b6862;
+    --line:#e3e0da; --accent:#c2410c; --ok:#15803d; --warn:#b45309;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#16151a; --card:#1f1e24; --ink:#eceaf0; --muted:#a3a0ab;
+    --line:#33313b; --accent:#fb923c; --ok:#4ade80; --warn:#fbbf24;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#16151a; --card:#1f1e24; --ink:#eceaf0; --muted:#a3a0ab;
+    --line:#33313b; --accent:#fb923c; --ok:#4ade80; --warn:#fbbf24;
+  }
+  body{background:var(--bg);color:var(--ink);font:16px/1.65 "Malgun Gothic","Segoe UI",system-ui,sans-serif;
+       margin:0;padding:40px 20px 80px}
+  main{max-width:820px;margin:0 auto}
+  h1{font-size:28px;line-height:1.3;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--muted);margin:0 0 36px;font-size:14px}
+  h2{font-size:19px;margin:44px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  h3{font-size:15px;margin:26px 0 8px;color:var(--accent)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 24px 24px;margin-bottom:8px}
+  .tw{overflow-x:auto;margin:14px 0}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:460px}
+  th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-weight:600;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+  td.n{text-align:right;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:13px;
+       font-family:Consolas,"Cascadia Mono",monospace}
+  ul{padding-left:20px} li{margin:6px 0}
+  ol{padding-left:22px} ol li{margin:8px 0}
+  .tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;border:1px solid currentColor;
+       font-weight:600;vertical-align:middle}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--accent)}
+  .note{border-left:3px solid var(--warn);background:var(--bg);padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0}
+  .note p{margin:6px 0}
+  .flow{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:16px 0;
+        font-family:Consolas,"Cascadia Mono",monospace;font-size:13px;line-height:1.7;overflow-x:auto;white-space:pre}
+  .lead{font-size:17px}
+  figure{margin:0}
+  .swatch{display:inline-block;width:13px;height:13px;border-radius:3px;border:1px solid var(--line);
+          vertical-align:-2px;margin-right:5px}
+</style>
+
+<main>
+<h1>구간별 배경 이미지 준비 가이드</h1>
+<p class="sub">심심할 때 하는 게임 · 점프점프 · 2026-09-07 · 대상 <code>Art/Background/BG_01~03.png</code></p>
+
+<section>
+<h2>1. 한 줄 요약</h2>
+<p class="lead">넣어 주신 3장은 <strong>세로로 이어 붙이라고 만든 그림</strong>이지 <strong>반복해서 까는 타일</strong>이 아닙니다.
+지금 배경 코드는 한 장을 무한 반복하는 구조라 그대로는 못 씁니다.
+<strong>세로로 긴 판형(896&times;1400)으로, 위끝과 아래끝이 이어지게</strong> 다시 뽑아 주시면 그대로 붙습니다.</p>
+</section>
+
+<section>
+<h2>2. 지금 3장을 재본 결과</h2>
+
+<div class="tw"><table>
+<tr><th>파일</th><th>크기</th><th class="n">좌우 이음매차</th><th class="n">상하 이음매차</th><th>위끝 색</th><th>아래끝 색</th></tr>
+<tr><td>BG_01 평야</td><td>896 &times; 400</td><td class="n">11.9</td><td class="n">107.2</td>
+    <td><span class="swatch" style="background:#4997d1"></span>73,151,209</td>
+    <td><span class="swatch" style="background:#613930"></span>97,57,48</td></tr>
+<tr><td>BG_02 산</td><td>896 &times; 400</td><td class="n">56.3</td><td class="n">92.4</td>
+    <td><span class="swatch" style="background:#647ea5"></span>100,126,165</td>
+    <td><span class="swatch" style="background:#3e8dca"></span>62,141,202</td></tr>
+<tr><td>BG_03 우주</td><td>896 &times; 400</td><td class="n">37.8</td><td class="n">77.6</td>
+    <td><span class="swatch" style="background:#251965"></span>37,25,101</td>
+    <td><span class="swatch" style="background:#6c7fa5"></span>108,127,165</td></tr>
+</table></div>
+
+<p><span class="tag" style="color:var(--muted)">이음매차</span> 이미지의 마주 보는 두 끝(예: 맨 윗줄과 맨 아랫줄)의
+색 차이 평균입니다. <strong>0에 가까울수록 이어 붙였을 때 자국이 안 보입니다.</strong>
+경험상 10 이하면 안 보이고, 40을 넘으면 선이 뚜렷하게 보입니다.</p>
+
+<h3>발견 1 &mdash; 세 장이 세로로 정확히 이어집니다</h3>
+<p>양 끝 색을 비교해 보면 우연이 아닙니다.</p>
+<div class="flow">BG_01 위끝 (73,151,209)  ─┐
+                          ├─ 차이 13   거의 일치
+BG_02 아래끝 (62,141,202) ─┘
+
+BG_02 위끝 (100,126,165)  ─┐
+                          ├─ 차이 3    사실상 완벽히 일치
+BG_03 아래끝 (108,127,165)─┘</div>
+<p>즉 <strong>01 → 02 → 03 을 아래에서 위로 쌓으면 하늘색이 자연스럽게 이어지도록</strong> 만들어진 세트입니다.
+의도하신 "평야 → 산 → 우주" 순서와도 정확히 맞습니다. 이 부분은 아주 잘 준비하셨습니다.</p>
+
+<h3>발견 2 &mdash; 그런데 한 장 자체는 반복이 안 됩니다</h3>
+<p>상하 이음매차가 77~107 로 전부 큽니다. 당연합니다 &mdash; BG_01 은 아래가 흙바닥이고 위가 하늘이니,
+위아래로 반복하면 <strong>하늘 한가운데를 흙바닥 띠가 가로지릅니다.</strong>
+(CLAUDE.md 의 "BG 지면 띠 반복 문제"가 바로 이것이고, 새 이미지는 더 심합니다.)</p>
+</section>
+
+<section>
+<h2>3. 왜 지금 판형(896&times;400)이 문제인가</h2>
+
+<h3>게임 화면은 세로로 긴 창입니다</h3>
+<div class="tw"><table>
+<tr><th>항목</th><th>값</th><th>근거</th></tr>
+<tr><td>화면에 보이는 세로 범위</td><td>16 m</td><td><code>orthoSize 8</code> &times; 2</td></tr>
+<tr><td>화면에 보이는 가로 범위</td><td>9 m (9:16 폰) ~ 7.2 m (20:9 폰)</td><td>비율에서 계산</td></tr>
+<tr><td>배경 한 장의 가로 폭</td><td>10.4 m</td><td><code>GameConfig.backdropTileWidth</code></td></tr>
+<tr><td>배경 한 장의 세로 높이 <span class="tag bad">문제</span></td><td>4.64 m</td><td>10.4 &times; (400 / 896)</td></tr>
+</table></div>
+
+<p>화면 세로가 16 m 인데 배경 한 장이 4.64 m 밖에 안 됩니다.
+<strong>한 화면 안에 같은 그림이 3.4 번 쌓여서 보입니다.</strong>
+흙바닥 띠가 화면에 세 줄 그어지는 셈입니다.</p>
+
+<div class="note">
+<p><strong>가로 이음매는 신경 쓰지 않으셔도 됩니다.</strong>
+배경 타일 폭이 10.4 m 인데 화면에 보이는 가로 폭은 최대 9 m 라서,
+좌우 이음매는 항상 화면 바깥에 있습니다. 위 표의 좌우 이음매차 11.9 / 56.3 / 37.8 은
+<strong>실제 게임에서는 보이지 않습니다.</strong> <strong>위아래만 맞추면 됩니다.</strong></p>
+</div>
+</section>
+
+<section>
+<h2>4. 이렇게 준비해 주세요 <span class="tag ok">핵심</span></h2>
+
+<div class="tw"><table>
+<tr><th>항목</th><th>값</th><th>이유</th></tr>
+<tr><td><strong>판형</strong></td><td><strong>896 &times; 1400</strong> (세로로 긴 형태)</td>
+    <td>월드 기준 10.4 m &times; 16.3 m &mdash; 한 화면에 딱 한 장이 들어갑니다</td></tr>
+<tr><td>비율만 맞으면 됨</td><td>가로 : 세로 = <strong>1 : 1.56</strong></td>
+    <td>실제 픽셀 수는 자유입니다 (640&times;1000, 1080&times;1688 모두 OK). 비율이 전부입니다</td></tr>
+<tr><td><strong>위끝 ↔ 아래끝</strong></td><td><strong>이어지게</strong> (이음매차 10 이하)</td>
+    <td>세로로 무한 반복하므로. <strong>이게 가장 중요합니다</strong></td></tr>
+<tr><td>장수</td><td>3장 (평야 / 산 / 우주)</td><td>지금과 동일</td></tr>
+<tr><td>파일명</td><td><code>BG_01.png</code> <code>BG_02.png</code> <code>BG_03.png</code></td><td>지금과 동일</td></tr>
+<tr><td>스타일</td><td>지금 픽셀아트 그대로</td><td>바꾸지 마세요, 잘 어울립니다</td></tr>
+</table></div>
+
+<h3>각 장에 <span class="bad">넣으면 안 되는 것</span></h3>
+<p>세로로 계속 반복되므로, <strong>"한 번만 나와야 자연스러운 것"은 배경에서 빼야 합니다.</strong></p>
+<div class="tw"><table>
+<tr><th>빼야 할 것</th><th>지금 어디에</th><th>반복하면</th></tr>
+<tr><td>흙 / 잔디 지면 띠</td><td>BG_01 아래쪽</td><td>하늘에 흙바닥이 몇 줄씩 뜹니다</td></tr>
+<tr><td>지구, 행성</td><td>BG_03 가운데</td><td>지구가 위로 갈수록 계속 다시 나옵니다</td></tr>
+<tr><td>산 <em>봉우리</em> (뾰족한 꼭대기)</td><td>BG_02, BG_03 아래쪽</td><td>봉우리가 하늘에 떠 있게 됩니다</td></tr>
+<tr><td>가로로 쭉 이어진 구름 <em>층</em></td><td>BG_03 아래쪽</td><td>구름 선반이 계단처럼 반복됩니다</td></tr>
+</table></div>
+
+<h3>각 장에 <span class="ok">넣어도 되는 것</span></h3>
+<ul>
+<li><strong>흩뿌린 구름</strong> &mdash; BG_01 위쪽에 있는 그런 구름. 반복돼도 "구름이 많구나"로 읽힙니다</li>
+<li><strong>별밭 / 성운</strong> &mdash; BG_03 가운데 같은 것. 반복 티가 가장 안 나는 소재입니다</li>
+<li><strong>산 능선</strong> &mdash; 위아래 끝에 걸치지만 않으면 됩니다. 반복되면 "산이 겹겹이 이어진다"로 읽혀서 오히려 자연스럽습니다</li>
+<li><strong>세로 색 그라데이션</strong> &mdash; 단, <strong>위끝 색과 아래끝 색이 같아야</strong> 합니다.
+    한 장 안에서 색이 확 바뀌면 반복할 때 그 지점에 선이 생깁니다</li>
+</ul>
+
+<h3>구간별로 이런 그림이면 좋습니다</h3>
+<div class="tw"><table>
+<tr><th>파일</th><th>구간</th><th>내용</th></tr>
+<tr><td>BG_01</td><td>0 ~ 200 m</td><td>맑은 하늘 + 흩뿌린 흰 구름. 지면 없음. 위아래 모두 같은 하늘색</td></tr>
+<tr><td>BG_02</td><td>200 ~ 500 m</td><td>높은 하늘 + 먼 산 능선이 겹겹이. 봉우리가 위아래 끝에 안 닿게</td></tr>
+<tr><td>BG_03</td><td>500 m 이상</td><td>검은 우주 + 별밭 + 은하수. 지구 없음. 1000 m 위로도 끝없이 반복됩니다</td></tr>
+</table></div>
+<p><span class="tag warn">참고</span> 우주는 게임 끝까지 계속 나오므로
+<strong>BG_03 의 상하 이음매가 특히 중요합니다.</strong> 다행히 별밭은 이음매 맞추기가 가장 쉬운 소재입니다.</p>
+</section>
+
+<section>
+<h2>5. 위끝과 아래끝을 맞추는 실제 방법</h2>
+
+<h3>방법 A &mdash; AI 로 뽑으실 때</h3>
+<p>AI 이미지 생성기는 "seamless" 를 부탁해도 잘 못 지킵니다. 그래도 확률을 올리는 조건들입니다.</p>
+<ul>
+<li>프롬프트에 <code>vertically seamless tileable</code>, <code>no ground</code>, <code>no horizon line</code> 을 넣기</li>
+<li>가로형이 아니라 <strong>세로형(portrait, 9:14)</strong> 으로 요청하기</li>
+<li>"위쪽과 아래쪽이 같은 색" 이 되도록 &mdash; 예: <code>uniform sky color from top to bottom</code></li>
+<li>그래도 이음매는 거의 안 맞습니다. <strong>맞추는 건 제가 후처리로 해 드릴 수 있습니다.</strong> (아래 방법 C)</li>
+</ul>
+
+<h3>방법 B &mdash; 직접 손보실 때 (포토샵 / 김프 공통)</h3>
+<ol>
+<li>이미지를 <strong>세로로 정확히 절반만큼 밀어냅니다</strong>
+    (포토샵: <code>필터 &gt; 기타 &gt; 오프셋</code>, 김프: <code>레이어 &gt; 변형 &gt; 오프셋</code>. 세로 이동값 = 높이의 절반, 감싸기/Wrap 켜기)</li>
+<li>그러면 원래 <strong>위끝-아래끝 이음매가 이미지 한가운데로 옵니다.</strong> 눈에 잘 보입니다</li>
+<li>그 선을 브러시나 도장 도구로 지워서 자연스럽게 만듭니다</li>
+<li>다시 절반만큼 밀어서 원래대로 되돌립니다 &rarr; 이제 위끝과 아래끝이 이어집니다</li>
+</ol>
+<p>"보이지 않는 이음매를 고치는" 대신 <strong>"이음매를 화면 한가운데로 끌어와서 고치는"</strong> 게 요령입니다.</p>
+
+<h3>방법 C &mdash; 저에게 맡기실 때</h3>
+<p>세로로 긴 원본만 주시면, 위아래 각 10% 를 서로 겹쳐 섞어서(cross-fade) 이음매를 자동으로 맞춰 드릴 수 있습니다.
+픽셀아트라 살짝 뭉개질 수 있지만 하늘/별밭이면 티가 거의 안 납니다.
+<strong>지금 있는 896&times;400 3장으로도 시도해 볼 수 있습니다</strong> &mdash;
+하늘 부분만 잘라내서 세로로 늘리고 이음매를 붙이는 식으로요. 완성도는 새로 뽑는 쪽이 확실히 높습니다.</p>
+</section>
+
+<section>
+<h2>6. 한 번만 나오는 그림 (선택 사항, 나중에 해도 됨)</h2>
+<p>지금 3장에 들어 있는 <strong>지면 · 지구 · 구름층은 사실 좋은 소재입니다.</strong>
+반복 배경에서 빼되, <strong>특정 높이에 딱 한 번만 놓는 장식</strong>으로 살리면 훨씬 멋있어집니다.</p>
+<div class="tw"><table>
+<tr><th>그림</th><th>놓을 높이</th><th>효과</th></tr>
+<tr><td>흙 / 잔디 지면</td><td>0 m (출발 지점)</td><td>땅에서 출발하는 느낌</td></tr>
+<tr><td>산 능선 실루엣</td><td>200 m 부근</td><td>평야를 벗어나 산에 들어서는 느낌</td></tr>
+<tr><td>구름바다 + 지구</td><td>500 m 부근</td><td>구름을 뚫고 우주로 나가는 느낌</td></tr>
+</table></div>
+<p>이건 배경 교체가 먼저 끝난 뒤에 붙이는 게 좋습니다. 지금은 <strong>반복 배경 3장만 신경 쓰시면 됩니다.</strong></p>
+</section>
+
+<section>
+<h2>7. 코드 쪽에서 제가 할 일</h2>
+<div class="note">
+<p><span class="tag ok">2026-09-07 완료</span> 아래 항목은 <strong>전부 적용하고 배치 모드로 검증까지 마쳤습니다.</strong>
+결과는 <code>배경_구간전환_적용보고서.html</code> 를 보세요.</p>
+<p><span class="tag warn">정정</span> 이 문서를 처음 쓸 때
+"<code>BG.jpeg</code> 가 지워져서 Build Game Scene 이 실패한다"고 적었는데 <strong>사실이 아니었습니다.</strong>
+파일은 그대로 있었고 빌드도 깨져 있지 않았습니다.
+(지금은 새 배경으로 대체해서 <code>BG_원본\</code> 으로 옮겨 두었습니다)</p>
+</div>
+<ol>
+<li><code>JumpJumpArtSetup.cs</code> &mdash; BG 를 파일명 고정이 아니라 <strong>폴더 스캔</strong>으로 바꾸기 (캐릭터 5종과 같은 방식)</li>
+<li><code>GameConfig</code> &mdash; <strong>"몇 m 부터 어떤 배경"</strong> 목록 추가 (0 m→BG_01, 200 m→BG_02, 500 m→BG_03)</li>
+<li><code>BackdropTiler.cs</code> &mdash; 배경을 <strong>두 겹</strong>으로 깔고 구간 경계에서 <strong>서서히 겹쳐 넘기기</strong>(크로스페이드).
+    딱 끊기면 이상하니 경계 앞 30 m 에 걸쳐 넘깁니다</li>
+</ol>
+<p>전환 높이 200 / 500 / 1000 m 는 <code>config.csv</code> 의 난이도 구간 경계와 정확히 맞습니다
+(2번, 5번, 10번 구간의 끝). 잘 잡으셨습니다.</p>
+</section>
+
+<section>
+<h2>8. 정리 &mdash; 가장 빠른 길</h2>
+<div class="flow">1. 세로로 긴 판형(896 x 1400)으로 3장 다시 뽑기
+     · 지면 / 지구 / 봉우리 / 구름층 빼기
+     · 위끝 색 = 아래끝 색
+
+2. Art/Background/ 에 BG_01 ~ 03.png 로 덮어쓰기
+
+3. 저한테 알려 주시면 코드 붙이고 배치 모드로 검증 + 미리보기 PNG</div>
+<p>이음매가 안 맞아도 괜찮습니다. <strong>일단 세로로 긴 그림만 만들어 주시면</strong>
+이음매는 제가 후처리로 맞춰 보고, 결과를 보여 드린 뒤 판단하시면 됩니다.</p>
+</section>
+
+</main>

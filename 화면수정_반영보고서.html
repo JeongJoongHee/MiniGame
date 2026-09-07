@@ -1,0 +1,213 @@
+<title>화면 수정 반영</title>
+<meta charset="utf-8">
+<style>
+  :root{
+    --bg:#f7f6f3; --card:#fff; --ink:#1c1b19; --muted:#6b6862;
+    --line:#e3e0da; --accent:#c2410c; --ok:#15803d; --warn:#b45309;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#16151a; --card:#1f1e24; --ink:#eceaf0; --muted:#a3a0ab;
+    --line:#33313b; --accent:#fb923c; --ok:#4ade80; --warn:#fbbf24;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#16151a; --card:#1f1e24; --ink:#eceaf0; --muted:#a3a0ab;
+    --line:#33313b; --accent:#fb923c; --ok:#4ade80; --warn:#fbbf24;
+  }
+  body{background:var(--bg);color:var(--ink);font:16px/1.65 "Malgun Gothic","Segoe UI",system-ui,sans-serif;
+       margin:0;padding:40px 20px 80px}
+  main{max-width:880px;margin:0 auto}
+  h1{font-size:28px;line-height:1.3;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--muted);margin:0 0 36px;font-size:14px}
+  h2{font-size:19px;margin:44px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  h3{font-size:15px;margin:26px 0 8px;color:var(--accent)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 24px 24px;margin-bottom:8px}
+  .tw{overflow-x:auto;margin:14px 0}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:460px}
+  th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-weight:600;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+  td.n{text-align:right;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:13px;
+       font-family:Consolas,"Cascadia Mono",monospace}
+  ul{padding-left:20px} li{margin:6px 0}
+  ol{padding-left:22px} ol li{margin:8px 0}
+  .tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;border:1px solid currentColor;
+       font-weight:600;vertical-align:middle}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--accent)}
+  .note{border-left:3px solid var(--warn);background:var(--bg);padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0}
+  .note p{margin:6px 0}
+  .lead{font-size:17px}
+  figure{margin:0}
+  .pair{display:flex;gap:14px;flex-wrap:wrap;margin:18px 0}
+  .pair figure{flex:1 1 200px;min-width:170px}
+  .pair img{width:100%;display:block;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+  .pair figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;text-align:center;line-height:1.5}
+  .num{display:inline-block;min-width:1.7em;color:var(--accent);font-weight:700}
+</style>
+
+<main>
+<h1>화면 수정 4건 반영</h1>
+<p class="sub">심심할 때 하는 게임 &middot; 2026-09-07 &middot; 타이틀 / START / 이름표 / 뒤로가기 버튼 &middot; 배치 모드 검증 완료</p>
+
+<section>
+<h2>한 줄 요약</h2>
+<p class="lead">4건 모두 반영했습니다. <strong>다만 1번 &ldquo;제목 2배&rdquo;는 그대로 하면 글자가 화면 밖으로
+잘려 나가서, 잘리지 않는 최대치로 키웠습니다.</strong> 아래에 이유를 적었습니다.</p>
+
+<div class="tw"><table>
+<tr><th>#</th><th>요청하신 것</th><th>결과</th></tr>
+<tr><td class="n">1</td><td>타이틀 제목 2배 확대</td>
+    <td><span class="tag warn">최대치로</span> 화면 폭의 94% (2배는 잘려서 불가)</td></tr>
+<tr><td class="n">2</td><td>START 버튼 0.7배 축소</td><td><span class="tag ok">완료</span> 0.459 &rarr; 0.321</td></tr>
+<tr><td class="n">3</td><td>로비 게임 이름 패널 크기 통일</td><td><span class="tag ok">완료</span> 두 칸이 똑같아졌습니다</td></tr>
+<tr><td class="n">4</td><td>게임마다 뒤로가기(LOBBY) 버튼, 우측 상단</td>
+    <td><span class="tag ok">완료</span> 게임 중에도 항상 보입니다</td></tr>
+</table></div>
+
+<p>작업 중에 넣어 주신 <strong>활쏘기 그림(과녁 &middot; 활 &middot; 화살)과 로비 아이콘 &middot; 이름표도 함께 붙였습니다.</strong>
+그 과정에서 발견한 문제 두 가지도 같이 고쳤습니다 (아래 &ldquo;덤으로 고친 것&rdquo;).</p>
+</section>
+
+<section>
+<h2>지금 화면 <span class="tag ok">배치 모드 캡처</span></h2>
+<div class="pair">
+<figure><img src="JumpJump/JumpJump_Preview/00_title.png" alt="타이틀 (9:16)">
+  <figcaption><strong>타이틀</strong><br>제목 확대 + START 축소</figcaption></figure>
+<figure><img src="JumpJump/JumpJump_Preview/00_title_tall.png" alt="타이틀 (20:9)">
+  <figcaption><strong>타이틀 (요즘 폰 20:9)</strong><br>여기서도 안 잘립니다</figcaption></figure>
+<figure><img src="JumpJump/JumpJump_Preview/00_lobby.png" alt="로비">
+  <figcaption><strong>로비</strong><br>이름표 두 개가 같은 크기</figcaption></figure>
+</div>
+<div class="pair">
+<figure><img src="JumpJump/JumpJump_Preview/02_playing.png" alt="점프점프 플레이">
+  <figcaption><strong>점프점프</strong><br>오른쪽 위 &lt; LOBBY</figcaption></figure>
+<figure><img src="JumpJump/JumpJump_Preview/11_archery_playing.png" alt="활쏘기 플레이">
+  <figcaption><strong>활쏘기</strong><br>새 그림 + 오른쪽 위 &lt; LOBBY</figcaption></figure>
+</div>
+</section>
+
+<section>
+<h2><span class="num">1</span> 타이틀 제목 &mdash; 2배는 못 했습니다</h2>
+<p class="lead"><strong>제목 그림이 이미 폰 화면 폭의 90% 를 차지하고 있었습니다.</strong>
+2배로 키우면 &ldquo;심&rdquo; 과 &ldquo;임&rdquo; 이 화면 밖으로 나갑니다.</p>
+
+<p>왜 그런가 하면 &mdash; 지금까지 제목 크기는 <b>배경 그림</b> 폭의 72% 였습니다.
+그런데 타이틀 배경은 화면을 꽉 채우는 방식(Cover)이라, <b>요즘 폰(20:9)에서는 배경의 좌우가
+20% 가까이 잘려 나갑니다.</b> 그래서 배경의 72% 는 실제 화면에서는 이미 90% 였습니다.</p>
+
+<div class="tw"><table>
+<tr><th>&nbsp;</th><th>9:16 (옛날 비율)</th><th>20:9 (요즘 폰)</th></tr>
+<tr><td>전(배경의 72%)</td><td>화면의 72%</td><td>화면의 <b>90%</b></td></tr>
+<tr><td>지금(화면의 94%)</td><td>화면의 94%</td><td>화면의 94%</td></tr>
+</table></div>
+
+<p><strong>기준도 바꿨습니다.</strong> 제목만은 배경이 아니라 <b>화면</b>에 붙도록 했습니다.
+그래야 폰 길이가 어떻든 잘리지 않고, 어느 폰에서나 같은 크기로 보입니다.
+(<code>TitleScreen.titleWidth</code> = 화면 폭 기준, 1.0 이 꽉 참)</p>
+
+<div class="note">
+<p><strong>정말 2배로 키우고 싶으시면 제목 그림을 두 줄로 다시 그려 주셔야 합니다.</strong>
+예를 들어 &ldquo;심심할때&rdquo; / &ldquo;하는 게임&rdquo; 두 줄로 그리면 글자 하나하나가 지금의 2배 가까이 커집니다.
+지금 그림은 가로로 긴 한 줄(2192 x 534)이라 폭이 한계입니다.
+그림을 주시면 <code>@Title_Text.png</code> 를 덮어쓰고 크기만 다시 잡으면 됩니다.</p>
+</div>
+</section>
+
+<section>
+<h2><span class="num">3</span> 이름표 크기 &mdash; 원인은 그림의 여백이었습니다</h2>
+<p>두 칸이 다르게 보인 이유는 <strong>이름표 그림 주변의 투명 여백</strong> 때문이었습니다.</p>
+
+<div class="tw"><table>
+<tr><th>파일</th><th>파일 크기</th><th>실제 그림</th><th>여백</th></tr>
+<tr><td><code>Name_01_점프점프.png</code></td><td>1761 x 821</td><td>1761 x 821</td><td>없음(가져오면서 잘림)</td></tr>
+<tr><td><code>Name_02_활쏘기.png</code></td><td>2400 x 1308</td><td>1797 x 838</td><td><b>25%</b></td></tr>
+</table></div>
+
+<p>같은 칸에 그려도 여백만큼 그림이 작아 보입니다.
+활쏘기 이름표를 <b>작업 폴더가 아니라 프로젝트 폴더에 바로 넣어 주셔서</b>
+여백을 잘라 내는 과정을 건너뛴 것이 원인이었습니다. 두 가지를 고쳤습니다.</p>
+
+<ol>
+<li><strong>프로젝트에 직접 넣은 그림도 여백을 잘라 냅니다.</strong> 이제 어느 쪽에 넣으셔도 됩니다.</li>
+<li><strong>이름표는 그림 비율이 아니라 정해진 칸 크기로 그립니다.</strong>
+    게임이 몇 개가 되든 이름표 크기가 전부 같습니다.
+    그래서 <b>이름표 그림은 가로:세로 약 2.15:1 로 그려 주세요.</b> (점프점프 이름표가 그 비율입니다)</li>
+</ol>
+</section>
+
+<section>
+<h2><span class="num">4</span> 뒤로가기 버튼</h2>
+<p>두 게임 모두 <strong>오른쪽 맨 위</strong>에 <code>&lt; LOBBY</code> 버튼이 생겼습니다.
+전에는 시작 화면과 게임 오버 화면에서만 보였는데, 이제 <strong>게임 중에도 항상 보이고
+아무 때나 눌러 나올 수 있습니다.</strong></p>
+<ul>
+<li>버튼을 누른 것이 <b>점프나 발사로 세지 않습니다.</b> UI 위의 터치는 걸러 냅니다.</li>
+<li>자리를 비우려고 점프점프의 <code>Height</code> 와 활쏘기의 점수판을 한 줄씩 내렸습니다.</li>
+<li>버튼은 <b>껍데기가 한 곳에서 만듭니다.</b> 그래서 앞으로 미니게임을 추가해도
+    자리와 모양이 저절로 같아지고, 모양을 바꾸려면 한 군데만 고치면 됩니다.</li>
+</ul>
+</section>
+
+<section>
+<h2>덤으로 고친 것 &mdash; 그림을 바꿔도 크기가 안 깨지게</h2>
+<p class="lead">넣어 주신 활쏘기 그림을 붙여 보니 <strong>활이 화면을 뒤덮을 만큼 커졌습니다.</strong>
+제 잘못이라 구조를 고쳤습니다.</p>
+
+<p>스프라이트가 화면에서 갖는 크기는 <code>픽셀 수 &divide; PPU</code> 로 정해집니다.
+제가 임시 그림(활 320px)에 맞춰 PPU 를 고정해 둔 탓에,
+2400px 짜리 진짜 그림을 넣자 그대로 7배가 되어 버렸습니다.</p>
+
+<p><strong>이제는 반대로 계산합니다.</strong> &ldquo;활의 폭은 3.2&rdquo; 처럼 <b>원하는 크기를 먼저 정해 두고
+그림에 맞는 PPU 를 역산</b>합니다. 그래서 앞으로는 <b>어떤 크기의 그림을 넣으셔도 화면에서
+같은 크기로 나옵니다.</b> 여백도 알아서 잘라 냅니다.</p>
+
+<div class="tw"><table>
+<tr><th>파일</th><th>무엇에 맞추나</th><th>지켜 주실 것</th></tr>
+<tr><td><code>Archery/Art/Target.png</code></td><td>과녁 크기는 매 프레임 다시 잽니다</td>
+    <td><strong>원이 그림 한가운데</strong>에 오도록</td></tr>
+<tr><td><code>Archery/Art/Arrow.png</code></td><td>세로 길이 = <code>arrowLength</code></td><td>위를 향하게</td></tr>
+<tr><td><code>Archery/Art/Bow.png</code></td><td>가로 폭 = <code>bowWidth</code></td><td>&mdash;</td></tr>
+<tr><td><code>Shell/Art/Games/</code> · <code>Names/</code></td><td>정해진 칸 크기</td>
+    <td>이름표는 가로:세로 약 2.15:1</td></tr>
+</table></div>
+
+<div class="note">
+<p><strong>과녁만 조건이 하나 있습니다.</strong> 과녁의 x 위치가 곧 명중 판정이라,
+원이 그림 안에서 한쪽으로 치우쳐 있으면 <b>보이는 곳과 맞는 곳이 달라집니다.</b>
+주변 여백은 알아서 잘라 내니 신경 쓰지 않으셔도 됩니다.</p>
+<p>그리고 제가 만들어 두었던 <b>임시 로비 아이콘 <code>@Game_02_활쏘기.png</code> 은 지웠습니다.</b>
+그대로 두면 나중에 &ldquo;Import Shell Art&rdquo; 를 누르셨을 때
+넣어 주신 진짜 아이콘을 덮어쓸 수 있었기 때문입니다.</p>
+</div>
+</section>
+
+<section>
+<h2>검증 <span class="tag ok">배치 모드</span></h2>
+<div class="tw"><table>
+<tr><th>확인한 것</th><th>결과</th></tr>
+<tr><td>컴파일</td><td><span class="tag ok">오류 0건</span></td></tr>
+<tr><td>씬 4장 생성</td><td><span class="tag ok">정상</span></td></tr>
+<tr><td>타이틀 &mdash; 9:16 과 20:9 두 비율에서 제목이 안 잘리는가</td><td><span class="tag ok">정상</span> 둘 다 화면 폭 94%</td></tr>
+<tr><td>로비 &mdash; 이름표 두 개가 같은 크기인가</td><td><span class="tag ok">정상</span> 여백 잘라내고 같은 칸</td></tr>
+<tr><td>두 게임 &mdash; 오른쪽 위 버튼이 HUD 와 안 겹치는가</td><td><span class="tag ok">정상</span></td></tr>
+<tr><td>활쏘기 조준 봇 120초</td><td><span class="tag ok">정상</span> 97발 중 96발 명중, 안 죽음</td></tr>
+<tr><td>활쏘기 빗맞히는 봇 30초</td><td><span class="tag ok">정상</span> 7판 전부 OUT OF ARROWS</td></tr>
+<tr><td>점프점프 플레이테스트 120초</td><td><span class="tag ok">정상</span> 148칸 / 40600점 (영향 없음)</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>확인해 주실 것</h2>
+<ol>
+<li><code>Tools &gt; Arcade &gt; Build All Scenes</code> &rarr; Play 로 <strong>네 가지가 원하시는 대로인지</strong> 봐 주세요.
+    숫자를 더 만질 곳은 전부 인스펙터입니다 &mdash;
+    제목 크기 <code>TitleScreen.titleWidth</code>, START <code>startWidth</code>,
+    이름표 <code>LobbyScreen.plateWidth / plateHeight</code>.</li>
+<li><strong>제목을 정말 2배로 키우실 거면 두 줄짜리 제목 그림</strong>을 주세요.</li>
+<li><strong>활쏘기 난이도</strong>도 같이 봐 주세요. 준비 중이라고 하신 <b>테이블</b>이 나오면
+    <code>archery.csv</code> 를 그대로 갈아 끼우면 됩니다.</li>
+<li>활쏘기 <strong>배경(하늘)</strong>은 아직 제가 만든 그라데이션입니다. 그림을 주시면 바꿔 드립니다.</li>
+</ol>
+</section>
+
+</main>

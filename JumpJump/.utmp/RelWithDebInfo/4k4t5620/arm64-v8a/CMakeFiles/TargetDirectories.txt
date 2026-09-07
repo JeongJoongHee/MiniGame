@@ -1,0 +1,8 @@
+D:/00.JumpJump/JumpJump/.utmp/RelWithDebInfo/4k4t5620/arm64-v8a/CMakeFiles/edit_cache.dir
+D:/00.JumpJump/JumpJump/.utmp/RelWithDebInfo/4k4t5620/arm64-v8a/CMakeFiles/rebuild_cache.dir
+D:/00.JumpJump/JumpJump/.utmp/RelWithDebInfo/4k4t5620/arm64-v8a/GameActivity/CMakeFiles/game.dir
+D:/00.JumpJump/JumpJump/.utmp/RelWithDebInfo/4k4t5620/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+D:/00.JumpJump/JumpJump/.utmp/RelWithDebInfo/4k4t5620/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir
+D:/00.JumpJump/JumpJump/.utmp/RelWithDebInfo/4k4t5620/arm64-v8a/FramePacing/CMakeFiles/swappywrapper.dir
+D:/00.JumpJump/JumpJump/.utmp/RelWithDebInfo/4k4t5620/arm64-v8a/FramePacing/CMakeFiles/edit_cache.dir
+D:/00.JumpJump/JumpJump/.utmp/RelWithDebInfo/4k4t5620/arm64-v8a/FramePacing/CMakeFiles/rebuild_cache.dir
