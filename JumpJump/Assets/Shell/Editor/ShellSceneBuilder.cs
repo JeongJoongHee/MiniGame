@@ -27,6 +27,35 @@ namespace Arcade.EditorTools
 
         static readonly Vector2 ReferenceResolution = new Vector2(1080f, 1920f);
 
+        // --- 팝업 배치 ---------------------------------------------------------
+        // 팝업은 배경 그림이 아니라 **화면(캔버스)** 한가운데 뜹니다. 그래서 크기를
+        // 1080x1920 기준 픽셀로 잡습니다. 폰 해상도가 달라도 CanvasScaler 가 같이 늘려 줍니다.
+
+        /// <summary>팝업 판의 가로 폭 (1080 중 900 = 화면 폭의 83%). 세로는 그림 비율대로.</summary>
+        const float PopupWidth = 900f;
+        /// <summary>판 안에서 버튼 하나의 가로 폭 (판 폭을 1 로 본 값).</summary>
+        const float PopupButtonWidth = 0.30f;
+        /// <summary>판 안에서 버튼 두 개의 좌우 위치.</summary>
+        const float PopupButtonLeftX = 0.29f;
+        const float PopupButtonRightX = 0.71f;
+        /// <summary>글자가 그려진 판(질문 팝업)의 버튼 높이. 판 아래쪽 빈자리입니다.</summary>
+        const float AskButtonY = 0.28f;
+        /// <summary>빈 판(설정 팝업)의 버튼 높이. 위쪽은 나중에 사운드 조절을 넣을 자리로 비워 둡니다.</summary>
+        const float SettingsButtonY = 0.24f;
+
+        /// <summary>미니게임 오른쪽 위 뒤로가기 화살표의 가로 폭 (1080 기준 픽셀).</summary>
+        const float BackButtonWidth = 240f;
+
+        // --- 로비 톱니바퀴 -----------------------------------------------------
+        // 2026-09-07 에 로비 그림에서 지웠던 톱니바퀴를, 이번에는 **진짜 버튼**으로 다시 얹습니다.
+        // 자리는 원래 그림에 그려져 있던 그 자리입니다 (Lobby_원본_톱니바퀴포함.png 에서 재서 넣었습니다).
+        // 값은 로비 그림 안에서의 비율이라 폰 해상도가 달라도 같은 자리에 붙습니다.
+
+        static readonly Vector2 GearCenter = new Vector2(0.9268f, 0.9496f);
+        const float GearWidth = 0.085f;
+        /// <summary>손가락으로 누를 영역은 그림보다 넉넉하게 잡습니다.</summary>
+        const float GearHitWidth = 0.135f;
+
         [MenuItem("Tools/Arcade/Build All Scenes", priority = 0)]
         public static void BuildAll()
         {
@@ -121,8 +150,53 @@ namespace Arcade.EditorTools
             // 버튼이 눌렸을 때 TitleScreen.OnStartPressed 가 불리도록 씬에 저장해 둡니다.
             BindClick(startButton, screen, "OnStartPressed");
 
+            // 타이틀에는 나가기 버튼이 없습니다. 대신 **폰의 뒤로 버튼**으로 앱을 끌 수 있도록
+            // 종료 확인 팝업만 얹어 둡니다. (수정사항_02 3쪽)
+            MakeQuitMenu(root, quitOnly: true);
+
             screen.Apply();
             return screen;
+        }
+
+        /// <summary>
+        /// "종료하시겠습니까?" 팝업과 그것을 여는 ShellMenu 를 만듭니다.
+        /// quitOnly 가 false 면 설정 팝업(빈 판 + [종료] [닫기])도 같이 만들어 붙입니다.
+        /// </summary>
+        static ShellMenu MakeQuitMenu(RectTransform root, bool quitOnly)
+        {
+            var quitSprite = ShellArt.Load(ShellArt.AskQuitPath);
+            var okSprite = ShellArt.Load(ShellArt.OkButtonPath);
+            var cancelSprite = ShellArt.Load(ShellArt.CancelButtonPath);
+            if (quitSprite == null || okSprite == null || cancelSprite == null) return null;
+
+            var menuGo = new GameObject("ShellMenu");
+            var menu = menuGo.AddComponent<ShellMenu>();
+
+            // 설정 팝업을 먼저 만듭니다. 종료 확인이 나중이라 설정 위로 뜹니다.
+            PopupPanel settings = null;
+            if (!quitOnly)
+            {
+                var panelSprite = ShellArt.Load(ShellArt.PanelPath);
+                var endSprite = ShellArt.Load(ShellArt.EndButtonPath);
+                var closeSprite = ShellArt.Load(ShellArt.CloseButtonPath);
+                if (panelSprite != null && endSprite != null && closeSprite != null)
+                {
+                    settings = MakePopup(root, "SettingsPopup", panelSprite, out var panel, out float aspect);
+
+                    // 판 위쪽은 일부러 비워 둡니다 — 나중에 사운드 조절이 들어갈 자리입니다.
+                    MakePopupButton(panel, "End", endSprite, new Vector2(PopupButtonLeftX, SettingsButtonY),
+                                    aspect, menu, "OnEndPressed");
+                    MakePopupButton(panel, "Close", closeSprite, new Vector2(PopupButtonRightX, SettingsButtonY),
+                                    aspect, menu, "OnCancelPressed");
+                }
+            }
+
+            var quit = MakeAskPopup(root, "QuitPopup", quitSprite, okSprite, cancelSprite,
+                                    menu, "OnQuitConfirmed", "OnCancelPressed");
+
+            Wire(menu, ("quitPopup", quit));
+            if (settings != null) Wire(menu, ("settingsPopup", settings));
+            return menu;
         }
 
         // ------------------------------------------------------------------ 로비
@@ -134,7 +208,8 @@ namespace Arcade.EditorTools
 
             var lobbySprite = ShellArt.Load(ShellArt.LobbyPath);
             var playSprite = ShellArt.Load(ShellArt.PlayButtonPath);
-            if (lobbySprite == null || playSprite == null) return null;
+            var gearSprite = ShellArt.Load(ShellArt.SettingButtonPath);
+            if (lobbySprite == null || playSprite == null || gearSprite == null) return null;
 
             // 로비는 칸이 잘리면 안 되므로 그림 전체가 보이게 넣고,
             // 남는 위아래 여백은 배경 테두리 색을 어둡게 깔아 액자처럼 보이게 합니다.
@@ -144,6 +219,21 @@ namespace Arcade.EditorTools
             var canvas = MakeCanvas("LobbyCanvas");
             var root = canvas.GetComponent<RectTransform>();
             var backdrop = MakeBackdrop(root, lobbySprite, AspectFitMode.Contain);
+
+            // 설정 팝업 + 종료 확인 팝업 + 폰 뒤로 버튼 처리. (수정사항_02 1쪽)
+            var menu = MakeQuitMenu(root, quitOnly: false);
+
+            // 오른쪽 위 톱니바퀴. 그림과 누를 영역을 따로 두는 이유는 톱니가 작아서
+            // 손가락으로 누르기 빠듯하기 때문입니다. 누를 영역이 나중에 만들어져 위에 옵니다.
+            float frameAspect = lobbySprite.rect.width / lobbySprite.rect.height;
+
+            var gear = ShellUI.AddImage(backdrop, "SettingsIcon", gearSprite);
+            ShellUI.Place(gear.rectTransform, GearCenter,
+                          new Vector2(GearWidth, ShellUI.HeightForWidth(gearSprite, GearWidth, frameAspect)));
+
+            var gearHit = ShellUI.AddHitArea(backdrop, "SettingsButton");
+            ShellUI.Place((RectTransform)gearHit.transform, GearCenter, new Vector2(GearHitWidth, GearHitWidth * frameAspect));
+            if (menu != null) BindClick(gearHit, menu, "OnSettingsPressed");
 
             var screenGo = new GameObject("LobbyScreen");
             var screen = screenGo.AddComponent<LobbyScreen>();
@@ -183,56 +273,142 @@ namespace Arcade.EditorTools
         }
 
         /// <summary>
-        /// 미니게임 화면 오른쪽 위에 붙는 "&lt; LOBBY" 버튼입니다.
+        /// 미니게임 화면의 **나가는 길 한 벌**을 통째로 만들어 붙입니다.
+        /// 오른쪽 맨 위의 뒤로가기 화살표 + "로비로 나가시겠습니까?" 팝업 + ShellMenu.
+        ///
         /// 게임마다 따로 만들지 않고 여기 한 곳에서 만들어, 어느 게임에서나
         /// **같은 자리·같은 모양**이 되게 합니다. 게임 중에도 항상 보입니다.
+        /// 미니게임을 새로 만들 때도 이 함수 한 줄만 부르면 됩니다 — 게임 쪽 코드는 필요 없습니다.
         ///
-        /// 오버레이(시작 안내 / 게임 오버)보다 나중에 만들어야 어두운 막 위로 올라옵니다.
-        /// 이 버튼을 누른 것이 점프·발사로 세지 않는 것은 각 게임의 `TapInput.OverUI` 가 막아 줍니다.
+        /// 오버레이(시작 안내 / 게임 오버)보다 나중에 불러야 어두운 막 위로 올라옵니다.
+        /// 이 버튼을 누른 것이 점프·발사로 세지 않는 것은 각 게임의 `TapInput.OverUI` 가 막아 주고,
+        /// 팝업이 떠 있는 동안 게임이 멈추는 것은 각 게임 Update 의 `PopupPanel.AnyOpen` 이 맡습니다.
         /// </summary>
         /// <param name="root">HUD 캔버스의 RectTransform</param>
-        /// <param name="round">9-slice 라운드 사각형 스프라이트 (게임이 이미 쓰고 있는 것)</param>
-        /// <param name="target">`OnLobbyPressed()` 를 가진 컴포넌트 (각 게임의 HUD)</param>
-        public static Button MakeLobbyButton(RectTransform root, Sprite round, Object target)
+        public static ShellMenu MakeExitToLobbyUI(RectTransform root)
         {
-            var go = new GameObject("LobbyButton", typeof(RectTransform), typeof(Image), typeof(Button));
-            go.transform.SetParent(root, false);
-            go.transform.SetAsLastSibling();
+            ShellArt.Sync(force: false);
 
-            var image = go.GetComponent<Image>();
-            image.sprite = round;
-            image.type = Image.Type.Sliced;
-            image.color = new Color(0.08f, 0.10f, 0.16f, 0.55f);
-            image.raycastTarget = true;
+            var backSprite = ShellArt.Load(ShellArt.BackButtonPath);
+            var askSprite = ShellArt.Load(ShellArt.AskExitPath);
+            var okSprite = ShellArt.Load(ShellArt.OkButtonPath);
+            var cancelSprite = ShellArt.Load(ShellArt.CancelButtonPath);
+            if (backSprite == null || askSprite == null || okSprite == null || cancelSprite == null) return null;
 
-            var rt = image.rectTransform;
-            rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(1f, 1f);
-            rt.sizeDelta = new Vector2(232f, 92f);
-            rt.anchoredPosition = new Vector2(-36f, -56f);
+            // 캔버스에 GraphicRaycaster 가 없으면 **버튼이 아예 눌리지 않고**
+            // `TapInput.OverUI` 도 항상 false 가 됩니다. 미니게임의 HUD 캔버스는 글자만
+            // 그리려고 만들어져 있어서 붙어 있지 않은 경우가 많으므로 여기서 보장합니다.
+            // (2026-09-08 에 발견 — 그전까지 "< LOBBY" 버튼이 이 이유로 안 눌렸습니다)
+            if (root.GetComponent<GraphicRaycaster>() == null)
+                root.gameObject.AddComponent<GraphicRaycaster>();
 
-            var labelGo = new GameObject("Label", typeof(RectTransform), typeof(Text));
-            labelGo.transform.SetParent(rt, false);
+            var menuGo = new GameObject("ShellMenu");
+            var menu = menuGo.AddComponent<ShellMenu>();
 
-            var label = labelGo.GetComponent<Text>();
-            label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            label.fontSize = 40;
-            label.alignment = TextAnchor.MiddleCenter;
-            label.color = Color.white;
-            label.raycastTarget = false;
-            label.horizontalOverflow = HorizontalWrapMode.Overflow;
-            label.verticalOverflow = VerticalWrapMode.Overflow;
-            label.text = "< LOBBY";
+            // 1) 오른쪽 맨 위 화살표
+            var back = ShellUI.AddImage(root, "BackButton", backSprite, raycast: true);
+            var backRt = back.rectTransform;
+            backRt.anchorMin = backRt.anchorMax = backRt.pivot = new Vector2(1f, 1f);
+            backRt.sizeDelta = new Vector2(BackButtonWidth, BackButtonWidth * backSprite.rect.height / backSprite.rect.width);
+            backRt.anchoredPosition = new Vector2(-36f, -46f);
+            back.transform.SetAsLastSibling();
+            MakeButton(back, menu, "OnBackPressed");
 
-            var labelRt = label.rectTransform;
-            labelRt.anchorMin = Vector2.zero;
-            labelRt.anchorMax = Vector2.one;
-            labelRt.offsetMin = Vector2.zero;
-            labelRt.offsetMax = Vector2.zero;
+            // 2) "로비로 나가시겠습니까?" 팝업. 화살표보다 나중에 만들어 화살표 위를 덮습니다.
+            var popup = MakeAskPopup(root, "ExitToLobbyPopup", askSprite, okSprite, cancelSprite,
+                                     menu, "OnExitToLobbyConfirmed", "OnCancelPressed");
 
-            var button = go.GetComponent<Button>();
+            Wire(menu, ("exitToLobbyPopup", popup));
+            return menu;
+        }
+
+        // ------------------------------------------------------------------ 팝업 부품
+
+        /// <summary>
+        /// 질문이 그려진 판(Popup_Ask_*) + [확인] [취소] 두 개짜리 팝업을 만듭니다.
+        /// 만들어진 팝업은 **꺼진 채로** 씬에 남아 있다가 ShellMenu 가 켭니다.
+        /// </summary>
+        static PopupPanel MakeAskPopup(RectTransform canvasRoot, string name, Sprite panelSprite,
+                                       Sprite okSprite, Sprite cancelSprite,
+                                       Object target, string okMethod, string cancelMethod)
+        {
+            var popup = MakePopup(canvasRoot, name, panelSprite, out var panel, out float panelAspect);
+
+            MakePopupButton(panel, "Ok", okSprite, new Vector2(PopupButtonLeftX, AskButtonY),
+                            panelAspect, target, okMethod);
+            MakePopupButton(panel, "Cancel", cancelSprite, new Vector2(PopupButtonRightX, AskButtonY),
+                            panelAspect, target, cancelMethod);
+            return popup;
+        }
+
+        /// <summary>
+        /// 팝업 한 장의 뼈대입니다. 화면 전체를 덮는 어두운 막 + 한가운데 판.
+        ///
+        /// **어두운 막이 터치를 전부 먹기 때문에** 팝업이 떠 있는 동안 뒤쪽 버튼
+        /// (PLAY / 게임 화면)이 눌리지 않습니다. 따로 막는 코드가 필요 없습니다.
+        /// </summary>
+        /// <param name="panel">판의 사각형. 여기에 버튼을 비율로 붙입니다</param>
+        /// <param name="panelAspect">판의 화면상 가로/세로 비율 (버튼이 안 찌그러지게 하는 데 씁니다)</param>
+        static PopupPanel MakePopup(RectTransform canvasRoot, string name, Sprite panelSprite,
+                                    out RectTransform panel, out float panelAspect)
+        {
+            var rootGo = new GameObject(name, typeof(RectTransform));
+            rootGo.transform.SetParent(canvasRoot, false);
+            rootGo.transform.SetAsLastSibling();
+
+            var root = (RectTransform)rootGo.transform;
+            Stretch(root);
+
+            var dim = ShellUI.AddImage(root, "Dim", null, raycast: true);
+            // 이 프로젝트는 Linear 컬러 공간이라 같은 알파라도 감마 때보다 옅게 보입니다.
+            // 0.70 이 화면에서 "확실히 뒤가 죽는" 정도입니다.
+            dim.color = new Color(0f, 0f, 0f, 0.70f);
+            Stretch(dim.rectTransform);
+
+            panelAspect = panelSprite.rect.width / Mathf.Max(1f, panelSprite.rect.height);
+
+            var image = ShellUI.AddImage(root, "Panel", panelSprite, raycast: true);
+            panel = image.rectTransform;
+            panel.anchorMin = panel.anchorMax = panel.pivot = new Vector2(0.5f, 0.5f);
+            panel.anchoredPosition = Vector2.zero;
+            panel.sizeDelta = new Vector2(PopupWidth, PopupWidth / panelAspect);
+
+            var popup = rootGo.AddComponent<PopupPanel>();
+            rootGo.SetActive(false);
+            return popup;
+        }
+
+        /// <summary>판 안에 버튼 한 개. 위치·크기는 판 크기를 1 로 본 비율입니다.</summary>
+        static Button MakePopupButton(RectTransform panel, string name, Sprite sprite, Vector2 center,
+                                      float panelAspect, Object target, string method)
+        {
+            var image = ShellUI.AddImage(panel, name, sprite, raycast: true);
+            float height = ShellUI.HeightForWidth(sprite, PopupButtonWidth, panelAspect);
+            ShellUI.Place(image.rectTransform, center, new Vector2(PopupButtonWidth, height));
+            return MakeButton(image, target, method);
+        }
+
+        /// <summary>그림에 Button 을 붙이고 누를 때 살짝 어두워지게 합니다.</summary>
+        static Button MakeButton(Image image, Object target, string method)
+        {
+            var button = image.gameObject.AddComponent<Button>();
             button.targetGraphic = image;
-            BindClick(button, target, "OnLobbyPressed");
+            button.transition = Selectable.Transition.ColorTint;
+
+            var colors = button.colors;
+            colors.pressedColor = new Color(0.82f, 0.82f, 0.82f);
+            button.colors = colors;
+
+            BindClick(button, target, method);
             return button;
+        }
+
+        static void Stretch(RectTransform rt)
+        {
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
         }
 
         /// <summary>버튼을 누르려면 씬에 EventSystem 이 하나 있어야 합니다.</summary>

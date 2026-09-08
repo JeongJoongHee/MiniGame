@@ -6,14 +6,14 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/JumpJump/Scenes/GameScene.unity
+    guid: f4d37f2521b9dd44a8dbca881d81583f
+  - enabled: 1
     path: Assets/Shell/Scenes/TitleScene.unity
     guid: 794a0b77096706f4e842d803af71935e
   - enabled: 1
     path: Assets/Shell/Scenes/LobbyScene.unity
     guid: 210dfad3ab9c1a6449830be353fadd63
-  - enabled: 1
-    path: Assets/JumpJump/Scenes/GameScene.unity
-    guid: f4d37f2521b9dd44a8dbca881d81583f
   - enabled: 1
     path: Assets/Archery/Scenes/ArcheryScene.unity
     guid: 9312d721b47629f4da98caac4dba40fe

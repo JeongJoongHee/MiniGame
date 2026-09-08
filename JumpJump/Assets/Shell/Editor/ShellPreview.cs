@@ -54,10 +54,36 @@ namespace Arcade.EditorTools
                     PrepareForRenderTexture();
                     lobby.Build();
                     Shoot(Path.Combine(outputFolder, "00_lobby" + suffix + ".png"), height);
+
+                    // 팝업은 씬에 꺼진 채로 들어 있습니다. 하나씩 켜서 자리를 확인합니다.
+                    ShootPopup("SettingsPopup", Path.Combine(outputFolder, "00_popup_settings" + suffix + ".png"), height);
+                    ShootPopup("QuitPopup", Path.Combine(outputFolder, "00_popup_quit" + suffix + ".png"), height);
                 }
             }
 
             Debug.Log("[Arcade] 타이틀 / 로비 미리보기 저장 완료 -> " + outputFolder);
+        }
+
+        /// <summary>
+        /// 씬에 꺼진 채로 들어 있는 팝업 하나를 켜서 찍고 다시 끕니다.
+        /// (Find 는 꺼진 물체를 못 찾으므로 컴포넌트로 훑습니다)
+        /// </summary>
+        public static void ShootPopup(string name, string path, int height)
+        {
+            PopupPanel found = null;
+            foreach (var popup in Object.FindObjectsByType<PopupPanel>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (popup.name == name) found = popup;
+
+            if (found == null)
+            {
+                Debug.LogWarning("[Arcade] 팝업을 찾지 못했습니다: " + name);
+                return;
+            }
+
+            found.Open();
+            Relayout();
+            Shoot(path, height);
+            found.Close();
         }
 
         /// <summary>

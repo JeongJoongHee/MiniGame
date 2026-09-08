@@ -293,9 +293,9 @@ namespace JumpJump.EditorTools
             Anchor(hint.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
                    new Vector2(0f, -320f), new Vector2(1000f, 80f));
 
-            // 로비로 돌아가는 버튼 : 화면 오른쪽 맨 위. 게임 중에도 항상 눌러 나갈 수 있습니다.
+            // 로비로 돌아가는 길 : 화면 오른쪽 맨 위 화살표 + "로비로 나가시겠습니까?" 팝업.
             // 오버레이보다 나중에 만들어야 어두운 막 위에 올라오고 터치도 먹습니다.
-            Arcade.EditorTools.ShellSceneBuilder.MakeLobbyButton(root, round, hud);
+            Arcade.EditorTools.ShellSceneBuilder.MakeExitToLobbyUI(root);
 
             Wire(hud,
                 ("scoreText", score), ("heightText", height), ("comboText", combo),

@@ -62,6 +62,11 @@ namespace JumpJump
 
         void Update()
         {
+            // "로비로 나가시겠습니까?" 팝업이 떠 있는 동안에는 게임을 멈춥니다.
+            // 고민하는 사이에 죽으면 안 되니까요. 여기서 막기 때문에 아래 Step 은
+            // 팝업을 전혀 몰라도 되고, 배치 모드 플레이테스트도 그대로 돕니다.
+            if (Arcade.PopupPanel.Blocking) return;
+
             // 오버레이의 "로비로" 버튼을 누른 것까지 점프로 세지 않도록 UI 위의 터치는 걸러냅니다.
             bool tap = TapInput.Pressed && !TapInput.OverUI;
             if (tap) TapInput.Consume();

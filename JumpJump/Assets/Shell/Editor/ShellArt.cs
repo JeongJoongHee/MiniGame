@@ -31,6 +31,25 @@ namespace Arcade.EditorTools
         /// <summary>이름표 그림이 아직 없는 게임에 깔리는 빈 이름표. 없으면 코드가 그려서 만듭니다.</summary>
         public const string BlankPlatePath = Folder + "/NamePlate_Blank.png";
 
+        // --- 팝업(설정 / 종료 / 로비로 나가기) 에 쓰는 그림들 -------------------
+        // 프로젝트 안에서는 "무엇에 쓰는 그림인지" 알 수 있는 이름으로 바꿔 둡니다.
+        // (작업 폴더의 Popup_01 / Popup_02 만 봐서는 어느 쪽이 어느 쪽인지 알 수 없습니다)
+
+        /// <summary>로비 오른쪽 위 톱니바퀴. 설정 팝업을 엽니다.</summary>
+        public const string SettingButtonPath = Folder + "/Setting_Button.png";
+        /// <summary>미니게임 오른쪽 위 뒤로가기 화살표.</summary>
+        public const string BackButtonPath = Folder + "/Back_Button.png";
+        /// <summary>글자가 없는 빈 판. 설정 팝업의 바탕입니다 (위쪽 빈자리는 나중에 사운드 조절용).</summary>
+        public const string PanelPath = Folder + "/Popup_Panel.png";
+        /// <summary>"로비로 나가시겠습니까?" 가 그려진 판.</summary>
+        public const string AskExitPath = Folder + "/Popup_Ask_Exit.png";
+        /// <summary>"종료하시겠습니까?" 가 그려진 판.</summary>
+        public const string AskQuitPath = Folder + "/Popup_Ask_Quit.png";
+        public const string OkButtonPath = Folder + "/Ok_Button.png";
+        public const string CancelButtonPath = Folder + "/Cancel_Button.png";
+        public const string EndButtonPath = Folder + "/End_Button.png";
+        public const string CloseButtonPath = Folder + "/Close_Button.png";
+
         /// <summary>작업 폴더의 파일 이름 -> 프로젝트 안 경로. 배경은 자르지 않고 그대로 복사합니다.</summary>
         static readonly (string[] sources, string dest, bool trim)[] Map =
         {
@@ -39,6 +58,16 @@ namespace Arcade.EditorTools
             (new[] { "@Lobby.png", "@Lobby.jpg" },                    LobbyPath,        false),
             (new[] { "@Start_Button.png" },                           StartButtonPath,  true),
             (new[] { "@Play_Button.png" },                            PlayButtonPath,   true),
+
+            (new[] { "Setting.png" },                                 SettingButtonPath, true),
+            (new[] { "Undo.png" },                                    BackButtonPath,    true),
+            (new[] { "Empty_Pannel.png", "Empty_Panel.png" },         PanelPath,         true),
+            (new[] { "Popup_01.png" },                                AskExitPath,       true),
+            (new[] { "Popup_02.png" },                                AskQuitPath,       true),
+            (new[] { "Ok_Button.png" },                               OkButtonPath,      true),
+            (new[] { "Cancel_Button.png" },                           CancelButtonPath,  true),
+            (new[] { "End_Button.png" },                              EndButtonPath,     true),
+            (new[] { "Close_Button.png" },                            CloseButtonPath,   true),
         };
 
         [MenuItem("Tools/Arcade/Import Shell Art", priority = 20)]
@@ -71,7 +100,8 @@ namespace Arcade.EditorTools
             // 파일을 늘리면 자동으로 따라오므로 게임을 추가할 때 코드를 고칠 일이 없습니다.
             foreach (var (pattern, folder) in new[] { ("@Game_*.png", GamesFolder), ("@Name_*.png", NamesFolder) })
             {
-                foreach (var source in Directory.GetFiles(WorkingDir(), pattern))
+                foreach (var dir in SourceFolders())
+                foreach (var source in Directory.GetFiles(dir, pattern))
                 {
                     string dest = folder + "/" + Path.GetFileName(source).Substring(1);
                     if (CopyIfNewer(source, dest, true, force, report)) changed = true;
@@ -164,14 +194,39 @@ namespace Arcade.EditorTools
             return true;
         }
 
+        /// <summary>
+        /// 그림 원본을 찾아 볼 폴더들. 작업 폴더 바로 아래가 먼저고,
+        /// 그 다음이 `@리소스` 로 시작하는 하위 폴더들입니다 (이름 순).
+        ///
+        /// 사용자가 리소스를 `@리소스 추가_1차` 같은 폴더에 묶음으로 넣어 주기 때문입니다.
+        /// **뒤에 오는 폴더가 이깁니다** — `_2차` 폴더에 같은 이름의 그림을 넣으면
+        /// 코드를 고치지 않아도 그쪽이 쓰입니다.
+        /// </summary>
+        static List<string> SourceFolders()
+        {
+            var folders = new List<string> { WorkingDir() };
+
+            var extras = new List<string>(Directory.GetDirectories(WorkingDir(), "@리소스*"));
+            extras.Sort(string.CompareOrdinal);
+            folders.AddRange(extras);
+
+            return folders;
+        }
+
         static string FindSource(string[] candidates)
         {
-            foreach (var name in candidates)
+            string found = null;
+            foreach (var dir in SourceFolders())
             {
-                string path = Path.Combine(WorkingDir(), name);
-                if (File.Exists(path)) return path;
+                foreach (var name in candidates)
+                {
+                    string path = Path.Combine(dir, name);
+                    if (!File.Exists(path)) continue;
+                    found = path;   // 뒤쪽 폴더가 이깁니다
+                    break;          // 한 폴더 안에서는 앞에 적은 이름이 이깁니다
+                }
             }
-            return null;
+            return found;
         }
 
         static bool CopyIfNewer(string source, string dest, bool trim, bool force, StringBuilder report)
@@ -263,6 +318,17 @@ namespace Arcade.EditorTools
             Configure(StartButtonPath, 512);
             Configure(BlankPlatePath, 1024);
             Configure(PlayButtonPath, 512);
+
+            // 팝업 : 판과 버튼에는 한글이 그려져 있어서 512 로 줄이면 글자가 뭉갭니다.
+            Configure(SettingButtonPath, 512);
+            Configure(BackButtonPath, 512);
+            Configure(PanelPath, 1024);
+            Configure(AskExitPath, 1024);
+            Configure(AskQuitPath, 1024);
+            Configure(OkButtonPath, 1024);
+            Configure(CancelButtonPath, 1024);
+            Configure(EndButtonPath, 1024);
+            Configure(CloseButtonPath, 1024);
 
             foreach (var path in GameIconPaths())
                 Configure(path, 512);

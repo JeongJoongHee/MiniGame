@@ -67,10 +67,33 @@ namespace JumpJump.EditorTools
             Settle(game, 30);
             Shoot(cam, Path.Combine(outputFolder, "03_higher.png"));
 
+            // 오른쪽 위 화살표를 눌렀을 때 뜨는 "로비로 나가시겠습니까?" 팝업.
+            // 껍데기가 만들어 주므로 활쏘기도 똑같이 생겼습니다. 여기서 한 번만 찍습니다.
+            ShootPopup(cam, "ExitToLobbyPopup", Path.Combine(outputFolder, "04_exit_popup.png"));
+
             CaptureBackdropBands(game, cam, outputFolder);
 
             Debug.Log("[JumpJump] 미리보기 저장 완료 -> " + outputFolder +
                       "   (최고 칸 " + game.TopRow + ", 상태 " + game.State + ")");
+        }
+
+        /// <summary>씬에 꺼진 채로 들어 있는 팝업 하나를 켜서 찍고 다시 끕니다.</summary>
+        static void ShootPopup(Camera cam, string name, string path)
+        {
+            Arcade.PopupPanel found = null;
+            foreach (var popup in Object.FindObjectsByType<Arcade.PopupPanel>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (popup.name == name) found = popup;
+
+            if (found == null)
+            {
+                Debug.LogWarning("[JumpJump] 팝업을 찾지 못했습니다: " + name);
+                return;
+            }
+
+            found.Open();
+            Canvas.ForceUpdateCanvases();
+            Shoot(cam, path);
+            found.Close();
         }
 
         /// <summary>

@@ -90,11 +90,5 @@ namespace JumpJump
                     break;
             }
         }
-
-        /// <summary>화면 오른쪽 위의 "< LOBBY" 버튼이 부릅니다. 게임 중에도 항상 눌러 나갈 수 있습니다.</summary>
-        public void OnLobbyPressed()
-        {
-            Arcade.AppFlow.GoToLobby();
-        }
     }
 }
