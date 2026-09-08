@@ -311,7 +311,8 @@ namespace JumpJump.EditorTools
             go.transform.SetParent(parent, false);
 
             var text = go.GetComponent<Text>();
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            // 글꼴은 껍데기가 정합니다. 작업 폴더에 @Font.ttf 를 놓으면 그것으로 바뀝니다.
+            text.font = Arcade.ShellUI.GameFont;
             text.fontSize = fontSize;
             text.alignment = anchor;
             text.color = HudColor;

@@ -22,6 +22,19 @@ namespace Arcade.EditorTools
         public const string GamesFolder = "Assets/Shell/Art/Games";
         public const string NamesFolder = "Assets/Shell/Art/Names";
 
+        /// <summary>
+        /// 글꼴이 들어가는 곳. **Resources 폴더인 것이 중요합니다** —
+        /// 실행 중에 `Resources.Load&lt;Font&gt;("GameFont")` 로 찾아 쓰기 때문입니다.
+        /// (`ShellUI.GameFont`. 씬에 참조를 저장하는 방식이 아니라서 씬을 다시 굽지 않아도 바뀝니다)
+        /// </summary>
+        public const string FontFolder = "Assets/Shell/Resources";
+
+        /// <summary>
+        /// 글꼴 원본을 놓는 폴더. 작업 폴더 아래 `Font` 입니다.
+        /// **여기에 `.ttf` 나 `.otf` 를 넣기만 하면 됩니다** — 파일 이름은 아무거나 좋습니다.
+        /// </summary>
+        public const string FontSourceFolder = "Font";
+
         public const string TitlePath = Folder + "/Title.jpg";
         public const string TitleTextPath = Folder + "/Title_Text.png";
         public const string LobbyPath = Folder + "/Lobby.png";
@@ -109,6 +122,7 @@ namespace Arcade.EditorTools
             }
 
             if (TrimStrayArt(report)) changed = true;
+            if (SyncFont(force, report)) changed = true;
 
             if (changed)
             {
@@ -121,6 +135,93 @@ namespace Arcade.EditorTools
                 ApplyImportSettings();
             }
         }
+
+        /// <summary>
+        /// 작업 폴더의 `Font/` 에 있는 글꼴을 `Assets/Shell/Resources/GameFont.*` 로 가져옵니다.
+        ///
+        /// **글꼴을 바꾸는 방법은 그 폴더의 파일을 갈아 끼우는 것뿐입니다.** 코드에는 글꼴 이름이 없고,
+        /// `ShellUI.GameFont` 가 실행 중에 가져온 파일을 찾아 씁니다.
+        /// 폴더가 비어 있으면 Unity 기본 글꼴을 씁니다 — 그래서 글꼴이 없어도 앱은 돌아갑니다.
+        ///
+        /// 확장자가 다른 글꼴로 갈아 끼우면(.ttf -> .otf) 예전 파일은 지웁니다.
+        /// 안 지우면 둘 다 남아서 어느 쪽이 쓰일지 알 수 없게 됩니다.
+        /// </summary>
+        static bool SyncFont(bool force, StringBuilder report)
+        {
+            string source = FindFontSource();
+            if (source == null) return false;
+
+            Directory.CreateDirectory(FontFolder);
+
+            string extension = Path.GetExtension(source).ToLowerInvariant();
+            string dest = FontFolder + "/GameFont" + extension;
+
+            if (!force && File.Exists(dest) && File.GetLastWriteTimeUtc(dest) >= File.GetLastWriteTimeUtc(source))
+                return false;
+
+            File.Copy(source, dest, true);
+            report.Append("  ").Append(Path.GetFileName(source)).Append(" -> ").Append(dest).Append('\n');
+
+            // 확장자가 다른 옛 글꼴 파일이 남아 있으면 지웁니다.
+            foreach (var stale in new[] { FontFolder + "/GameFont.ttf", FontFolder + "/GameFont.otf" })
+            {
+                if (stale == dest || !File.Exists(stale)) continue;
+                AssetDatabase.DeleteAsset(stale);
+                report.Append("  옛 글꼴 파일을 지웠습니다: ").Append(stale).Append('\n');
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 작업 폴더의 `Font/` 안에서 쓸 글꼴 파일 하나를 고릅니다.
+        ///
+        /// **`.ttf` 를 `.otf` 보다 먼저 봅니다** — 둘 다 있으면 ttf 를 씁니다. Unity 가 더 잘 다룹니다.
+        /// (같은 글꼴을 여러 형식으로 받는 일이 흔합니다. `.bdf` / `.woff2` / 압축 파일은 무시합니다)
+        /// 같은 확장자가 여러 개면 이름 순서로 첫 번째입니다.
+        /// </summary>
+        static string FindFontSource()
+        {
+            string folder = Path.Combine(WorkingDir(), FontSourceFolder);
+            if (!Directory.Exists(folder)) return null;
+
+            foreach (var pattern in new[] { "*.ttf", "*.otf" })
+            {
+                var files = Directory.GetFiles(folder, pattern);
+                if (files.Length == 0) continue;
+
+                System.Array.Sort(files, string.CompareOrdinal);
+                return files[0];
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// 글꼴 임포트 설정. 픽셀아트 화면이라 **글자에 뿌연 테두리가 생기지 않게** 잡습니다.
+        /// 글꼴 파일이 없으면 아무것도 하지 않습니다.
+        /// </summary>
+        static void ConfigureFont()
+        {
+            foreach (var path in new[] { FontFolder + "/GameFont.ttf", FontFolder + "/GameFont.otf" })
+            {
+                var importer = AssetImporter.GetAtPath(path) as TrueTypeFontImporter;
+                if (importer == null) continue;
+                if (importer.userData == FontMarker) continue;
+
+                // HintedRaster : 글자 모양을 픽셀 격자에 맞춰 또렷하게 굽습니다.
+                //                (기본값 Smooth 는 부드럽게 뭉개져서 픽셀 글꼴과 안 어울립니다)
+                importer.fontRenderingMode = FontRenderingMode.HintedRaster;
+                importer.includeFontData = true;   // 폰에 글꼴을 같이 담습니다. 끄면 한글이 안 나옵니다
+                importer.userData = FontMarker;
+                importer.SaveAndReimport();
+
+                Debug.Log("[Arcade] 글꼴을 가져왔습니다 -> " + path +
+                          "\n  앱 전체(타이틀 / 로비 / 두 미니게임의 HUD)가 이 글꼴을 씁니다.");
+            }
+        }
+
+        const string FontMarker = "arcade-shell-font-v1";
 
         /// <summary>
         /// 작업 폴더를 거치지 않고 `Art/Games` / `Art/Names` 에 **직접 넣은** 그림의 투명 여백을 잘라 냅니다.
@@ -334,6 +435,8 @@ namespace Arcade.EditorTools
                 Configure(path, 512);
             foreach (var path in NamePlatePaths())
                 Configure(path, 1024);           // 이름표에는 글자가 들어 있어서 아이콘보다 크게 잡습니다
+
+            ConfigureFont();
         }
 
         /// <summary>Art/Games 의 아이콘들. Game_01, Game_02 ... 이름 순서입니다.</summary>

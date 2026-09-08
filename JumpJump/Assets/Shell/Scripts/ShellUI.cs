@@ -49,13 +49,38 @@ namespace Arcade
             return image;
         }
 
+        /// <summary>
+        /// 앱 전체가 쓰는 글꼴입니다. **바꾸고 싶으면 코드가 아니라 파일을 바꾸세요.**
+        ///
+        /// 작업 폴더에 `@Font.ttf`(또는 `.otf`)를 놓고 Build All Scenes 를 돌리면
+        /// `Assets/Shell/Resources/GameFont.*` 로 들어오고, 아래에서 그것을 찾아 씁니다.
+        /// 파일이 없으면 Unity 기본 글꼴로 돌아갑니다 — 그래서 폰트를 안 넣어도 앱은 돌아갑니다.
+        ///
+        /// 점프점프 / 활쏘기 HUD 도 이 값을 씁니다. 글꼴을 정하는 곳은 여기 한 군데뿐입니다.
+        /// </summary>
+        public static Font GameFont
+        {
+            get
+            {
+                if (_gameFont != null) return _gameFont;
+
+                _gameFont = Resources.Load<Font>("GameFont");
+                if (_gameFont == null)
+                    _gameFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+
+                return _gameFont;
+            }
+        }
+
+        static Font _gameFont;
+
         public static Text AddText(RectTransform parent, string name, int fontSize, Color color)
         {
             var go = new GameObject(name, typeof(RectTransform), typeof(Text));
             go.transform.SetParent(parent, false);
 
             var text = go.GetComponent<Text>();
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            text.font = GameFont;
             text.fontSize = fontSize;
             text.alignment = TextAnchor.MiddleCenter;
             text.color = color;

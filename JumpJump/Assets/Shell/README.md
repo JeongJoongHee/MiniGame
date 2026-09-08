@@ -171,6 +171,39 @@ PROJ="D:/00.JumpJump/JumpJump"
 
 버튼을 누른 것이 점프·발사로 세지 않는 것은 각 게임의 `TapInput.OverUI` 가 막아 줍니다.
 
+### 글꼴 (2026-09-08)
+
+**앱 전체가 쓰는 글꼴은 작업 폴더의 `Font/` 폴더 하나로 정해집니다.**
+
+```
+D:\00.JumpJump\Font\  에 .ttf 나 .otf 를 넣는다   (파일 이름은 아무거나)
+        ↓  Build All Scenes
+Assets/Shell/Resources/GameFont.ttf
+        ↓  실행 중에
+ShellUI.GameFont  ←  타이틀 / 로비 / 점프점프 HUD / 활쏘기 HUD 가 전부 이걸 씁니다
+```
+
+- **코드에는 글꼴 이름이 한 글자도 없습니다.** 바꾸려면 폴더의 파일만 갈아 끼우세요.
+- 폴더가 비어 있으면 Unity 기본 글꼴(LegacyRuntime)로 돌아갑니다. **글꼴이 없어도 앱은 돌아갑니다.**
+- `.ttf` 와 `.otf` 가 둘 다 있으면 **`.ttf` 를 씁니다.** Unity 가 더 잘 다룹니다.
+  같은 글꼴을 여러 형식으로 받는 일이 흔해서 그렇게 해 두었습니다
+  (`.bdf` / `.woff2` / 압축 파일은 무시합니다).
+- **`Resources` 폴더에 넣는 것이 중요합니다.** 실행 중에 `Resources.Load<Font>("GameFont")`
+  로 찾기 때문에, 글꼴만 바꿀 때는 **씬을 다시 굽지 않아도 됩니다.**
+
+**임포트 설정은 `ShellArt.ConfigureFont` 가 잡습니다.**
+
+- `fontRenderingMode = HintedRaster` — 글자를 픽셀 격자에 맞춰 또렷하게 굽습니다.
+  기본값(Smooth)은 부드럽게 뭉개져서 **픽셀 글꼴과 어울리지 않습니다.**
+- `includeFontData = true` — 글꼴을 앱에 같이 담습니다. **끄면 폰에서 한글이 안 나옵니다.**
+
+지금 쓰는 글꼴은 **x10y12pxDenkiChipHangul** (10x12 픽셀, 한글 포함)입니다.
+`.ttf` 가 5.1MB 라 APK 가 그만큼 커집니다. 같은 글꼴의 `.otf` 는 489KB 이므로,
+용량이 아깝다면 `Font/` 에서 `.ttf` 를 빼면 `.otf` 가 쓰입니다.
+
+> **한글 위험이 사라졌습니다.** 예전에는 화면에 한글이 나오면 OS 글꼴에 기대야 해서
+> 안드로이드에서 깨질 수 있었는데, 이제 한글이 들어 있는 글꼴을 앱에 담고 있습니다.
+
 ### 그림의 투명 여백을 잘라 내는 이유
 
 원본 버튼 PNG 는 그림 주위에 빈 공간이 넓습니다. 예를 들어 `@Start_Button.png` 는
@@ -216,6 +249,8 @@ Assets/Shell/
     Ok_Button.png / Cancel_Button.png / End_Button.png / Close_Button.png
     Games/                미니게임 아이콘 (Game_01_Jump.png / Game_02_활쏘기.png ...)
     Names/                미니게임 이름표 (Name_01_점프점프.png ...)
+  Resources/
+    GameFont.ttf          앱 전체가 쓰는 글꼴 (작업 폴더 Font/ 에서 자동으로 들어옴)
   Scenes/
     TitleScene.unity      앱 시작 지점
     LobbyScene.unity
@@ -259,10 +294,8 @@ Assets/Shell/
   모두 그림(`Title_Text.png` / `Names/Name_NN_*.png`)으로 바뀌었기 때문입니다.
   글자로 그리는 곳은 미니게임 안의 HUD(전부 영어·숫자)와, 이름표 그림이 없는 게임의 이름뿐입니다.
   **지금은 두 게임 다 이름표 그림이 있어서, 화면에 한글을 글자로 그리는 곳이 없습니다.**
-  그 부분은 Unity 기본 LegacyRuntime 폰트가 운영체제 폰트로 대체(fallback)해서 그립니다.
-  **안드로이드 기기에서 한글이 제대로 나오는지는 실제로 확인해 봐야 합니다.**
-  깨져 보이면 무료 폰트(예: 나눔고딕)를 `Assets/Shell/Art/` 옆에 넣고
-  `ShellUI.AddText` 의 폰트를 바꾸면 됩니다.
+  **2026-09-08 에 한글이 들어 있는 픽셀 글꼴을 앱에 담았으므로 이 위험은 없어졌습니다.**
+  (위 "글꼴" 절. 앞으로 한글을 글자로 찍어도 폰에서 그대로 나옵니다)
 - 로비에서 폰 뒤로 버튼을 누르면 타이틀로 돌아가지 않고 **바로 종료 확인**이 뜹니다.
   (2026-09-08 에 사용자가 그렇게 정했습니다)
 - 로비에서 최고 점수 같은 기록을 보여 주지 않습니다.
