@@ -1,0 +1,24 @@
+Key,Text,Note
+jump.ready.title,JUMP JUMP,점프점프 - 시작 화면 제목
+jump.ready.body,TAP TO JUMP UP\nRIDE THE MOVING PLATFORM,점프점프 - 시작 화면 설명
+jump.ready.hint,TAP TO START,점프점프 - 시작 화면 아래 안내
+jump.over.title,GAME OVER,점프점프 - 종료 화면 제목
+jump.over.body,"{reason}\n\nSCORE   {score}\nHEIGHT  {height}m\nBEST    {best}",점프점프 - 종료 화면 본문
+jump.over.hint,TAP TO RETRY,점프점프 - 종료 화면 아래 안내
+jump.over.fell,FELL DOWN,점프점프 - 떨어져서 끝났을 때
+jump.over.timeup,TIME OVER,점프점프 - 시간이 다 됐을 때
+jump.hud.score,Score : {score},점프점프 - 화면 왼쪽 위
+jump.hud.height,Height : {height}m,점프점프 - 화면 오른쪽 위
+jump.hud.combo,COMBO {combo}   x{multiplier},점프점프 - 콤보 2 이상일 때만 나옴
+archery.ready.title,ARCHERY,활쏘기 - 시작 화면 제목
+archery.ready.body,TAP TO SHOOT\nHIT THE MOVING TARGET\n\nCENTER 5 PT / EDGE 1 PT\nA HIT REFILLS YOUR ARROWS,활쏘기 - 시작 화면 설명
+archery.ready.hint,TAP TO START,활쏘기 - 시작 화면 아래 안내
+archery.over.title,GAME OVER,활쏘기 - 종료 화면 제목
+archery.over.body,"{reason}\n\nSCORE     {score} PT\nHITS      {hits} / {shots}\nACCURACY  {accuracy}%\nBEST      {best} PT",활쏘기 - 종료 화면 본문
+archery.over.hint,TAP TO RETRY,활쏘기 - 종료 화면 아래 안내
+archery.over.noammo,OUT OF ARROWS,활쏘기 - 화살이 다 떨어졌을 때
+archery.hud.score,SCORE : {score} PT,활쏘기 - 오른쪽 위 점수
+archery.hud.best,HIGHEST : {best} PT,활쏘기 - 오른쪽 위 최고 점수
+archery.hud.target,TARGET {size}%,활쏘기 - 왼쪽 위 과녁 크기
+archery.hud.ammo,AMMO {ammo}/{ammoMax},활쏘기 - 왼쪽 아래 남은 화살
+archery.hit.popup,+{point} PT,활쏘기 - 맞혔을 때 과녁 아래 잠깐 뜨는 글자

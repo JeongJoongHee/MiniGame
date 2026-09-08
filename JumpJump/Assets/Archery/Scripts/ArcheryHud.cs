@@ -41,27 +41,28 @@ namespace Archery
             if (game.Score != _lastScore)
             {
                 _lastScore = game.Score;
-                scoreText.text = "SCORE : " + _lastScore + " PT";
+                scoreText.text = T("archery.hud.score", "SCORE : {score} PT", ("score", _lastScore));
             }
 
             if (game.BestScore != _lastBest)
             {
                 _lastBest = game.BestScore;
-                bestText.text = "HIGHEST : " + _lastBest + " PT";
+                bestText.text = T("archery.hud.best", "HIGHEST : {best} PT", ("best", _lastBest));
             }
 
             int size = Mathf.RoundToInt(game.SizePercent);
             if (size != _lastSize)
             {
                 _lastSize = size;
-                sizeText.text = "TARGET " + size + "%";
+                sizeText.text = T("archery.hud.target", "TARGET {size}%", ("size", size));
             }
 
             if (game.Ammo != _lastAmmo || game.AmmoMax != _lastAmmoMax)
             {
                 _lastAmmo = game.Ammo;
                 _lastAmmoMax = game.AmmoMax;
-                ammoText.text = "AMMO " + _lastAmmo + "/" + _lastAmmoMax;
+                ammoText.text = T("archery.hud.ammo", "AMMO {ammo}/{ammoMax}",
+                                  ("ammo", _lastAmmo), ("ammoMax", _lastAmmoMax));
                 RefreshAmmoIcons(_lastAmmo, _lastAmmoMax);
             }
 
@@ -99,7 +100,7 @@ namespace Archery
             if (hitPopup.gameObject.activeSelf != show) hitPopup.gameObject.SetActive(show);
             if (!show) return;
 
-            hitPopup.text = "+" + game.LastHitPoints + " PT";
+            hitPopup.text = T("archery.hit.popup", "+{point} PT", ("point", game.LastHitPoints));
 
             // 화면 폭에서 화살이 지나간 자리(월드 x)를 비율로 바꿔 그 위에 띄웁니다.
             float half = Mathf.Max(0.01f, game.Config.playHalfWidth + game.Config.targetRadius);
@@ -113,15 +114,26 @@ namespace Archery
             hitPopup.color = color;
         }
 
+        /// <summary>
+        /// 화면에 나올 글자를 표(strings.csv)에서 꺼냅니다.
+        /// 두 번째 인자는 표가 없거나 그 줄이 비었을 때 쓸 기본 문구입니다.
+        /// **문구를 바꾸려면 코드가 아니라 D:\00.JumpJump\strings.csv 를 고치세요.**
+        /// </summary>
+        static string T(string key, string fallback, params (string name, object value)[] values)
+        {
+            return Arcade.StringTable.Format(key, fallback, values);
+        }
+
         void ApplyState(ArcheryGame game)
         {
             switch (game.State)
             {
                 case GameState.Ready:
                     overlay.SetActive(true);
-                    titleText.text = "ARCHERY";
-                    bodyText.text = "TAP TO SHOOT\nHIT THE MOVING TARGET\n\nCENTER 5 PT / EDGE 1 PT\nA HIT REFILLS YOUR ARROWS";
-                    hintText.text = "TAP TO START";
+                    titleText.text = T("archery.ready.title", "ARCHERY");
+                    bodyText.text = T("archery.ready.body",
+                        "TAP TO SHOOT\nHIT THE MOVING TARGET\n\nCENTER 5 PT / EDGE 1 PT\nA HIT REFILLS YOUR ARROWS");
+                    hintText.text = T("archery.ready.hint", "TAP TO START");
                     break;
 
                 case GameState.Playing:
@@ -130,13 +142,13 @@ namespace Archery
 
                 case GameState.GameOver:
                     overlay.SetActive(true);
-                    titleText.text = "GAME OVER";
-                    bodyText.text = game.LastResultReason
-                                    + "\n\nSCORE     " + game.Score + " PT"
-                                    + "\nHITS      " + game.Hits + " / " + game.Shots
-                                    + "\nACCURACY  " + game.Accuracy.ToString("0") + "%"
-                                    + "\nBEST      " + game.BestScore + " PT";
-                    hintText.text = "TAP TO RETRY";
+                    titleText.text = T("archery.over.title", "GAME OVER");
+                    bodyText.text = T("archery.over.body",
+                        "{reason}\n\nSCORE     {score} PT\nHITS      {hits} / {shots}\nACCURACY  {accuracy}%\nBEST      {best} PT",
+                        ("reason", game.LastResultReason),
+                        ("score", game.Score), ("hits", game.Hits), ("shots", game.Shots),
+                        ("accuracy", game.Accuracy.ToString("0")), ("best", game.BestScore));
+                    hintText.text = T("archery.over.hint", "TAP TO RETRY");
                     break;
             }
         }

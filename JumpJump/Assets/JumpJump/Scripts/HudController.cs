@@ -33,21 +33,25 @@ namespace JumpJump
             if (game.Score != _lastScore)
             {
                 _lastScore = game.Score;
-                scoreText.text = "Score : " + _lastScore.ToString("00000000");
+                scoreText.text = T("jump.hud.score", "Score : {score}",
+                                   ("score", _lastScore.ToString("00000000")));
             }
 
             int meters = Mathf.Max(0, Mathf.FloorToInt(game.HeightMeters));
             if (meters != _lastMeters)
             {
                 _lastMeters = meters;
-                heightText.text = "Height : " + meters.ToString("000000") + "m";
+                heightText.text = T("jump.hud.height", "Height : {height}m",
+                                    ("height", meters.ToString("000000")));
             }
 
             if (game.Combo != _lastCombo)
             {
                 _lastCombo = game.Combo;
                 comboText.text = _lastCombo >= 2
-                    ? "COMBO " + _lastCombo + "   x" + game.Config.ScoreMultiplier(_lastCombo).ToString("0.0")
+                    ? T("jump.hud.combo", "COMBO {combo}   x{multiplier}",
+                        ("combo", _lastCombo),
+                        ("multiplier", game.Config.ScoreMultiplier(_lastCombo).ToString("0.0")))
                     : "";
             }
 
@@ -64,15 +68,25 @@ namespace JumpJump
             }
         }
 
+        /// <summary>
+        /// 화면에 나올 글자를 표(strings.csv)에서 꺼냅니다.
+        /// 두 번째 인자는 표가 없거나 그 줄이 비었을 때 쓸 기본 문구입니다.
+        /// **문구를 바꾸려면 코드가 아니라 D:\00.JumpJump\strings.csv 를 고치세요.**
+        /// </summary>
+        static string T(string key, string fallback, params (string name, object value)[] values)
+        {
+            return Arcade.StringTable.Format(key, fallback, values);
+        }
+
         void ApplyState(GameManager game)
         {
             switch (game.State)
             {
                 case GameState.Ready:
                     overlay.SetActive(true);
-                    titleText.text = "JUMP JUMP";
-                    bodyText.text = "TAP TO JUMP UP\nRIDE THE MOVING PLATFORM";
-                    hintText.text = "TAP TO START";
+                    titleText.text = T("jump.ready.title", "JUMP JUMP");
+                    bodyText.text = T("jump.ready.body", "TAP TO JUMP UP\nRIDE THE MOVING PLATFORM");
+                    hintText.text = T("jump.ready.hint", "TAP TO START");
                     break;
 
                 case GameState.Playing:
@@ -81,12 +95,14 @@ namespace JumpJump
 
                 case GameState.GameOver:
                     overlay.SetActive(true);
-                    titleText.text = "GAME OVER";
-                    bodyText.text = game.LastResultReason
-                                    + "\n\nSCORE   " + game.Score.ToString("00000000")
-                                    + "\nHEIGHT  " + Mathf.FloorToInt(game.HeightMeters).ToString("000000") + "m"
-                                    + "\nBEST    " + game.BestScore.ToString("00000000");
-                    hintText.text = "TAP TO RETRY";
+                    titleText.text = T("jump.over.title", "GAME OVER");
+                    bodyText.text = T("jump.over.body",
+                        "{reason}\n\nSCORE   {score}\nHEIGHT  {height}m\nBEST    {best}",
+                        ("reason", game.LastResultReason),
+                        ("score", game.Score.ToString("00000000")),
+                        ("height", Mathf.FloorToInt(game.HeightMeters).ToString("000000")),
+                        ("best", game.BestScore.ToString("00000000")));
+                    hintText.text = T("jump.over.hint", "TAP TO RETRY");
                     break;
             }
         }

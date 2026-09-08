@@ -171,6 +171,37 @@ PROJ="D:/00.JumpJump/JumpJump"
 
 버튼을 누른 것이 점프·발사로 세지 않는 것은 각 게임의 `TapInput.OverUI` 가 막아 줍니다.
 
+### 화면 글자표 `strings.csv` (2026-09-08)
+
+**화면에 나오는 글자는 전부 표 한 장에서 옵니다.** 코드를 고칠 필요가 없습니다.
+
+- 고치는 파일 : `D:\00.JumpJump\strings.csv` (엑셀로 열면 됩니다)
+- 게임이 읽는 사본 : `Assets/Shell/Resources/strings.csv`
+- 바깥 파일이 더 새로우면 자동으로 가져옵니다 (`ShellStringsCsv.Sync`).
+  씬 빌드 · 미리보기 캡처 · 플레이테스트가 전부 이 함수를 거칩니다.
+  강제로 다시 읽으려면 **Tools > Arcade > Apply strings.csv**.
+
+표는 `Key,Text` 두 열입니다. **Key 는 코드가 찾는 이름이라 고치면 안 되고, Text 만 고칩니다.**
+
+| 쓰는 법 | 뜻 |
+| --- | --- |
+| `\n` | 줄바꿈 |
+| `{score}` `{reason}` 등 | **숫자가 들어갈 자리.** 옮기거나 지워도 되지만 이름을 틀리면 글자가 그대로 남습니다 |
+| `Note` 열 | 무시됩니다. 메모용 열을 마음껏 추가해도 됩니다 |
+| `#` 로 시작하는 Key | 주석으로 보고 건너뜁니다 |
+
+쉼표가 든 문장은 엑셀이 알아서 따옴표로 묶어 주고, 파서도 그대로 읽습니다.
+
+**표가 없거나 어떤 줄이 비어 있어도 앱은 돌아갑니다.** 그 자리는 코드에 적어 둔
+기본 문구(전부 영어)로 대신합니다 — `HudController.T()` / `ArcheryHud.T()` 의 두 번째 인자입니다.
+그래서 **표를 지워도 화면이 비지 않습니다.**
+
+> **글자를 한글로 바꿔도 됩니다.** 2026-09-08 에 한글이 든 글꼴을 넣었으므로
+> 폰에서도 그대로 나옵니다. 다만 **한글은 영어보다 폭이 넓어서 칸을 넘칠 수 있으니**,
+> 길게 바꾸신 뒤에는 미리보기 캡처로 한 번 확인하는 편이 좋습니다.
+
+새 미니게임을 만들면 그 게임의 글자도 이 표에 `<게임id>.` 로 시작하는 Key 로 추가하세요.
+
 ### 글꼴 (2026-09-08)
 
 **앱 전체가 쓰는 글꼴은 작업 폴더의 `Font/` 폴더 하나로 정해집니다.**
@@ -251,6 +282,7 @@ Assets/Shell/
     Names/                미니게임 이름표 (Name_01_점프점프.png ...)
   Resources/
     GameFont.ttf          앱 전체가 쓰는 글꼴 (작업 폴더 Font/ 에서 자동으로 들어옴)
+    strings.csv           화면에 나오는 글자표 (작업 폴더 strings.csv 에서 들어옴)
   Scenes/
     TitleScene.unity      앱 시작 지점
     LobbyScene.unity
@@ -264,10 +296,12 @@ Assets/Shell/
     ShellUI.cs            비율 기반 배치 도구
     PopupPanel.cs         팝업 한 장 (켜기/끄기 + 열린 팝업 목록)
     ShellMenu.cs          나가기/설정 버튼이 부르는 함수들 + 폰 뒤로 버튼
+    StringTable.cs        strings.csv 를 읽어 화면 글자를 꺼내 줌
     PulseScale.cs         버튼 숨쉬기 애니메이션
   Editor/
     ShellArt.cs           작업 폴더 그림 가져오기 + 여백 자르기 + 임포트 설정
     ShellSceneBuilder.cs  씬 자동 생성
+    ShellStringsCsv.cs    strings.csv 가져오기 (Tools > Arcade > Apply strings.csv)
     ShellPreview.cs       플레이 모드 없이 화면 PNG 캡처
 ```
 

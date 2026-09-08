@@ -109,7 +109,7 @@ namespace JumpJump
 
             if (allowInput && transform.position.y < screenBottomY - config.deathMargin)
             {
-                GameManager.Instance.EndRun("FELL DOWN");
+                GameManager.Instance.EndRun(Arcade.StringTable.Get("jump.over.fell", "FELL DOWN"));
             }
         }
 

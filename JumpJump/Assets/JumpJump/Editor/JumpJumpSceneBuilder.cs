@@ -207,6 +207,11 @@ namespace JumpJump.EditorTools
 
             // 바깥 작업 폴더의 config.csv 가 더 새로우면 가져온 뒤 GameConfig 에 연결합니다.
             JumpJumpConfigCsv.Sync();
+
+            // 화면에 나오는 글자표도 여기서 같이 가져옵니다. 씬 빌드뿐 아니라
+            // 미리보기 캡처 · 플레이테스트도 이 함수를 거치기 때문에,
+            // strings.csv 를 고치면 배치 모드 검증에도 바로 반영됩니다.
+            Arcade.EditorTools.ShellStringsCsv.Sync();
             var csv = AssetDatabase.LoadAssetAtPath<TextAsset>(JumpJumpConfigCsv.AssetPath);
             if (csv != null && config.difficultyCsv != csv)
             {

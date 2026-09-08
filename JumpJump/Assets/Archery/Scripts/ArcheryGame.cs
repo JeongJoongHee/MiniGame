@@ -116,7 +116,8 @@ namespace Archery
 
                     // 화살이 다 떨어지고, 날아가는 중인 화살도 없으면 판이 끝납니다.
                     // (마지막 한 발이 아직 과녁에 닿지 않았다면 결과를 기다립니다)
-                    if (Ammo <= 0 && arrows.PendingCount <= 0) EndRun("OUT OF ARROWS");
+                    if (Ammo <= 0 && arrows.PendingCount <= 0)
+                        EndRun(Arcade.StringTable.Get("archery.over.noammo", "OUT OF ARROWS"));
                     break;
 
                 case GameState.GameOver:

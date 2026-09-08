@@ -61,6 +61,9 @@ namespace Arcade.EditorTools
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
 
+            // 0) 화면에 나오는 글자표. 두 게임이 다 쓰므로 미니게임 씬보다 먼저 가져옵니다.
+            ShellStringsCsv.Sync();
+
             // 1) 미니게임 씬들 (각 게임의 빌더가 자기 CSV 동기화까지 같이 합니다)
             JumpJump.EditorTools.JumpJumpSceneBuilder.BuildScene();
             Archery.EditorTools.ArcherySceneBuilder.BuildScene();

@@ -104,7 +104,7 @@ namespace JumpJump
                     if (meters > HeightMeters) HeightMeters = meters;
                     if (backdrop != null) backdrop.Tick(meters);
 
-                    if (TimeLeft <= 0f) EndRun("TIME OVER");
+                    if (TimeLeft <= 0f) EndRun(Arcade.StringTable.Get("jump.over.timeup", "TIME OVER"));
                     break;
 
                 case GameState.GameOver:

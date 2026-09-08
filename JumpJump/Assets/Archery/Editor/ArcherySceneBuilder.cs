@@ -168,6 +168,9 @@ namespace Archery.EditorTools
 
             // 작업 폴더의 archery.csv 가 더 새로우면 가져온 뒤 ArcheryConfig 에 연결합니다.
             ArcheryStageCsv.Sync();
+
+            // 화면에 나오는 글자표도 여기서 같이 가져옵니다. (점프점프 쪽과 같은 이유)
+            Arcade.EditorTools.ShellStringsCsv.Sync();
             var csv = AssetDatabase.LoadAssetAtPath<TextAsset>(ArcheryStageCsv.AssetPath);
             if (csv != null && config.stageCsv != csv)
             {
