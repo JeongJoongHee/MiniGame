@@ -68,6 +68,10 @@ namespace Arcade.EditorTools
                 return;
             }
 
+            // 엑셀이 옛 한글 인코딩으로 저장했으면 여기서 UTF-8 로 되돌려 놓습니다.
+            // 파일을 고치는 것이라 복사 여부와 상관없이 먼저 합니다.
+            RepairEncoding(outside);
+
             bool needCopy = !File.Exists(inside)
                             || File.GetLastWriteTimeUtc(outside) > File.GetLastWriteTimeUtc(inside);
             if (!needCopy) return;
@@ -79,6 +83,61 @@ namespace Arcade.EditorTools
 
             Debug.Log($"[Arcade] 바깥 폴더의 {FileName} 이(가) 더 새로워서 가져왔습니다.\n" +
                       $"  {outside}\n  -> {AssetPath}");
+        }
+
+        /// <summary>
+        /// CSV 를 **UTF-8 + BOM** 으로 맞춰 둡니다. 한글이 깨지지 않게 하는 장치입니다.
+        ///
+        /// 한글 윈도우의 엑셀은 CSV 를 열 때, 파일 앞에 BOM 이라는 표시가 없으면
+        /// **옛 한글 인코딩(CP949)이라고 넘겨짚습니다.** 그래서 UTF-8 로 저장된 한글이
+        /// `?먰봽?먰봽` 처럼 깨져 보입니다. BOM 을 붙여 두면 엑셀이 UTF-8 로 알아봅니다.
+        ///
+        /// 반대로 엑셀에서 그냥 "CSV" 로 저장하면 CP949 로 쓰이는데, 그때는 Unity 가
+        /// 한글을 못 읽습니다. 그 경우를 여기서 알아채고 UTF-8 로 되돌려 놓습니다.
+        /// **덕분에 엑셀에서 어느 쪽으로 저장해도 한글이 깨지지 않습니다.**
+        /// </summary>
+        static void RepairEncoding(string path)
+        {
+            byte[] bytes;
+            try { bytes = File.ReadAllBytes(path); }
+            catch { return; }
+
+            if (bytes.Length == 0) return;
+
+            bool hasBom = bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF;
+            if (hasBom) return;   // 이미 제대로 되어 있습니다
+
+            string text = null;
+            bool wasLegacy = false;
+
+            // BOM 이 없으면 먼저 UTF-8 로 읽어 봅니다. 깨진 바이트가 있으면 예외가 납니다.
+            try
+            {
+                text = new UTF8Encoding(false, true).GetString(bytes);
+            }
+            catch (DecoderFallbackException)
+            {
+                // UTF-8 이 아니면 엑셀이 CP949 로 저장한 것입니다.
+                try
+                {
+                    text = Encoding.GetEncoding(949).GetString(bytes);
+                    wasLegacy = true;
+                }
+                catch
+                {
+                    Debug.LogWarning($"[Arcade] {FileName} 의 한글을 읽지 못했습니다.\n" +
+                                     "  엑셀에서 [다른 이름으로 저장] > 파일 형식을 " +
+                                     "**\"CSV UTF-8(쉼표로 분리)\"** 로 골라 다시 저장해 주세요.");
+                    return;
+                }
+            }
+
+            File.WriteAllText(path, text, new UTF8Encoding(true));   // BOM 을 붙여 다시 씁니다
+
+            Debug.Log($"[Arcade] {FileName} 을(를) UTF-8 로 맞춰 두었습니다. " +
+                      (wasLegacy
+                          ? "엑셀이 옛 한글 인코딩으로 저장해서 되돌렸습니다."
+                          : "엑셀에서 한글이 깨져 보이지 않도록 표시(BOM)를 붙였습니다."));
         }
 
         /// <summary>읽은 결과를 로그에 보기 좋게 늘어놓습니다. 줄바꿈은 기호로 바꿔 한 줄로 만듭니다.</summary>
