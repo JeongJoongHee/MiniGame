@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -29,6 +29,9 @@ namespace Archery.EditorTools
             const string bestKey = "Archery.BestScore";
             int savedBest = PlayerPrefs.GetInt(bestKey, 0);
 
+            // 봇이 도는 수십 판이 광고 카운터·랭킹에 섞이면 안 됩니다.
+            Arcade.GameSession.Recording = false;
+
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var game = ArcherySceneBuilder.Populate();
             if (game == null) return;
@@ -46,6 +49,7 @@ namespace Archery.EditorTools
 
             PlayerPrefs.SetInt(bestKey, savedBest);
             PlayerPrefs.Save();
+            Arcade.GameSession.Recording = true;
 
             if (aim.hits < 20)
                 Debug.LogError("[Archery 플레이테스트] 조준 봇이 20발도 못 맞혔습니다. " +

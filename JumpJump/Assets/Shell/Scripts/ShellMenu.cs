@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Arcade
@@ -25,6 +25,9 @@ namespace Arcade
         [Tooltip("\"로비로 나가시겠습니까?\" - 미니게임 씬에만 있습니다")]
         [SerializeField] PopupPanel exitToLobbyPopup;
 
+        [Tooltip("로비 왼쪽 위 아이콘으로 여는 랭킹 창. 로비에만 있습니다")]
+        [SerializeField] PopupPanel rankingPopup;
+
         // ------------------------------------------------------------ 버튼이 부르는 함수들
 
         /// <summary>로비 오른쪽 위 톱니바퀴.</summary>
@@ -38,6 +41,12 @@ namespace Arcade
         {
             if (settingsPopup != null) settingsPopup.Close();
             if (quitPopup != null) quitPopup.Open();
+        }
+
+        /// <summary>로비 왼쪽 위 랭킹 아이콘.</summary>
+        public void OnRankingPressed()
+        {
+            if (rankingPopup != null) rankingPopup.Open();
         }
 
         /// <summary>미니게임 오른쪽 위 뒤로가기 화살표.</summary>

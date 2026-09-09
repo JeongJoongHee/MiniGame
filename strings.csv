@@ -22,3 +22,19 @@ archery.hud.best,HIGHEST : {best} PT,활쏘기 - 오른쪽 위 최고 점수
 archery.hud.target,TARGET {size}%,활쏘기 - 왼쪽 위 과녁 크기
 archery.hud.ammo,AMMO {ammo}/{ammoMax},활쏘기 - 왼쪽 아래 남은 화살
 archery.hit.popup,+{point} PT,활쏘기 - 맞혔을 때 과녁 아래 잠깐 뜨는 글자
+
+# 랭킹 · 별명 (2026-09-09)
+rank.title,랭킹,랭킹 창 - 제목
+rank.loading,불러오는 중...,랭킹 창 - 기다리는 동안
+rank.empty,아직 기록이 없습니다,랭킹 창 - 아무도 없을 때
+rank.failed,랭킹을 불러오지 못했습니다,랭킹 창 - 인터넷이 안 될 때
+rank.place,{rank},랭킹 창 - 순위 숫자. 뒤에 '위'를 붙이려면 {rank}위
+rank.me,내 순위 {rank}위   {score},랭킹 창 - 맨 아래 내 기록
+rank.me.none,아직 내 기록이 없습니다,랭킹 창 - 내가 아직 안 올렸을 때
+nick.title,별명을 정해 주세요,별명 창 - 제목
+nick.hint,최대 {max}글자 · 다른 사람과 같을 수 없습니다,별명 창 - 안내
+nick.placeholder,별명,별명 창 - 빈 칸에 옅게 보이는 글자
+nick.checking,확인하는 중...,별명 창 - 서버에 물어보는 동안
+nick.empty,별명을 입력해 주세요,별명 창 - 빈 채로 확인을 눌렀을 때
+nick.taken,이미 있는 별명입니다,별명 창 - 남이 쓰고 있을 때
+nick.failed,지금은 등록할 수 없습니다,별명 창 - 확인하지 못했을 때

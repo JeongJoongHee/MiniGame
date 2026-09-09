@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -52,6 +52,8 @@ namespace Arcade.EditorTools
         // 값은 로비 그림 안에서의 비율이라 폰 해상도가 달라도 같은 자리에 붙습니다.
 
         static readonly Vector2 GearCenter = new Vector2(0.9268f, 0.9496f);
+        /// <summary>왼쪽 위 랭킹 아이콘. 톱니바퀴를 좌우로 뒤집은 자리입니다.</summary>
+        static readonly Vector2 RankCenter = new Vector2(0.0732f, 0.9496f);
         const float GearWidth = 0.085f;
         /// <summary>손가락으로 누를 영역은 그림보다 넉넉하게 잡습니다.</summary>
         const float GearHitWidth = 0.135f;
@@ -63,6 +65,9 @@ namespace Arcade.EditorTools
 
             // 0) 화면에 나오는 글자표. 두 게임이 다 쓰므로 미니게임 씬보다 먼저 가져옵니다.
             ShellStringsCsv.Sync();
+
+            // 0b) 껍데기 설정 에셋 (광고 간격 · 랭킹 줄 수 · 별명 길이). 없으면 기본값으로 만들어 둡니다.
+            ShellConfigAsset.LoadOrCreate();
 
             // 1) 미니게임 씬들 (각 게임의 빌더가 자기 CSV 동기화까지 같이 합니다)
             JumpJump.EditorTools.JumpJumpSceneBuilder.BuildScene();
@@ -238,6 +243,25 @@ namespace Arcade.EditorTools
             ShellUI.Place((RectTransform)gearHit.transform, GearCenter, new Vector2(GearHitWidth, GearHitWidth * frameAspect));
             if (menu != null) BindClick(gearHit, menu, "OnSettingsPressed");
 
+            // 왼쪽 위 랭킹 아이콘. 톱니바퀴와 같은 크기·같은 높이의 대칭 자리입니다.
+            // 그림이 없으면 ShellArt 가 임시 그림(시상대 모양)을 만들어 둡니다.
+            var rankSprite = ShellArt.Load(ShellArt.RankButtonPath);
+            if (rankSprite != null)
+            {
+                var rankIcon = ShellUI.AddImage(backdrop, "RankIcon", rankSprite);
+                ShellUI.Place(rankIcon.rectTransform, RankCenter,
+                              new Vector2(GearWidth, ShellUI.HeightForWidth(rankSprite, GearWidth, frameAspect)));
+
+                var rankHit = ShellUI.AddHitArea(backdrop, "RankButton");
+                ShellUI.Place((RectTransform)rankHit.transform, RankCenter,
+                              new Vector2(GearHitWidth, GearHitWidth * frameAspect));
+                if (menu != null) BindClick(rankHit, menu, "OnRankingPressed");
+            }
+
+            // 랭킹 창. 게임 이름표가 탭이라 카탈로그가 필요합니다.
+            var rankingPopup = ShellRankingUI.BuildRankingPopup(root, catalog, menu);
+            if (menu != null && rankingPopup != null) Wire(menu, ("rankingPopup", rankingPopup));
+
             var screenGo = new GameObject("LobbyScreen");
             var screen = screenGo.AddComponent<LobbyScreen>();
 
@@ -322,6 +346,14 @@ namespace Arcade.EditorTools
                                      menu, "OnExitToLobbyConfirmed", "OnCancelPressed");
 
             Wire(menu, ("exitToLobbyPopup", popup));
+
+            // 3) 랭킹 : 한 판이 끝나면 점수를 올립니다.
+            //    별명이 아직 없으면 이 창으로 한 번만 물어봅니다 (처음 랭킹에 오를 때).
+            //    게임 쪽 코드는 EndRun 의 한 줄이 전부이고, 나머지는 RankingFlow 가 합니다.
+            var nickname = ShellRankingUI.BuildNicknamePopup(root);
+            var flow = new GameObject("RankingFlow").AddComponent<RankingFlow>();
+            if (nickname != null) Wire(flow, ("nicknamePopup", nickname));
+
             return menu;
         }
 
@@ -446,7 +478,7 @@ namespace Arcade.EditorTools
             var rt = image.rectTransform;
 
             var fitter = image.gameObject.AddComponent<AspectFitter>();
-            Wire(fitter, ("mode", (int)mode));
+            WireInts(fitter, ("mode", (int)mode));
             fitter.Aspect = sprite.rect.width / sprite.rect.height;
             fitter.Apply();
 
@@ -548,7 +580,7 @@ namespace Arcade.EditorTools
 
         // ------------------------------------------------------------------ 직렬화 도우미
 
-        static void Wire(Object target, params (string field, Object value)[] fields)
+        public static void Wire(Object target, params (string field, Object value)[] fields)
         {
             var so = new SerializedObject(target);
             foreach (var pair in fields)
@@ -564,7 +596,7 @@ namespace Arcade.EditorTools
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        static void Wire(Object target, params (string field, int value)[] fields)
+        public static void WireInts(Object target, params (string field, int value)[] fields)
         {
             var so = new SerializedObject(target);
             foreach (var pair in fields)
@@ -575,6 +607,78 @@ namespace Arcade.EditorTools
             }
             so.ApplyModifiedPropertiesWithoutUndo();
         }
+
+        /// <summary>배열 필드를 채웁니다 (랭킹 창의 줄 글자들처럼 개수가 여럿인 것).</summary>
+        public static void WireArray(Object target, string field, IList<Object> values)
+        {
+            var so = new SerializedObject(target);
+            var prop = so.FindProperty(field);
+            if (prop == null)
+            {
+                Debug.LogError("[Arcade] 배열 필드를 찾지 못했습니다: " + target.GetType().Name + "." + field);
+                return;
+            }
+
+            prop.arraySize = values.Count;
+            for (int i = 0; i < values.Count; i++)
+                prop.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        /// <summary>글자 배열 필드를 채웁니다 (랭킹 창의 게임 id 목록).</summary>
+        public static void WireStrings(Object target, string field, IList<string> values)
+        {
+            var so = new SerializedObject(target);
+            var prop = so.FindProperty(field);
+            if (prop == null)
+            {
+                Debug.LogError("[Arcade] 글자 배열 필드를 찾지 못했습니다: " + target.GetType().Name + "." + field);
+                return;
+            }
+
+            prop.arraySize = values.Count;
+            for (int i = 0; i < values.Count; i++)
+                prop.GetArrayElementAtIndex(i).stringValue = values[i];
+
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        /// <summary>판 안에 버튼 한 개 (바깥에서도 쓰는 판). 위치·크기는 판 크기를 1 로 본 비율입니다.</summary>
+        public static Button MakePanelButton(RectTransform panel, string name, Sprite sprite, Vector2 center,
+                                             float panelAspect, Object target, string method)
+        {
+            return MakePopupButton(panel, name, sprite, center, panelAspect, target, method);
+        }
+
+        /// <summary>이미 만들어 둔 그림에 버튼을 붙입니다.</summary>
+        public static Button MakeButtonOn(Image image, Object target, string method)
+        {
+            return MakeButton(image, target, method);
+        }
+
+        /// <summary>
+        /// **크기를 내가 정하는 팝업**입니다. 판 그림을 9-슬라이스로 늘리기 때문에
+        /// 세로로 긴 창(랭킹)이든 낮은 창(별명)이든 테두리 두께가 그대로입니다.
+        /// 그래서 창을 새로 만들 때마다 그림을 새로 그릴 필요가 없습니다.
+        /// </summary>
+        public static PopupPanel MakeSlicedPopup(RectTransform canvasRoot, string name, Sprite panelSprite,
+                                                 Vector2 sizePixels, out RectTransform panel)
+        {
+            var popup = MakePopup(canvasRoot, name, panelSprite, out panel, out _);
+
+            var image = panel.GetComponent<Image>();
+            image.type = Image.Type.Sliced;
+            image.pixelsPerUnitMultiplier = PanelSliceScale;
+            panel.sizeDelta = sizePixels;
+            return popup;
+        }
+
+        /// <summary>
+        /// 9-슬라이스로 늘릴 때 테두리를 몇 배로 볼지. 판 그림의 테두리가 34px 인데
+        /// 그대로 쓰면 1080 폭 화면에서 너무 두껍게 나와서 조금 줄입니다.
+        /// </summary>
+        const float PanelSliceScale = 0.55f;
 
         /// <summary>버튼의 OnClick 에 "이 컴포넌트의 이 함수" 를 씬에 저장되는 형태로 걸어 줍니다.</summary>
         static void BindClick(Button button, Object target, string methodName)

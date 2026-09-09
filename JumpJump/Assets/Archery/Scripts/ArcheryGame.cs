@@ -31,6 +31,9 @@ namespace Archery
         [SerializeField] ArcheryHud hud;
 
         const string BestScoreKey = "Archery.BestScore";
+
+        /// <summary>랭킹표를 가르는 이름. `GameCatalog.asset` 의 id 와 같아야 합니다.</summary>
+        public const string GameId = "archery";
         const float RetryLockSeconds = 0.6f;
 
         float _stateClock;    // 현재 상태에 머문 시간 (에디터 테스트에서도 동작하도록 Time.time 대신 누적)
@@ -202,6 +205,11 @@ namespace Archery
                 PlayerPrefs.SetInt(BestScoreKey, BestScore);
                 PlayerPrefs.Save();
             }
+
+            // 점프점프와 똑같은 한 줄입니다. 여기서는 "끝났다"만 알리고,
+            // 랭킹 등록·광고는 이 신호를 듣는 쪽에서 합니다 (Arcade.GameSession 설명 참고).
+            Arcade.GameSession.ReportRunFinished(
+                new Arcade.RunResult(GameId, Score, reason, "명중 " + Hits));
 
             SetState(GameState.GameOver);
         }

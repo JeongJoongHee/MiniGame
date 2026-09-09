@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -58,6 +58,7 @@ namespace Arcade.EditorTools
                     // 팝업은 씬에 꺼진 채로 들어 있습니다. 하나씩 켜서 자리를 확인합니다.
                     ShootPopup("SettingsPopup", Path.Combine(outputFolder, "00_popup_settings" + suffix + ".png"), height);
                     ShootPopup("QuitPopup", Path.Combine(outputFolder, "00_popup_quit" + suffix + ".png"), height);
+                    ShootPopup("RankingPopup", Path.Combine(outputFolder, "00_popup_ranking" + suffix + ".png"), height);
                 }
             }
 
@@ -81,9 +82,20 @@ namespace Arcade.EditorTools
             }
 
             found.Open();
+            RefreshViews(found);
             Relayout();
             Shoot(path, height);
             found.Close();
+        }
+
+        /// <summary>
+        /// 에디터에서는 OnEnable 이 불리지 않아 창 안이 비어 있습니다.
+        /// 실행 중에 채워지는 글자(랭킹 줄 / 별명 안내)를 여기서 직접 채워 줍니다.
+        /// </summary>
+        static void RefreshViews(PopupPanel popup)
+        {
+            foreach (var view in popup.GetComponentsInChildren<RankingPopup>(true)) view.Refresh();
+            foreach (var view in popup.GetComponentsInChildren<NicknamePopup>(true)) view.Refresh();
         }
 
         /// <summary>

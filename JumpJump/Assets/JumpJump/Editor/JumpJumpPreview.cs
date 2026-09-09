@@ -71,6 +71,10 @@ namespace JumpJump.EditorTools
             // 껍데기가 만들어 주므로 활쏘기도 똑같이 생겼습니다. 여기서 한 번만 찍습니다.
             ShootPopup(cam, "ExitToLobbyPopup", Path.Combine(outputFolder, "04_exit_popup.png"));
 
+            // 처음 랭킹에 오를 때 한 번 뜨는 별명 창. 이것도 껍데기가 만들어 주므로
+            // 활쏘기에서도 똑같이 생겼습니다.
+            ShootPopup(cam, "NicknamePopup", Path.Combine(outputFolder, "05_nickname.png"));
+
             CaptureBackdropBands(game, cam, outputFolder);
 
             Debug.Log("[JumpJump] 미리보기 저장 완료 -> " + outputFolder +
@@ -91,6 +95,10 @@ namespace JumpJump.EditorTools
             }
 
             found.Open();
+
+            // 에디터에서는 OnEnable 이 불리지 않아 창 안이 비어 있습니다. 직접 채워 줍니다.
+            foreach (var view in found.GetComponentsInChildren<Arcade.NicknamePopup>(true)) view.Refresh();
+
             Canvas.ForceUpdateCanvases();
             Shoot(cam, path);
             found.Close();

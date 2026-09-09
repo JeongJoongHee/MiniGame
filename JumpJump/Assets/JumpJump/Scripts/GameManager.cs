@@ -20,6 +20,9 @@ namespace JumpJump
         [SerializeField] HudController hud;
 
         const string BestScoreKey = "JumpJump.BestScore";
+
+        /// <summary>랭킹표를 가르는 이름. `GameCatalog.asset` 의 id 와 같아야 합니다.</summary>
+        public const string GameId = "jumpjump";
         const float RetryLockSeconds = 0.6f;
 
         float _stateClock;   // 현재 상태에 머문 시간 (에디터 테스트에서도 동작하도록 Time.time 대신 누적)
@@ -159,6 +162,11 @@ namespace JumpJump
                 PlayerPrefs.SetInt(BestScoreKey, BestScore);
                 PlayerPrefs.Save();
             }
+
+            // 한 판이 끝났다는 **사실만** 알립니다. 랭킹 등록과 광고는 이 신호를 듣는 쪽에서 합니다.
+            // Step 안에서 통신하면 배치 플레이테스트가 망가지기 때문입니다 (Arcade.GameSession 설명 참고).
+            Arcade.GameSession.ReportRunFinished(
+                new Arcade.RunResult(GameId, Score, reason, Mathf.FloorToInt(HeightMeters) + "m"));
 
             SetState(GameState.GameOver);
         }

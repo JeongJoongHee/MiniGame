@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEditor;
@@ -58,6 +58,8 @@ namespace Arcade.EditorTools
         public const string AskExitPath = Folder + "/Popup_Ask_Exit.png";
         /// <summary>"종료하시겠습니까?" 가 그려진 판.</summary>
         public const string AskQuitPath = Folder + "/Popup_Ask_Quit.png";
+        /// <summary>로비 왼쪽 위 랭킹 아이콘. 없으면 코드가 임시 그림을 그려 둡니다.</summary>
+        public const string RankButtonPath = Folder + "/Rank_Button.png";
         public const string OkButtonPath = Folder + "/Ok_Button.png";
         public const string CancelButtonPath = Folder + "/Cancel_Button.png";
         public const string EndButtonPath = Folder + "/End_Button.png";
@@ -81,6 +83,7 @@ namespace Arcade.EditorTools
             (new[] { "Cancel_Button.png" },                           CancelButtonPath,  true),
             (new[] { "End_Button.png" },                              EndButtonPath,     true),
             (new[] { "Close_Button.png" },                            CloseButtonPath,   true),
+            (new[] { "Rank.png", "Ranking.png", "Trophy.png" },        RankButtonPath,    true),
         };
 
         [MenuItem("Tools/Arcade/Import Shell Art", priority = 20)]
@@ -101,6 +104,7 @@ namespace Arcade.EditorTools
             bool changed = false;
 
             if (EnsureBlankNamePlate()) changed = true;
+            if (EnsureRankIcon()) changed = true;
 
             foreach (var (sources, dest, trim) in Map)
             {
@@ -296,6 +300,57 @@ namespace Arcade.EditorTools
         }
 
         /// <summary>
+        /// 로비 왼쪽 위 **랭킹 아이콘**의 임시 그림을 만들어 둡니다 (1·2·3등 시상대 모양).
+        /// 톱니바퀴처럼 진짜 그림을 받으면 그것으로 바뀝니다 —
+        /// 작업 폴더(또는 `@리소스 추가_N차`)에 <c>Rank.png</c> 를 넣으면 됩니다.
+        /// 파일이 이미 있으면 아무것도 하지 않습니다.
+        /// </summary>
+        static bool EnsureRankIcon()
+        {
+            if (File.Exists(RankButtonPath)) return false;
+
+            const int size = 512;
+            var edge = new Color(0.231f, 0.106f, 0.078f);     // 팝업 테두리와 같은 진한 갈색
+            var fill = new Color(0.898f, 0.729f, 0.478f);
+            var top  = new Color(0.976f, 0.867f, 0.647f);
+
+            var pixels = new Color[size * size];              // 기본값 = 투명
+
+            // 시상대 세 칸 : (왼쪽 x, 오른쪽 x, 높이). 가운데가 1등이라 가장 높습니다.
+            var bars = new[] { (60, 196, 300), (196, 316, 396), (316, 452, 250) };
+
+            foreach (var (x0, x1, height) in bars)
+            {
+                Fill(pixels, size, x0, x1, 96, height, edge);                 // 테두리
+                Fill(pixels, size, x0 + 14, x1 - 14, 110, height - 14, fill); // 안쪽
+                Fill(pixels, size, x0 + 14, x1 - 14, height - 40, height - 14, top); // 윗면 하이라이트
+            }
+
+            Fill(pixels, size, 44, 468, 60, 96, edge);        // 바닥
+
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            tex.SetPixels(pixels);
+            tex.Apply();
+            Directory.CreateDirectory(Folder);
+            File.WriteAllBytes(RankButtonPath, tex.EncodeToPNG());
+            Object.DestroyImmediate(tex);
+
+            Debug.Log("[Arcade] 랭킹 아이콘 임시 그림을 만들었습니다 -> " + RankButtonPath +
+                      "\n  진짜 그림을 쓰시려면 작업 폴더에 Rank.png 를 넣고 Build All Scenes 를 누르세요.");
+            return true;
+        }
+
+        static void Fill(Color[] pixels, int size, int x0, int x1, int y0, int y1, Color color)
+        {
+            x0 = Mathf.Clamp(x0, 0, size); x1 = Mathf.Clamp(x1, 0, size);
+            y0 = Mathf.Clamp(y0, 0, size); y1 = Mathf.Clamp(y1, 0, size);
+
+            for (int y = y0; y < y1; y++)
+                for (int x = x0; x < x1; x++)
+                    pixels[y * size + x] = color;
+        }
+
+        /// <summary>
         /// 그림 원본을 찾아 볼 폴더들. 작업 폴더 바로 아래가 먼저고,
         /// 그 다음이 `@리소스` 로 시작하는 하위 폴더들입니다 (이름 순).
         ///
@@ -423,7 +478,12 @@ namespace Arcade.EditorTools
             // 팝업 : 판과 버튼에는 한글이 그려져 있어서 512 로 줄이면 글자가 뭉갭니다.
             Configure(SettingButtonPath, 512);
             Configure(BackButtonPath, 512);
-            Configure(PanelPath, 1024);
+            Configure(RankButtonPath, 512);
+
+            // 빈 판은 랭킹 창처럼 **세로로 긴 팝업**에도 쓰기 때문에 9-슬라이스로 잡습니다.
+            // 테두리 29px 바로 바깥쪽(34px)을 모서리로 두면, 판을 어떤 크기로 늘려도
+            // 테두리 두께가 그대로 유지되고 가운데만 늘어납니다.
+            Configure(PanelPath, 1024, new Vector4(PanelBorder, PanelBorder, PanelBorder, PanelBorder));
             Configure(AskExitPath, 1024);
             Configure(AskQuitPath, 1024);
             Configure(OkButtonPath, 1024);
@@ -457,9 +517,12 @@ namespace Arcade.EditorTools
             return paths;
         }
 
-        const string Marker = "arcade-shell-art-v1";
+        const string Marker = "arcade-shell-art-v2";
 
-        static void Configure(string path, int maxSize)
+        /// <summary>빈 판(Popup_Panel)의 테두리 두께(px). 그림의 실제 테두리가 29px 입니다.</summary>
+        public const float PanelBorder = 34f;
+
+        static void Configure(string path, int maxSize, Vector4 border = default)
         {
             var importer = AssetImporter.GetAtPath(path) as TextureImporter;
             if (importer == null) return;
@@ -482,6 +545,7 @@ namespace Arcade.EditorTools
             settings.spriteAlignment = (int)SpriteAlignment.Center;
             settings.spritePivot = new Vector2(0.5f, 0.5f);
             settings.spriteGenerateFallbackPhysicsShape = false;
+            settings.spriteBorder = border;                                  // 0 이면 늘였을 때 통째로 늘어납니다
             importer.SetTextureSettings(settings);
 
             importer.userData = Marker;

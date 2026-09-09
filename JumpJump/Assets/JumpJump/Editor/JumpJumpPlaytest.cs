@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -22,6 +22,9 @@ namespace JumpJump.EditorTools
 
             const string bestKey = "JumpJump.BestScore";
             int savedBest = PlayerPrefs.GetInt(bestKey, 0);
+
+            // 봇이 도는 수십 판이 광고 카운터·랭킹에 섞이면 안 됩니다.
+            Arcade.GameSession.Recording = false;
 
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var game = JumpJumpSceneBuilder.Populate();
@@ -81,6 +84,7 @@ namespace JumpJump.EditorTools
 
             PlayerPrefs.SetInt(bestKey, savedBest);
             PlayerPrefs.Save();
+            Arcade.GameSession.Recording = true;
 
             Debug.Log($"[JumpJump 플레이테스트] {Seconds}초 시뮬레이션 결과\n" +
                       $"  완료한 판     : {runs}\n" +
