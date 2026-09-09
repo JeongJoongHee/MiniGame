@@ -1,0 +1,287 @@
+<title>출시까지 할 일</title>
+<meta charset="utf-8">
+<style>
+  :root{
+    --bg:#f7f6f3; --card:#fff; --ink:#1c1b19; --muted:#6b6862;
+    --line:#e3e0da; --accent:#c2410c; --ok:#15803d; --warn:#b45309;
+    --mine:#1d4ed8; --yours:#c2410c;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#16151a; --card:#1f1e24; --ink:#eceaf0; --muted:#a3a0ab;
+    --line:#33313b; --accent:#fb923c; --ok:#4ade80; --warn:#fbbf24;
+    --mine:#7da2ff; --yours:#fb923c;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#16151a; --card:#1f1e24; --ink:#eceaf0; --muted:#a3a0ab;
+    --line:#33313b; --accent:#fb923c; --ok:#4ade80; --warn:#fbbf24;
+    --mine:#7da2ff; --yours:#fb923c;
+  }
+  body{background:var(--bg);color:var(--ink);font:16px/1.65 "Malgun Gothic","Segoe UI",system-ui,sans-serif;
+       margin:0;padding:40px 20px 80px}
+  main{max-width:900px;margin:0 auto}
+  h1{font-size:28px;line-height:1.3;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--muted);margin:0 0 30px;font-size:14px}
+  h2{font-size:19px;margin:40px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  h3{font-size:15px;margin:24px 0 8px;color:var(--accent)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 24px 24px;margin-bottom:8px}
+  code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:13px;
+       font-family:Consolas,"Cascadia Mono",monospace}
+  .tw{overflow-x:auto;margin:14px 0}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-weight:600;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+  tr:last-child td{border-bottom:none}
+  .tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;border:1px solid currentColor;
+       font-weight:600;vertical-align:middle;white-space:nowrap}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--accent)}
+  .you{color:var(--yours)} .me{color:var(--mine)}
+  .note{border-left:3px solid var(--warn);background:var(--bg);padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0}
+  .stop{border-left-color:var(--accent)}
+  .note p{margin:6px 0}
+  .lead{font-size:17px}
+  ul.todo{list-style:none;padding-left:0;margin:10px 0}
+  ul.todo li{margin:0;border-bottom:1px solid var(--line)}
+  ul.todo li:last-child{border-bottom:none}
+  label{display:flex;gap:12px;align-items:flex-start;padding:11px 4px;cursor:pointer}
+  label:hover{background:var(--bg)}
+  input[type=checkbox]{margin-top:4px;width:18px;height:18px;flex:0 0 18px;accent-color:var(--accent);cursor:pointer}
+  .what{flex:1}
+  .what b{display:block;font-weight:600}
+  .what span{display:block;color:var(--muted);font-size:13.5px;line-height:1.5;margin-top:2px}
+  input:checked + .what b{text-decoration:line-through;color:var(--muted)}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin:6px 0 0;font-size:13.5px;color:var(--muted)}
+  .flow{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:16px 0;
+        font-family:Consolas,"Cascadia Mono",monospace;font-size:13px;line-height:1.9;overflow-x:auto;white-space:pre}
+  .reset{font-size:12.5px;color:var(--muted);background:none;border:1px solid var(--line);border-radius:6px;
+         padding:4px 10px;cursor:pointer;margin-top:14px}
+</style>
+
+<main>
+<h1>출시까지 할 일</h1>
+<p class="sub">심심할 때 하는 게임 &middot; 2026-09-09 기준 &middot; 체크는 이 브라우저에 저장됩니다</p>
+
+<section>
+<h2>지금 어디까지 왔나</h2>
+<p class="lead">게임 두 개와 화면은 <strong>다 됐습니다.</strong>
+남은 것은 <strong>랭킹을 서버에 연결하고, 광고를 붙이고, 두 스토어에 올리는 것</strong> 세 가지입니다.</p>
+
+<div class="flow">[끝] 점프점프 · 활쏘기 · 타이틀 · 로비 · 팝업 · 글꼴 · 글자표
+[끝] 랭킹 뼈대 + 랭킹 창 + 별명 창          <- 2026-09-09
+[ ] 2단계  랭킹을 Firebase 에 연결
+[ ] 3단계  광고(AdMob) 붙이기
+[ ] 4단계  서명 · 개인정보처리방침 · 스토어 등록
+[ ] 5단계  폰에서 실기 확인 -> 출시</div>
+
+<div class="legend">
+  <span><span class="tag you">사용자</span> 제가 대신 할 수 없는 일 (계정 · 결제 · 비밀번호 · 그림 · 결정)</span>
+  <span><span class="tag me">Claude</span> 제가 하는 일 (코드 · 설정 · 검증 · 문서)</span>
+</div>
+</section>
+
+<section>
+<h2>0. 바로 지금 <span class="tag you">사용자</span></h2>
+<ul class="todo">
+<li><label><input type="checkbox" data-k="a1"><span class="what">
+  <b>에디터에서 Play 로 한 번 눌러 보기</b>
+  <span>Tools &gt; Arcade &gt; Build All Scenes → Play.
+  <strong>로비 왼쪽 위 랭킹 아이콘</strong>, 게임 한 판 끝내고 나오는 <strong>별명 창</strong>,
+  톱니바퀴, 게임 안 화살표, Esc 키. 배치 모드로는 "보이는지"까지만 확인됩니다 —
+  "눌리는지"는 이렇게 눌러 봐야 압니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="a2"><span class="what">
+  <b>0.7배로 줄인 버튼 글자 확인</b>
+  <span>크기가 맞는지 봐 주세요. 다시 뽑는 것은 몇 분이면 됩니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="a3"><span class="what">
+  <b>세 가지 결정</b>
+  <span>① 별명을 나중에 바꿀 수 있게 할지 ② 욕설·비속어를 걸러낼지
+  ③ 게임 안 글자(HUD)도 한글로 통일할지. 셋 다 정해 주시면 제가 넣습니다.</span></span></label></li>
+</ul>
+</section>
+
+<section>
+<h2>1. 랭킹을 서버에 연결 (2단계)</h2>
+
+<h3><span class="tag you">사용자</span> — 웹에서 누르는 일, 한 번이면 끝납니다</h3>
+<ul class="todo">
+<li><label><input type="checkbox" data-k="b1"><span class="what">
+  <b>Firebase 프로젝트 만들기</b>
+  <span>구글 계정으로 로그인해서 프로젝트 하나 만들기. <strong>무료 요금제로 충분하고 카드 등록이 필요 없습니다.</strong>
+  화면 순서는 제가 짚어 드리겠습니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="b2"><span class="what">
+  <b>안드로이드 앱 등록 → <code>google-services.json</code> 받기</b>
+  <span>패키지 이름은 <code>com.zkfpf.jumpjump</code> 그대로. 받은 파일을 작업 폴더에 넣어 주시면 됩니다.
+  익명 로그인만 쓰므로 <strong>서명 지문(SHA-1)은 필요 없습니다.</strong></span></span></label></li>
+<li><label><input type="checkbox" data-k="b3"><span class="what">
+  <b>익명 로그인 켜기 / Firestore 만들기</b>
+  <span>둘 다 웹 화면에서 버튼 몇 번입니다.</span></span></label></li>
+</ul>
+
+<h3><span class="tag me">Claude</span></h3>
+<ul class="todo">
+<li><label><input type="checkbox" data-k="c1"><span class="what">
+  <b>화면 순서 안내서 작성</b>
+  <span>위 세 가지를 어디서 무엇을 누르는지 그림처럼 적어 드립니다. <strong>이것부터 만듭니다.</strong></span></span></label></li>
+<li><label><input type="checkbox" data-k="c2"><span class="what">
+  <b>Firebase SDK 임포트 + 익명 로그인</b>
+  <span>받은 UID 를 PID 로 씁니다. 이미 그렇게 만들어 두었습니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="c3"><span class="what">
+  <b>Firestore 랭킹 구현으로 갈아 끼우기</b>
+  <span>지금 폰 안에만 저장하는 자리를 서버로 바꿉니다. <strong>게임·화면 코드는 고치지 않습니다.</strong></span></span></label></li>
+<li><label><input type="checkbox" data-k="c4"><span class="what">
+  <b>별명 중복 검사 (트랜잭션)</b>
+  <span>"빈자리 확인"과 "내 것으로 표시"를 한 번에 처리해야 두 사람이 동시에 같은 별명을 잡지 않습니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="c5"><span class="what">
+  <b>보안 규칙</b>
+  <span>읽기는 누구나, 쓰기는 자기 자리만. 안 걸면 남의 점수를 지울 수 있습니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="c6"><span class="what">
+  <b>인터넷이 끊겼을 때 처리 · 검증 · 보고서</b></span></label></li>
+</ul>
+</section>
+
+<section>
+<h2>2. 광고 붙이기 (3단계)</h2>
+
+<h3><span class="tag you">사용자</span></h3>
+<ul class="todo">
+<li><label><input type="checkbox" data-k="d1"><span class="what">
+  <b>AdMob 계정 만들기 · 앱 등록</b>
+  <span>구글 계정으로 가입. 수익을 받으려면 <strong>주소·세금·계좌 정보</strong>도 넣어야 합니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="d2"><span class="what">
+  <b>전면 광고 단위 만들고 ID 두 개 알려 주기</b>
+  <span>앱 ID 와 광고 단위 ID. 제가 넣겠습니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="d3"><span class="what">
+  <b>원스토어가 AdMob 승인 스토어인지 확인</b>
+  <span>AdMob 정책 페이지에서 확인이 필요합니다 — 제가 단정할 수 없는 부분입니다.
+  <strong>플레이스토어는 확실하므로 광고 자체는 문제없습니다.</strong></span></span></label></li>
+</ul>
+
+<h3><span class="tag me">Claude</span></h3>
+<ul class="todo">
+<li><label><input type="checkbox" data-k="e1"><span class="what">
+  <b>Google Mobile Ads 플러그인 임포트 · 설정</b></span></label></li>
+<li><label><input type="checkbox" data-k="e2"><span class="what">
+  <b>전면 광고 연결 — 2판마다, 다음 화면으로 넘어가는 길목</b>
+  <span>"언제 띄울지" 판정은 이미 만들어 두었습니다(<code>AdGate</code>). 띄우는 부분만 붙이면 됩니다.
+  <strong>게임 도중에는 절대 띄우지 않습니다</strong> — 오클릭은 정책 위반입니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="e3"><span class="what">
+  <b>동의 화면(UMP) · 어린이 대상 설정</b></span></label></li>
+<li><label><input type="checkbox" data-k="e4"><span class="what">
+  <b>테스트 광고로 먼저 확인</b>
+  <span><strong>개발 중에는 반드시 테스트 광고입니다.</strong> 실제 ID 는 스토어에 올리는 시점에 바꿉니다.</span></span></label></li>
+</ul>
+
+<div class="note stop">
+<p><strong>내 광고를 내가 누르면 안 됩니다.</strong> 계정이 정지되고 되돌리기 어렵습니다.
+확인은 테스트 광고로만 하세요.</p>
+</div>
+</section>
+
+<section>
+<h2>3. 서명 · 정책 · 스토어 (4단계)</h2>
+
+<h3><span class="tag you">사용자</span></h3>
+<ul class="todo">
+<li><label><input type="checkbox" data-k="f1"><span class="what">
+  <b>릴리스 키스토어 만들고 안전하게 보관</b>
+  <span>만드는 명령은 제가 알려 드리지만 <strong>비밀번호는 사용자만 알아야 합니다.</strong>
+  파일과 비밀번호를 <strong>두 곳에 백업</strong>하세요 — 잃어버리면 원스토어 쪽은 같은 앱을 갱신할 수 없습니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="f2"><span class="what">
+  <b>구글 플레이 개발자 등록 (1회 25달러)</b>
+  <span>신규 개인 계정에는 <strong>비공개 테스트(테스터 여러 명 · 일정 기간)</strong> 요건이 있습니다.
+  규정이 자주 바뀌니 가입 화면의 조건을 확인하세요.</span></span></label></li>
+<li><label><input type="checkbox" data-k="f3"><span class="what">
+  <b>원스토어 개발자 등록</b></span></label></li>
+<li><label><input type="checkbox" data-k="f4"><span class="what">
+  <b>개인정보처리방침을 웹에 올리기</b>
+  <span>광고와 식별자를 쓰므로 <strong>필수</strong>입니다. 초안은 제가 써 드리고,
+  올리는 것(블로그·깃허브 페이지 등)은 사용자께서 하셔야 합니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="f5"><span class="what">
+  <b>스토어 등록 정보 준비</b>
+  <span>앱 아이콘, 스크린샷, 설명 글, 연령 등급 설문(IARC).
+  <strong>설문에서 "광고 포함"을 사실대로 체크</strong>해야 합니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="f6"><span class="what">
+  <b>랭킹 아이콘 그림 (선택)</b>
+  <span>지금은 임시 그림(시상대 모양)입니다. 그리시면 <code>Rank.png</code> 로 넣어 주시면 됩니다.</span></span></label></li>
+</ul>
+
+<h3><span class="tag me">Claude</span></h3>
+<ul class="todo">
+<li><label><input type="checkbox" data-k="g1"><span class="what">
+  <b>빌드 스크립트 정리 — 플레이용 AAB / 원스토어용 APK</b>
+  <span>메뉴 두 개로 나누고 릴리스 서명을 켭니다. 버전 번호는 양쪽 같은 값을 씁니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="g2"><span class="what">
+  <b>키스토어 만드는 방법 안내</b></span></label></li>
+<li><label><input type="checkbox" data-k="g3"><span class="what">
+  <b>개인정보처리방침 초안 작성</b>
+  <span>무엇을 수집하는지(별명 · 점수 · 광고 식별자) 사실대로 적습니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="g4"><span class="what">
+  <b>데이터 세이프티 양식에 넣을 내용 정리</b></span></label></li>
+</ul>
+</section>
+
+<section>
+<h2>4. 폰에서 확인 (5단계)</h2>
+<div class="note">
+<p><strong>여기서부터는 제가 확인해 드릴 수 없습니다.</strong> 광고와 통신은 배치 모드로 검증되지 않습니다.
+아래 목록을 만들어 드릴 테니 폰에서 하나씩 눌러 봐 주세요.</p>
+</div>
+<ul class="todo">
+<li><label><input type="checkbox" data-k="h1"><span class="what">
+  <b>비행기 모드로 한 판</b><span>랭킹이 안 되어도 게임이 멈추지 않아야 합니다.</span></span></label></li>
+<li><label><input type="checkbox" data-k="h2"><span class="what">
+  <b>2판째에 광고가 뜨는지 / 닫으면 제자리로 돌아오는지</b></span></label></li>
+<li><label><input type="checkbox" data-k="h3"><span class="what">
+  <b>광고 도중 뒤로 버튼</b></span></label></li>
+<li><label><input type="checkbox" data-k="h4"><span class="what">
+  <b>앱을 껐다 켜도 판 수가 이어지는지</b></span></label></li>
+<li><label><input type="checkbox" data-k="h5"><span class="what">
+  <b>별명이 겹칠 때 다시 물어보는지 / 랭킹에 내 점수가 올라가는지</b></span></label></li>
+<li><label><input type="checkbox" data-k="h6"><span class="what">
+  <b>20:9 화면에서 로비 위아래 띠</b>
+  <span>로비 그림이 9:16 이라 요즘 폰에서는 위아래에 어두운 띠가 생깁니다. 괜찮은지 봐 주세요.</span></span></label></li>
+</ul>
+</section>
+
+<section>
+<h2>순서가 중요한 것</h2>
+<div class="tw"><table>
+<tr><th>이것이 없으면</th><th>이것을 못 합니다</th></tr>
+<tr><td><span class="tag you">사용자</span> Firebase 설정 파일</td><td>랭킹을 서버에 연결 (2단계 전체)</td></tr>
+<tr><td><span class="tag you">사용자</span> AdMob 광고 ID</td><td>실제 광고 연결 (테스트 광고까지는 지금도 가능)</td></tr>
+<tr><td><span class="tag you">사용자</span> 릴리스 키스토어</td><td>어느 스토어에도 올릴 수 없음</td></tr>
+<tr><td><span class="tag you">사용자</span> 개인정보처리방침 주소</td><td>스토어 심사 통과 불가</td></tr>
+<tr><td><span class="tag you">사용자</span> 플레이 개발자 등록</td><td>실제 광고 수익 (사이드로드로는 테스트 광고만)</td></tr>
+</table></div>
+<p><strong>제 쪽 일은 대부분 사용자 쪽 준비가 끝나야 시작됩니다.</strong>
+그래서 <strong>Firebase 설정 파일 하나만 먼저 받으면</strong> 2단계를 통째로 진행할 수 있습니다.
+그 사이에 광고·스토어 준비를 하시면 시간이 겹쳐서 빨라집니다.</p>
+</section>
+
+<section>
+<h2>함께 보는 문서</h2>
+<div class="tw"><table>
+<tr><th>파일</th><th>내용</th></tr>
+<tr><td><code>랭킹_광고_적용계획.html</code></td><td>왜 이렇게 하는지 · 두 스토어 출시 · 결정 사항</td></tr>
+<tr><td><code>랭킹_광고_1단계_보고서.html</code></td><td>이번에 만든 랭킹 뼈대와 화면</td></tr>
+<tr><td><code>글자크기_조정_반영보고서.html</code></td><td>버튼 글자 0.7배</td></tr>
+<tr><td><code>CLAUDE.md</code></td><td>프로젝트 전체 인수인계 (제가 다음에 읽는 문서)</td></tr>
+</table></div>
+</section>
+
+<button class="reset" onclick="if(confirm('체크를 전부 지울까요?')){try{localStorage.removeItem('jumpjump-todo')}catch(e){};location.reload()}">체크 전부 지우기</button>
+
+<script>
+  var KEY = 'jumpjump-todo';
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { state = {}; }
+
+  var boxes = document.querySelectorAll('input[type=checkbox]');
+  for (var i = 0; i < boxes.length; i++) {
+    var box = boxes[i];
+    box.checked = !!state[box.dataset.k];
+    box.addEventListener('change', function () {
+      state[this.dataset.k] = this.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    });
+  }
+</script>
+</main>
