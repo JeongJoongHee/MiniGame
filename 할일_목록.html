@@ -25,7 +25,9 @@
   h3{font-size:15px;margin:24px 0 8px;color:var(--accent)}
   section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 24px 24px;margin-bottom:8px}
   code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:13px;
-       font-family:Consolas,"Cascadia Mono",monospace}
+       font-family:Consolas,"Cascadia Mono",monospace;word-break:break-all}
+  pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow-x:auto;
+      font-family:Consolas,"Cascadia Mono",monospace;font-size:12.5px;line-height:1.7;margin:10px 0}
   .tw{overflow-x:auto;margin:14px 0}
   table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
   th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
@@ -35,13 +37,13 @@
        font-weight:600;vertical-align:middle;white-space:nowrap}
   .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--accent)}
   .you{color:var(--yours)} .me{color:var(--mine)}
-  .note{border-left:3px solid var(--warn);background:var(--bg);padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0}
+  .note{border-left:3px solid var(--warn);background:var(--bg);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0}
   .stop{border-left-color:var(--accent)}
   .note p{margin:6px 0}
   .lead{font-size:17px}
   ul.todo{list-style:none;padding-left:0;margin:10px 0}
-  ul.todo li{margin:0;border-bottom:1px solid var(--line)}
-  ul.todo li:last-child{border-bottom:none}
+  ul.todo > li{margin:0;border-bottom:1px solid var(--line);padding-bottom:2px}
+  ul.todo > li:last-child{border-bottom:none}
   label{display:flex;gap:12px;align-items:flex-start;padding:11px 4px;cursor:pointer}
   label:hover{background:var(--bg)}
   input[type=checkbox]{margin-top:4px;width:18px;height:18px;flex:0 0 18px;accent-color:var(--accent);cursor:pointer}
@@ -49,6 +51,16 @@
   .what b{display:block;font-weight:600}
   .what span{display:block;color:var(--muted);font-size:13.5px;line-height:1.5;margin-top:2px}
   input:checked + .what b{text-decoration:line-through;color:var(--muted)}
+  details{margin:0 0 12px 34px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+  details[open]{padding-bottom:6px}
+  summary{cursor:pointer;padding:8px 14px;font-size:13.5px;color:var(--accent);font-weight:600;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"▸ ";}
+  details[open] summary::before{content:"▾ ";}
+  details .body{padding:2px 18px 8px;font-size:14px}
+  details ol{padding-left:20px;margin:8px 0}
+  details ol li{margin:7px 0}
+  details ul{padding-left:20px;margin:8px 0}
   .legend{display:flex;gap:18px;flex-wrap:wrap;margin:6px 0 0;font-size:13.5px;color:var(--muted)}
   .flow{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:16px 0;
         font-family:Consolas,"Cascadia Mono",monospace;font-size:13px;line-height:1.9;overflow-x:auto;white-space:pre}
@@ -58,7 +70,7 @@
 
 <main>
 <h1>출시까지 할 일</h1>
-<p class="sub">심심할 때 하는 게임 &middot; 2026-09-09 기준 &middot; 체크는 이 브라우저에 저장됩니다</p>
+<p class="sub">심심할 때 하는 게임 &middot; 2026-09-09 기준 &middot; <strong>▸ 자세한 방법</strong> 을 누르면 하는 법이 나옵니다 &middot; 체크는 이 브라우저에 저장됩니다</p>
 
 <section>
 <h2>지금 어디까지 왔나</h2>
@@ -66,7 +78,7 @@
 남은 것은 <strong>랭킹을 서버에 연결하고, 광고를 붙이고, 두 스토어에 올리는 것</strong> 세 가지입니다.</p>
 
 <div class="flow">[끝] 점프점프 · 활쏘기 · 타이틀 · 로비 · 팝업 · 글꼴 · 글자표
-[끝] 랭킹 뼈대 + 랭킹 창 + 별명 창          <- 2026-09-09
+[끝] 랭킹 뼈대 + 랭킹 창 + 별명 창          &lt;- 2026-09-09
 [ ] 2단계  랭킹을 Firebase 에 연결
 [ ] 3단계  광고(AdMob) 붙이기
 [ ] 4단계  서명 · 개인정보처리방침 · 스토어 등록
@@ -76,24 +88,87 @@
   <span><span class="tag you">사용자</span> 제가 대신 할 수 없는 일 (계정 · 결제 · 비밀번호 · 그림 · 결정)</span>
   <span><span class="tag me">Claude</span> 제가 하는 일 (코드 · 설정 · 검증 · 문서)</span>
 </div>
+
+<div class="note">
+<p><strong>미리 알아 두실 것.</strong> 아래 설명의 버튼 이름은 <strong>사이트가 바뀌면 조금씩 달라집니다.</strong>
+"이런 이름의 버튼을 찾으시면 됩니다" 정도로 읽어 주시고, 화면이 설명과 다르면
+<strong>그 화면을 그대로 알려 주시면 제가 맞춰 다시 안내해 드리겠습니다.</strong></p>
+<p>자주 쓰는 값입니다. <strong>패키지 이름 <code>com.zkfpf.jumpjump</code></strong> ·
+앱 이름 "심심할 때 하는 게임" · 현재 버전 0.1 (versionCode 1).</p>
+</div>
 </section>
 
 <section>
 <h2>0. 바로 지금 <span class="tag you">사용자</span></h2>
 <ul class="todo">
-<li><label><input type="checkbox" data-k="a1"><span class="what">
+<li>
+<label><input type="checkbox" data-k="a1"><span class="what">
   <b>에디터에서 Play 로 한 번 눌러 보기</b>
-  <span>Tools &gt; Arcade &gt; Build All Scenes → Play.
-  <strong>로비 왼쪽 위 랭킹 아이콘</strong>, 게임 한 판 끝내고 나오는 <strong>별명 창</strong>,
-  톱니바퀴, 게임 안 화살표, Esc 키. 배치 모드로는 "보이는지"까지만 확인됩니다 —
-  "눌리는지"는 이렇게 눌러 봐야 압니다.</span></span></label></li>
-<li><label><input type="checkbox" data-k="a2"><span class="what">
+  <span>배치 모드로는 "보이는지"까지만 확인됩니다. "눌리는지"는 눌러 봐야 압니다.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<ol>
+<li>Unity 에디터를 엽니다.</li>
+<li>위쪽 메뉴 <strong>Tools &gt; Arcade &gt; Build All Scenes</strong> 를 누릅니다.
+    (화면 4장이 다시 구워지고 타이틀 씬이 열립니다)</li>
+<li><strong>Play</strong> 버튼을 누릅니다.</li>
+<li>이 순서로 눌러 보세요.
+  <ul>
+  <li>타이틀 → <strong>START</strong> → 로비</li>
+  <li>로비 <strong>왼쪽 위 아이콘</strong> (시상대 모양) → 랭킹 창이 뜨는가 →
+      <strong>이름표 두 개를 눌러</strong> 게임이 바뀌는가 → <strong>닫기</strong></li>
+  <li>1번 칸 <strong>PLAY</strong> → 점프점프 한 판 → 죽으면 <strong>별명 창</strong>이 뜨는가</li>
+  <li>별명 칸에 아무거나 치고 <strong>확인</strong> → 로비로 나가서 랭킹 창에 내 이름이 있는가</li>
+  <li>다시 게임 → 오른쪽 위 <strong>화살표</strong> → "로비로 나가시겠습니까?"</li>
+  <li>로비 <strong>톱니바퀴</strong> → 설정 → <strong>Esc 키</strong> (폰의 뒤로 버튼과 같습니다)</li>
+  </ul>
+</li>
+</ol>
+<p><strong>에디터에서 "별명 겹침"을 시험해 보시려면</strong> 별명을 <code>표본둘</code> 로 넣어 보세요.
+"이미 있는 별명입니다" 가 떠야 정상입니다. (표본 이름은 에디터에서만 있습니다)</p>
+<p>이상한 곳이 있으면 <strong>무엇을 눌렀을 때 어떻게 됐는지</strong>만 알려 주시면 됩니다.</p>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="a2"><span class="what">
   <b>0.7배로 줄인 버튼 글자 확인</b>
-  <span>크기가 맞는지 봐 주세요. 다시 뽑는 것은 몇 분이면 됩니다.</span></span></label></li>
-<li><label><input type="checkbox" data-k="a3"><span class="what">
+  <span>확인 / 취소 / 종료 / 닫기 버튼과 팝업 두 장의 글자 크기.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<p>Play 로 팝업을 띄워 보시거나, 사진으로만 보시려면 아래 두 곳입니다.</p>
+<ul>
+<li>전/후 비교 : <code>글자크기_조정_반영보고서.html</code></li>
+<li>게임 화면 : <code>JumpJump\JumpJump_Preview\00_popup_quit.png</code> ·
+    <code>04_exit_popup.png</code></li>
+</ul>
+<p>크기를 바꾸고 싶으시면 <strong>"0.8배로 다시" 처럼 말씀만 주시면 됩니다.</strong>
+원본이 <code>리소스_원본_1차\</code> 에 남아 있어 몇 분이면 다시 뽑습니다.</p>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="a3"><span class="what">
   <b>세 가지 결정</b>
-  <span>① 별명을 나중에 바꿀 수 있게 할지 ② 욕설·비속어를 걸러낼지
-  ③ 게임 안 글자(HUD)도 한글로 통일할지. 셋 다 정해 주시면 제가 넣습니다.</span></span></label></li>
+  <span>별명 변경 / 욕설 거르기 / 게임 안 글자를 한글로 통일할지.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<p>정답이 있는 문제는 아니고, 어느 쪽이든 제가 맞춰 넣습니다. 판단에 필요한 것만 적습니다.</p>
+<ol>
+<li><strong>별명을 나중에 바꿀 수 있게 할까요?</strong>
+    이름이 하나뿐이라, 바꾸려면 "쓰던 이름을 놓아 주고 새 이름을 잡는" 절차가 필요합니다.
+    <br>바꾸게 하면 : 오타를 고칠 수 있습니다. 대신 남이 놓은 이름을 곧바로 채가는 일이 생깁니다.
+    <br>못 바꾸게 하면 : 지금 그대로입니다. 잘못 정하면 앱을 지웠다 깔아야 합니다.
+    <br><strong>추천 : 설정 팝업에 "별명 바꾸기"를 하나 두되, 횟수를 제한하지 않고 시작.</strong></li>
+<li><strong>욕설·비속어를 걸러낼까요?</strong> 남들에게 보이는 이름이라 스토어 심사에서도 볼 수 있습니다.
+    <br>금지어를 <code>badwords.csv</code> 한 장으로 두면 <strong>사용자께서 직접 채우고 늘리실 수 있습니다.</strong>
+    <br><strong>추천 : 넣기.</strong> 목록은 짧게 시작해도 됩니다.</li>
+<li><strong>게임 안 글자(HUD)도 한글로 바꿀까요?</strong>
+    지금은 점수·안내가 영어(<code>SCORE</code>, <code>TAP TO START</code>)이고
+    팝업·랭킹·별명 창만 한글입니다.
+    <br><code>strings.csv</code> 만 고치면 되고 코드는 건드리지 않습니다.
+    <br><strong>주의 : 한글은 영어보다 폭이 넓습니다.</strong> 활쏘기 시작 설명은 이미 네 줄이라
+    길어지면 넘칠 수 있어, 바꾼 뒤 화면을 캡처해서 확인해 드리겠습니다.</li>
+</ol>
+</div></details>
+</li>
 </ul>
 </section>
 
@@ -102,24 +177,79 @@
 
 <h3><span class="tag you">사용자</span> — 웹에서 누르는 일, 한 번이면 끝납니다</h3>
 <ul class="todo">
-<li><label><input type="checkbox" data-k="b1"><span class="what">
+<li>
+<label><input type="checkbox" data-k="b1"><span class="what">
   <b>Firebase 프로젝트 만들기</b>
-  <span>구글 계정으로 로그인해서 프로젝트 하나 만들기. <strong>무료 요금제로 충분하고 카드 등록이 필요 없습니다.</strong>
-  화면 순서는 제가 짚어 드리겠습니다.</span></span></label></li>
-<li><label><input type="checkbox" data-k="b2"><span class="what">
+  <span>구글 계정으로 로그인해서 프로젝트 하나. 무료이고 카드 등록이 필요 없습니다.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<ol>
+<li><code>console.firebase.google.com</code> 에 들어가 <strong>구글 계정으로 로그인</strong>합니다.</li>
+<li><strong>"프로젝트 만들기"</strong> 를 누릅니다.</li>
+<li>프로젝트 이름은 아무거나 좋습니다 (예: <code>jumpjump-arcade</code>).
+    이름 아래에 자동으로 붙는 <strong>프로젝트 ID 는 나중에 바꿀 수 없습니다</strong> —
+    다만 사람이 볼 일이 거의 없으니 그대로 두셔도 됩니다.</li>
+<li><strong>Google 애널리틱스는 꺼도 됩니다.</strong> 지금 쓰지 않습니다. (나중에 켤 수 있습니다)</li>
+<li>"만들기" → 1분쯤 기다리면 프로젝트 화면이 나옵니다.</li>
+</ol>
+<p><strong>요금제는 무료(Spark) 그대로 두세요.</strong> 개인 게임 규모에서는 무료 한도로 충분하고,
+카드를 등록하라는 화면이 나오면 건너뛰시면 됩니다.</p>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="b2"><span class="what">
   <b>안드로이드 앱 등록 → <code>google-services.json</code> 받기</b>
-  <span>패키지 이름은 <code>com.zkfpf.jumpjump</code> 그대로. 받은 파일을 작업 폴더에 넣어 주시면 됩니다.
-  익명 로그인만 쓰므로 <strong>서명 지문(SHA-1)은 필요 없습니다.</strong></span></span></label></li>
-<li><label><input type="checkbox" data-k="b3"><span class="what">
+  <span>이 파일 하나만 저에게 주시면 2단계를 통째로 진행할 수 있습니다.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<ol>
+<li>프로젝트 첫 화면 가운데에 있는 <strong>안드로이드 아이콘</strong>(로봇 모양)을 누릅니다.</li>
+<li><strong>"Android 패키지 이름"</strong> 에 아래를 <strong>그대로</strong> 넣습니다. 오타가 나면 앱이 연결되지 않습니다.
+    <pre>com.zkfpf.jumpjump</pre></li>
+<li>"앱 닉네임"은 아무거나 (예: 심심할 때 하는 게임).</li>
+<li><strong>"디버그 서명 인증서 SHA-1" 은 비워 두세요.</strong>
+    익명 로그인과 Firestore 만 쓰기 때문에 필요 없습니다.
+    (구글 로그인을 붙이게 되면 그때 등록합니다)</li>
+<li><strong>"앱 등록"</strong> → 다음 화면에서 <strong><code>google-services.json</code> 다운로드</strong>.</li>
+<li>받은 파일을 <strong><code>D:\00.JumpJump\</code> 에 그대로 두세요.</strong>
+    프로젝트 안으로 옮기는 것은 제가 합니다.</li>
+<li>그 다음 나오는 "SDK 추가 / build.gradle 수정" 단계는 <strong>전부 건너뛰세요.</strong>
+    Unity 는 방식이 다릅니다. <strong>"콘솔로 이동"</strong> 을 누르시면 됩니다.</li>
+</ol>
+<div class="note"><p>이 파일에는 비밀번호가 들어 있지 않습니다. 다만 프로젝트를 가리키는 주소이므로
+<strong>인터넷에 공개로 올리지는 마세요.</strong> 저에게 폴더로 주시는 것은 괜찮습니다.</p></div>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="b3"><span class="what">
   <b>익명 로그인 켜기 / Firestore 만들기</b>
-  <span>둘 다 웹 화면에서 버튼 몇 번입니다.</span></span></label></li>
+  <span>둘 다 웹 화면에서 버튼 몇 번입니다.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<p><strong>① 익명 로그인</strong> — 사용자가 아무것도 하지 않아도 앱이 고유 번호를 받아 오게 하는 기능입니다.</p>
+<ol>
+<li>왼쪽 메뉴에서 <strong>빌드 &gt; Authentication</strong> → <strong>"시작하기"</strong></li>
+<li><strong>"Sign-in method"</strong> 탭 → 목록에서 <strong>"익명"</strong> 을 찾아 누릅니다</li>
+<li><strong>사용 설정</strong>을 켜고 저장</li>
+</ol>
+<p><strong>② Firestore</strong> — 점수를 담아 둘 곳입니다.</p>
+<ol>
+<li>왼쪽 메뉴에서 <strong>빌드 &gt; Firestore Database</strong> → <strong>"데이터베이스 만들기"</strong></li>
+<li><strong>위치는 <code>asia-northeast3 (서울)</code></strong> 을 고르세요.
+    <strong>한 번 정하면 바꿀 수 없습니다.</strong> 국내 사용자가 쓰는 앱이니 서울이 가장 빠릅니다.</li>
+<li>규칙은 <strong>"프로덕션 모드로 시작"</strong> 을 고르세요.
+    테스트 모드로 하면 <strong>30일 동안 아무나 남의 점수를 지울 수 있고</strong>, 30일 뒤에는 아예 막힙니다.
+    <strong>제대로 된 규칙은 제가 넣어 드립니다.</strong></li>
+</ol>
+<p>프로덕션 모드로 시작하면 제가 규칙을 넣기 전까지는 앱에서 점수가 안 올라갑니다 — 정상입니다.</p>
+</div></details>
+</li>
 </ul>
 
 <h3><span class="tag me">Claude</span></h3>
 <ul class="todo">
 <li><label><input type="checkbox" data-k="c1"><span class="what">
   <b>화면 순서 안내서 작성</b>
-  <span>위 세 가지를 어디서 무엇을 누르는지 그림처럼 적어 드립니다. <strong>이것부터 만듭니다.</strong></span></span></label></li>
+  <span>위 세 가지를 실제 화면에 맞춰 더 자세히 적어 드립니다. 막히시면 그때그때 맞춰 드리겠습니다.</span></span></label></li>
 <li><label><input type="checkbox" data-k="c2"><span class="what">
   <b>Firebase SDK 임포트 + 익명 로그인</b>
   <span>받은 UID 를 PID 로 씁니다. 이미 그렇게 만들어 두었습니다.</span></span></label></li>
@@ -142,16 +272,64 @@
 
 <h3><span class="tag you">사용자</span></h3>
 <ul class="todo">
-<li><label><input type="checkbox" data-k="d1"><span class="what">
-  <b>AdMob 계정 만들기 · 앱 등록</b>
-  <span>구글 계정으로 가입. 수익을 받으려면 <strong>주소·세금·계좌 정보</strong>도 넣어야 합니다.</span></span></label></li>
-<li><label><input type="checkbox" data-k="d2"><span class="what">
-  <b>전면 광고 단위 만들고 ID 두 개 알려 주기</b>
-  <span>앱 ID 와 광고 단위 ID. 제가 넣겠습니다.</span></span></label></li>
-<li><label><input type="checkbox" data-k="d3"><span class="what">
+<li>
+<label><input type="checkbox" data-k="d1"><span class="what">
+  <b>AdMob 계정 만들기</b>
+  <span>구글 계정으로 가입합니다.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<ol>
+<li><code>admob.google.com</code> → <strong>"가입하기"</strong> → 구글 계정으로 로그인</li>
+<li>국가 / 시간대 / <strong>통화</strong>를 고릅니다.
+    <strong>통화는 나중에 바꿀 수 없습니다.</strong> 국내 계좌로 받으실 거면 원화(KRW)를 고르시면 됩니다.</li>
+<li>약관 동의 → 계정 생성</li>
+</ol>
+<p><strong>지급 정보(주소 · 세금 · 계좌)는 지금 안 넣어도 됩니다.</strong>
+수익이 일정 금액에 이르면 넣으라고 안내가 나옵니다.
+다만 주소 확인용 우편(PIN)이 오가는 데 시간이 걸리니, 출시 전에 미리 넣어 두시는 편이 편합니다.</p>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="d2"><span class="what">
+  <b>앱 등록 + 전면 광고 단위 만들고 ID 두 개 알려 주기</b>
+  <span>앱 ID 와 광고 단위 ID. 둘은 다른 값입니다.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<ol>
+<li>왼쪽 메뉴 <strong>앱 &gt; 앱 추가</strong></li>
+<li>플랫폼은 <strong>Android</strong></li>
+<li><strong>"앱이 스토어에 등록되어 있나요?"</strong> → 아직이면 <strong>아니요</strong>.
+    앱 이름에 <code>심심할 때 하는 게임</code> 을 넣고 추가합니다.
+    <br>(나중에 스토어에 올린 뒤 <strong>"앱 연결"</strong> 을 해 주셔야 실제 광고가 제대로 나옵니다)</li>
+<li>만들어진 앱에서 <strong>광고 단위 &gt; 광고 단위 추가</strong> → <strong>전면 광고(Interstitial)</strong> 를 고릅니다.
+    <br>이름은 아무거나 (예: <code>게임오버_전면</code>). 나머지 설정은 기본값으로 두세요.</li>
+<li><strong>두 가지 값을 복사해서 저에게 주세요.</strong>
+<pre>앱 ID        ca-app-pub-0000000000000000~1111111111
+광고 단위 ID  ca-app-pub-0000000000000000/2222222222</pre>
+    <strong>가운데 기호가 다릅니다</strong> — 앱 ID 는 <code>~</code>(물결), 광고 단위 ID 는 <code>/</code>(빗금).
+    <br>앱 ID 는 <strong>앱 &gt; 앱 설정</strong>, 광고 단위 ID 는 <strong>광고 단위 목록</strong>에 있습니다.</li>
+</ol>
+<div class="note"><p>이 두 값은 비밀이 아닙니다 (앱 안에 들어가는 값입니다). 그냥 알려 주시면 됩니다.</p></div>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="d3"><span class="what">
   <b>원스토어가 AdMob 승인 스토어인지 확인</b>
-  <span>AdMob 정책 페이지에서 확인이 필요합니다 — 제가 단정할 수 없는 부분입니다.
-  <strong>플레이스토어는 확실하므로 광고 자체는 문제없습니다.</strong></span></span></label></li>
+  <span>제가 단정할 수 없는 부분입니다. 플레이스토어는 확실합니다.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<p>AdMob 은 <strong>승인된 스토어로 배포된 앱</strong>에만 실제 광고를 내보냅니다.
+목록은 정책 페이지에 있고 <strong>바뀝니다.</strong></p>
+<ol>
+<li>AdMob 화면 아래쪽 또는 구글 검색으로 <strong>"AdMob 프로그램 정책"</strong> 문서를 엽니다.</li>
+<li><strong>"앱 배포" / "허용되는 배포 채널"</strong> 같은 항목에서 원스토어가 있는지 봅니다.</li>
+<li>확실하지 않으면 <strong>AdMob 고객센터에 문의</strong>하시는 것이 가장 확실합니다.</li>
+</ol>
+<p><strong>결과에 따라 제가 할 일이 정해집니다.</strong>
+목록에 있으면 그대로 두면 되고, 없으면 <strong>원스토어용 빌드에서만 광고를 끄도록</strong> 스위치를 하나 넣겠습니다
+(설정에 <code>adsEnabled</code> 가 이미 있습니다).</p>
+<p>급한 일은 아닙니다. <strong>플레이스토어에 올리시므로 광고 자체는 문제없습니다.</strong></p>
+</div></details>
+</li>
 </ul>
 
 <h3><span class="tag me">Claude</span></h3>
@@ -171,7 +349,7 @@
 
 <div class="note stop">
 <p><strong>내 광고를 내가 누르면 안 됩니다.</strong> 계정이 정지되고 되돌리기 어렵습니다.
-확인은 테스트 광고로만 하세요.</p>
+확인은 테스트 광고로만 하세요. 폰에서 실제 광고가 뜨더라도 <strong>누르지 마세요.</strong></p>
 </div>
 </section>
 
@@ -180,27 +358,144 @@
 
 <h3><span class="tag you">사용자</span></h3>
 <ul class="todo">
-<li><label><input type="checkbox" data-k="f1"><span class="what">
+<li>
+<label><input type="checkbox" data-k="f1"><span class="what">
   <b>릴리스 키스토어 만들고 안전하게 보관</b>
-  <span>만드는 명령은 제가 알려 드리지만 <strong>비밀번호는 사용자만 알아야 합니다.</strong>
-  파일과 비밀번호를 <strong>두 곳에 백업</strong>하세요 — 잃어버리면 원스토어 쪽은 같은 앱을 갱신할 수 없습니다.</span></span></label></li>
-<li><label><input type="checkbox" data-k="f2"><span class="what">
+  <span>앱에 도장을 찍는 열쇠입니다. 잃어버리면 같은 앱을 갱신할 수 없습니다.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<p><strong>쉬운 방법 — Unity 안에서 만들기</strong></p>
+<ol>
+<li>Unity 메뉴 <strong>Edit &gt; Project Settings &gt; Player</strong></li>
+<li>안드로이드 탭 → <strong>Publishing Settings</strong> 를 폅니다</li>
+<li><strong>Keystore Manager</strong> → <strong>Keystore &gt; Create New &gt; Anywhere...</strong></li>
+<li>저장 위치는 <strong>프로젝트 폴더 바깥</strong>으로 하세요. 예: <code>D:\00.JumpJump_열쇠\jumpjump.keystore</code>
+    <br>(프로젝트 안에 두면 git 에 딸려 들어갈 수 있습니다)</li>
+<li>비밀번호를 정합니다. <strong>키스토어 비밀번호</strong>와 <strong>키(Alias) 비밀번호</strong> 두 개인데,
+    <strong>같게 하셔도 됩니다.</strong></li>
+<li>Alias 는 <code>jumpjump</code> 정도. 유효기간은 기본값(50년)이 좋습니다.</li>
+</ol>
+
+<p><strong>명령으로 만드는 방법</strong> (같은 결과입니다)</p>
+<pre>"C:\Program Files\Unity Hub\6000.0.81f1\Editor\Data\PlaybackEngines\AndroidPlayer\OpenJDK\bin\keytool.exe" ^
+  -genkeypair -v -keystore D:\00.JumpJump_열쇠\jumpjump.keystore ^
+  -alias jumpjump -keyalg RSA -keysize 2048 -validity 18250</pre>
+
+<div class="note stop">
+<p><strong>세 가지를 반드시 따로 적어 두세요.</strong>
+① <code>.keystore</code> 파일 ② 비밀번호 두 개 ③ Alias 이름.
+<strong>USB 와 클라우드처럼 서로 다른 두 곳에</strong> 보관하시고,
+비밀번호는 파일 이름이 아니라 <strong>메모로</strong> 남기세요.</p>
+<p>잃어버리면 <strong>원스토어 쪽은 같은 앱을 영영 갱신할 수 없습니다.</strong>
+(플레이스토어는 Play 앱 서명을 쓰면 업로드 키를 다시 발급받을 수 있습니다)</p>
+<p><strong>키스토어 파일과 비밀번호는 저에게 주실 필요가 없습니다.</strong>
+빌드할 때 Unity 창에 직접 넣으시면 됩니다.</p>
+</div>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="f2"><span class="what">
   <b>구글 플레이 개발자 등록 (1회 25달러)</b>
-  <span>신규 개인 계정에는 <strong>비공개 테스트(테스터 여러 명 · 일정 기간)</strong> 요건이 있습니다.
-  규정이 자주 바뀌니 가입 화면의 조건을 확인하세요.</span></span></label></li>
-<li><label><input type="checkbox" data-k="f3"><span class="what">
-  <b>원스토어 개발자 등록</b></span></label></li>
-<li><label><input type="checkbox" data-k="f4"><span class="what">
+  <span>신규 개인 계정에는 비공개 테스트 요건이 있습니다.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<ol>
+<li><code>play.google.com/console</code> → 구글 계정으로 로그인</li>
+<li>계정 유형을 <strong>개인</strong> / 조직 중에 고릅니다.
+    <strong>개인으로 등록하면 스토어에 이름이 공개</strong>될 수 있습니다
+    (조직으로 하려면 사업자 등록이 필요합니다).</li>
+<li>신원 확인 — <strong>신분증</strong>과 주소를 요구합니다. 며칠 걸릴 수 있습니다.</li>
+<li><strong>등록비 25달러</strong> 결제 (한 번만).</li>
+<li>승인되면 <strong>"앱 만들기"</strong> 로 앱 자리를 만듭니다.</li>
+</ol>
+<div class="note">
+<p><strong>새로 만드는 개인 계정에는 "비공개 테스트" 요건이 붙습니다</strong> —
+일정 인원의 테스터가 일정 기간 동안 앱을 써 봐야 정식 출시를 신청할 수 있습니다.
+<strong>이 규정은 자주 바뀌므로 가입 화면에 나오는 조건을 그대로 따르세요.</strong>
+지인 계정을 미리 모아 두시면 나중에 덜 기다립니다.</p>
+</div>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="f3"><span class="what">
+  <b>원스토어 개발자 등록</b>
+  <span>국내 스토어입니다. 플레이스토어와 별개로 등록합니다.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<ol>
+<li>원스토어 <strong>개발자 센터</strong>에 가입합니다 (개인/사업자 선택).</li>
+<li>본인 확인과 정산 정보(계좌)를 넣습니다. <strong>국내 서비스라 절차가 한국어</strong>입니다.</li>
+<li>앱을 새로 만들고 <strong>APK</strong> 를 올립니다. (제가 원스토어용 APK 를 구워 드립니다)</li>
+<li>등급 분류 — 게임은 등급이 필요합니다. 보통 <strong>스토어 안의 설문</strong>으로 처리됩니다.
+    <strong>"광고 포함"을 사실대로 체크</strong>하세요.</li>
+</ol>
+<p><strong>순서를 정하자면 플레이스토어를 먼저 하시는 편이 낫습니다.</strong>
+심사 기준이 더 까다로워서, 거기서 통과하면 원스토어는 대체로 수월합니다.</p>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="f4"><span class="what">
   <b>개인정보처리방침을 웹에 올리기</b>
-  <span>광고와 식별자를 쓰므로 <strong>필수</strong>입니다. 초안은 제가 써 드리고,
-  올리는 것(블로그·깃허브 페이지 등)은 사용자께서 하셔야 합니다.</span></span></label></li>
-<li><label><input type="checkbox" data-k="f5"><span class="what">
+  <span>광고와 식별자를 쓰므로 <strong>필수</strong>입니다. 초안은 제가 씁니다.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<p>스토어에 <strong>"주소(URL)"</strong> 를 넣어야 하므로, 어딘가에 공개된 웹 페이지가 하나 있어야 합니다.
+내용은 제가 써 드리니 <strong>올리는 것만</strong> 하시면 됩니다.</p>
+<p><strong>돈 안 드는 곳들</strong> (아무거나 하나)</p>
+<ul>
+<li><strong>네이버 블로그 · 티스토리</strong> — 글 하나 쓰고 그 주소를 쓰면 됩니다. 가장 쉽습니다.</li>
+<li><strong>구글 사이트 도구(Google Sites)</strong> — 페이지 한 장짜리 사이트를 만들 수 있습니다.</li>
+<li><strong>GitHub Pages · Notion 공개 페이지</strong> — 익숙하시면 이쪽도 좋습니다.</li>
+</ul>
+<p><strong>조건</strong> : 로그인 없이 누구나 볼 수 있어야 하고, 주소가 바뀌지 않아야 합니다.</p>
+<p>제가 쓸 초안에는 이런 내용이 들어갑니다 —
+<strong>무엇을 모으는지</strong>(별명 · 점수 · 광고 식별자), <strong>왜 모으는지</strong>,
+<strong>누구에게 전달되는지</strong>(구글 Firebase / AdMob), <strong>문의 이메일</strong>.
+<strong style="color:var(--warn)">문의용 이메일 주소는 정해서 알려 주세요</strong> — 공개되는 주소입니다.</p>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="f5"><span class="what">
   <b>스토어 등록 정보 준비</b>
-  <span>앱 아이콘, 스크린샷, 설명 글, 연령 등급 설문(IARC).
-  <strong>설문에서 "광고 포함"을 사실대로 체크</strong>해야 합니다.</span></span></label></li>
-<li><label><input type="checkbox" data-k="f6"><span class="what">
+  <span>아이콘 · 스크린샷 · 설명 · 연령 등급 설문.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<p><strong>그림</strong> (대략의 크기입니다. 스토어 화면에 정확한 값이 나옵니다)</p>
+<ul>
+<li><strong>앱 아이콘 512&times;512 PNG</strong> — 폰 홈 화면 아이콘과 별개로 스토어에 올리는 그림입니다.
+    <strong>사용자께서 그려 주셔야 합니다.</strong></li>
+<li><strong>그래픽 이미지(배너) 1024&times;500</strong> — 스토어 목록 맨 위에 걸리는 가로 그림입니다.</li>
+<li><strong>폰 스크린샷 2장 이상</strong> — <strong>제가 게임 화면으로 만들어 드릴 수 있습니다.</strong>
+    타이틀 · 로비 · 점프점프 · 활쏘기 · 랭킹 창이 이미 캡처되어 있습니다.</li>
+</ul>
+<p><strong>글</strong> — 짧은 설명(한 줄)과 자세한 설명(여러 줄)이 필요합니다.
+<strong>초안은 제가 써 드립니다.</strong> 읽어 보시고 고치시면 됩니다.</p>
+<p><strong>설문</strong></p>
+<ul>
+<li><strong>연령 등급(IARC)</strong> — 폭력·선정성 등을 묻는 설문에 답하면 등급이 정해집니다.
+    이 게임은 낮은 등급이 나올 것입니다.</li>
+<li><strong>"광고 포함" 을 반드시 사실대로 체크하세요.</strong> 나중에 문제가 되는 대표적인 항목입니다.</li>
+<li><strong>데이터 세이프티</strong> — 무엇을 모으는지 신고하는 양식입니다.
+    <strong>넣을 내용은 제가 정리해 드립니다.</strong></li>
+</ul>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="f6"><span class="what">
   <b>랭킹 아이콘 그림 (선택)</b>
-  <span>지금은 임시 그림(시상대 모양)입니다. 그리시면 <code>Rank.png</code> 로 넣어 주시면 됩니다.</span></span></label></li>
+  <span>지금은 임시 그림(시상대 모양)입니다.</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<ol>
+<li>정사각형 <strong>투명 배경 PNG</strong> 로 그립니다. 512&times;512 정도면 충분합니다.
+    <strong>여백은 신경 쓰지 않으셔도 됩니다</strong> — 자동으로 잘라 냅니다.</li>
+<li>파일 이름을 <strong><code>Rank.png</code></strong> 로 합니다.</li>
+<li><code>D:\00.JumpJump\</code> 또는 <code>@리소스 추가_2차\</code> 같은 폴더에 넣습니다.</li>
+<li>Unity 에서 <strong>Tools &gt; Arcade &gt; Build All Scenes</strong>.</li>
+</ol>
+<p>로비의 <strong>톱니바퀴와 같은 크기</strong>로 들어가니, 톱니바퀴와 비슷한 굵기·색으로 그리시면 잘 어울립니다.
+트로피든 왕관이든 1·2·3 시상대든 좋습니다.</p>
+</div></details>
+</li>
 </ul>
 
 <h3><span class="tag me">Claude</span></h3>
@@ -209,32 +504,46 @@
   <b>빌드 스크립트 정리 — 플레이용 AAB / 원스토어용 APK</b>
   <span>메뉴 두 개로 나누고 릴리스 서명을 켭니다. 버전 번호는 양쪽 같은 값을 씁니다.</span></span></label></li>
 <li><label><input type="checkbox" data-k="g2"><span class="what">
-  <b>키스토어 만드는 방법 안내</b></span></label></li>
+  <b>키스토어 만드는 방법 안내</b>
+  <span>위 "자세한 방법" 에 적어 두었습니다. 막히시면 그때 맞춰 드리겠습니다.</span></span></label></li>
 <li><label><input type="checkbox" data-k="g3"><span class="what">
-  <b>개인정보처리방침 초안 작성</b>
-  <span>무엇을 수집하는지(별명 · 점수 · 광고 식별자) 사실대로 적습니다.</span></span></label></li>
+  <b>개인정보처리방침 초안 · 스토어 설명 글 초안</b></span></label></li>
 <li><label><input type="checkbox" data-k="g4"><span class="what">
-  <b>데이터 세이프티 양식에 넣을 내용 정리</b></span></label></li>
+  <b>데이터 세이프티 양식에 넣을 내용 정리 · 스크린샷 뽑기</b></span></label></li>
 </ul>
 </section>
 
 <section>
 <h2>4. 폰에서 확인 (5단계)</h2>
 <div class="note">
-<p><strong>여기서부터는 제가 확인해 드릴 수 없습니다.</strong> 광고와 통신은 배치 모드로 검증되지 않습니다.
-아래 목록을 만들어 드릴 테니 폰에서 하나씩 눌러 봐 주세요.</p>
+<p><strong>여기서부터는 제가 확인해 드릴 수 없습니다.</strong> 광고와 통신은 배치 모드로 검증되지 않습니다.</p>
 </div>
+
+<details open><summary>APK 를 폰에 넣는 방법</summary><div class="body">
+<ol>
+<li>제가 <code>D:\00.JumpJump\JumpJump.apk</code> 를 구워 드립니다 (10분 이상 걸립니다).</li>
+<li>USB 로 폰을 연결해 파일을 옮기거나, 카카오톡 "나에게 보내기" 로 보내셔도 됩니다.</li>
+<li>폰에서 그 파일을 눌러 설치합니다.
+    <strong>"출처를 알 수 없는 앱"</strong> 을 허용하라는 안내가 나오면 허용해 주세요.</li>
+<li>이미 깔려 있던 같은 앱이 있으면 <strong>서명이 달라 설치가 안 될 수 있습니다.</strong>
+    그때는 <strong>기존 앱을 지우고</strong> 다시 설치하세요. (기록도 같이 지워집니다)</li>
+</ol>
+</div></details>
+
 <ul class="todo">
 <li><label><input type="checkbox" data-k="h1"><span class="what">
   <b>비행기 모드로 한 판</b><span>랭킹이 안 되어도 게임이 멈추지 않아야 합니다.</span></span></label></li>
 <li><label><input type="checkbox" data-k="h2"><span class="what">
-  <b>2판째에 광고가 뜨는지 / 닫으면 제자리로 돌아오는지</b></span></label></li>
+  <b>2판째에 광고가 뜨는지 / 닫으면 제자리로 돌아오는지</b>
+  <span>광고가 뜬 뒤 게임 화면으로 정상적으로 돌아와야 합니다. <strong>광고는 누르지 마세요.</strong></span></span></label></li>
 <li><label><input type="checkbox" data-k="h3"><span class="what">
-  <b>광고 도중 뒤로 버튼</b></span></label></li>
+  <b>광고 도중 뒤로 버튼</b><span>앱이 이상해지거나 검은 화면으로 남으면 안 됩니다.</span></span></label></li>
 <li><label><input type="checkbox" data-k="h4"><span class="what">
-  <b>앱을 껐다 켜도 판 수가 이어지는지</b></span></label></li>
+  <b>앱을 껐다 켜도 판 수가 이어지는지</b>
+  <span>1판 하고 앱을 완전히 끈 뒤 다시 켜서 1판 → 두 번째 판이 끝날 때 광고가 떠야 맞습니다.</span></span></label></li>
 <li><label><input type="checkbox" data-k="h5"><span class="what">
-  <b>별명이 겹칠 때 다시 물어보는지 / 랭킹에 내 점수가 올라가는지</b></span></label></li>
+  <b>별명이 겹칠 때 다시 물어보는지 / 랭킹에 내 점수가 올라가는지</b>
+  <span>가능하면 <strong>다른 폰 두 대</strong>로 같은 별명을 넣어 보시면 확실합니다.</span></span></label></li>
 <li><label><input type="checkbox" data-k="h6"><span class="what">
   <b>20:9 화면에서 로비 위아래 띠</b>
   <span>로비 그림이 9:16 이라 요즘 폰에서는 위아래에 어두운 띠가 생깁니다. 괜찮은지 봐 주세요.</span></span></label></li>
@@ -254,6 +563,15 @@
 <p><strong>제 쪽 일은 대부분 사용자 쪽 준비가 끝나야 시작됩니다.</strong>
 그래서 <strong>Firebase 설정 파일 하나만 먼저 받으면</strong> 2단계를 통째로 진행할 수 있습니다.
 그 사이에 광고·스토어 준비를 하시면 시간이 겹쳐서 빨라집니다.</p>
+
+<h3>추천 순서</h3>
+<div class="flow">이번 주   Play 로 확인 (0번) + 세 가지 결정
+          Firebase 3가지        -> 저에게 파일 주기 -> 제가 2단계 진행
+그 다음   AdMob 계정 + 광고 ID  -> 제가 3단계 진행
+          플레이 개발자 등록 (신원 확인에 며칠 걸립니다 — 미리 시작)
+그 다음   키스토어 만들기 + 개인정보처리방침 올리기
+          아이콘 · 배너 그리기 (스크린샷·설명은 제가)
+마지막    폰에서 확인 -> 스토어 제출</div>
 </section>
 
 <section>
@@ -282,6 +600,12 @@
       state[this.dataset.k] = this.checked;
       try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
     });
+  }
+
+  // 체크박스를 눌렀을 때 "자세한 방법"이 같이 접히지 않도록 (label 안쪽만 토글)
+  var summaries = document.querySelectorAll('summary');
+  for (var j = 0; j < summaries.length; j++) {
+    summaries[j].addEventListener('click', function (e) { e.stopPropagation(); });
   }
 </script>
 </main>
