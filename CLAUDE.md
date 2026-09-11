@@ -34,6 +34,14 @@
 
 **2026-09-11 (6번째 세션) 상태 — 마지막 작업일:**
 
+- **같은 날 오후, 광고 3단계(AdMob)까지 끝냈다.** 사용자가 앱 ID · 전면 광고 단위 ID 를 줬다.
+  아래 "랭킹 · 광고" 절의 "3단계" 와 `광고_반영보고서.html`. **지금은 구글 테스트 광고다** (`useTestAds` 켜짐).
+  - 광고 자리 = **게임 오버에서 "다시하기"를 누른 순간** + **"로비로 나가기" [확인]**. 2판 + 최소 90초.
+    게임 오버 **직후**로 하지 않은 이유: 연타하던 손가락이 광고를 눌러 정책 위반(실수 클릭)이 되기 때문.
+  - 광고 플러그인이 **안드로이드 7.0(API 24)** 을 요구해서 `JumpJumpBuild` 의 minSdk 를 24 로 올렸다
+    (23 이면 gradle 이 manifest merger 오류로 멈춘다 — 실제로 한 번 멈췄다).
+  - **남은 사용자 결정 두 가지: 스토어 대상 연령(13세 미만 포함 여부) / 배포 국가(한국만이면 유럽 동의 버튼 불필요).**
+
 - **사용자가 `수정사항_02.pdf`(작업 폴더, `@` 없는 새 파일) · `google-services.json` · `badword.csv` 를 가져왔다.**
   (`@수정사항_02.pdf` 는 09-08 의 옛 문서다. 이름이 비슷하니 헷갈리지 말 것)
   수정사항 5건 전부 반영. `수정사항_02_랭킹서버_반영보고서.html` 참고.
@@ -172,13 +180,15 @@
 | `랭킹_광고_1단계_보고서.html` | 랭킹 뼈대 + 랭킹 창 + 별명 창 |
 | `할일_목록.html` | **출시까지 남은 일 — 사용자가 할 일 / 내가 할 일 (가장 최신)** |
 | `수정사항_02_랭킹서버_반영보고서.html` | 수정사항_02(09-11) 5건 + 랭킹 서버(Firebase) 연결 |
+| `광고_반영보고서.html` | AdMob 전면 광고 — 자리 · 테스트 광고 · 남은 결정 (09-11) |
 
-### 작업 폴더의 APK — 한 세대 뒤처져 있다
+### 작업 폴더의 APK — 2026-09-11 최신
 
-`D:\00.JumpJump\JumpJump.apk` 는 **2026-09-07 17:02 빌드**다 (46.9MB).
-사용자가 3번째 세션 끝에 에디터에서 직접 구웠다.
-타이틀 / 로비 / 점프점프 / 활쏘기 4장과 화면 수정 4건까지는 들어 있지만,
-**2026-09-08 의 설정·나가기 팝업은 들어 있지 않다.** 폰에서 확인하려면 다시 구워야 한다.
+`D:\00.JumpJump\JumpJump.apk` 는 **2026-09-11 11:50 빌드**다 (53.5MB, 디버그 서명, **테스트 광고**).
+09-11 까지의 모든 작업(팝업 · 글꼴 · 한글 HUD · 랭킹 서버 · 별명 바꾸기 · 게임 칸 랭킹 아이콘 · 광고)이 들어 있다.
+APK 안의 매니페스트를 aapt2 로 열어 AdMob 앱 ID · INTERNET · AD_ID 권한을 확인했다.
+(aapt2 는 `Editor/Data/PlaybackEngines/AndroidPlayer/SDK/build-tools/36.0.0/aapt2.exe`)
+**APK 는 git 에 넣지 않는다** — 사용자가 09-11 에 저장소의 옛 APK/zip 을 지웠다 (그 삭제는 아직 커밋 안 됨, 사용자에게 물어봄).
 
 다시 구우려면 **Tools > JumpJump > Build Android APK**.
 IL2CPP 라 10분 이상 걸리므로 배치로 돌릴 때는 백그라운드로 띄울 것.
@@ -254,7 +264,7 @@ PROJ="D:/00.JumpJump/JumpJump"
 "$UNITY" -batchmode -quit -projectPath "$PROJ" \
   -executeMethod Archery.EditorTools.ArcheryPreview.Capture -logFile <로그>
 
-# 3c) 랭킹 · 광고 자체 점검 34건 — 서버 없이 (광고 간격 / 별명 / 금지어 / 탭 번호 / 게임 칸 아이콘 ...)
+# 3c) 랭킹 · 광고 자체 점검 41건 — 서버 없이 (광고 간격 · 광고 자리 / 별명 / 금지어 / 탭 번호 / 게임 칸 아이콘 ...)
 "$UNITY" -batchmode -quit -projectPath "$PROJ" \
   -executeMethod Arcade.EditorTools.ArcadeSelfTest.Run -logFile <로그>
 
@@ -586,6 +596,9 @@ Unity 에서 UI 버튼이 터치를 받으려면 캔버스에 `GraphicRaycaster`
 
 **먼저 물어볼 것, 이 순서로:**
 
+0. **폰에 새 APK 를 넣어 테스트 광고를 봤는지** — 2판 끝내고 다시하기 → "Test Ad" 표시 광고 → 닫으면 "터치하면 시작".
+   그리고 **대상 연령 · 배포 국가** 두 결정 (위 "같은 날 오후" 항목). 결정에 따라 `childDirected` 를 켜거나
+   설정 창에 "개인정보 설정" 버튼(UMP `ConsentForm.ShowPrivacyOptionsForm`)을 붙인다.
 1. **에디터에서 Play 로 이번 것을 눌러 봤는지.** 전부 배치로는 "보이는지"까지만 확인됐다.
    ① 로비 게임 칸의 랭킹 아이콘 → 그 게임 탭으로 열리는지 → 탭을 눌러 바뀌는지
    ② 톱니바퀴 → [별명 바꾸기] → 바꾼 뒤 설정 창의 "내 별명" 이 바뀌는지
@@ -595,11 +608,12 @@ Unity 에서 UI 버튼이 터치를 받으려면 캔버스에 `GraphicRaycaster`
    사용자의 에디터에는 1단계 때 폰 안에서만 정한 별명 "불곰" 이 있다 — 첫 판이 끝날 때 서버에 자동 등록된다.
 2. **금지어 표의 짧은 줄을 정리할지.** `SM` 이 `SMILE` 을, `뽕` 이 `짬뽕` 을, `고추` 가 `고추장` 을,
    `구멍` 이 `구멍가게` 를, `동거` 가 `동거동락` 을 막는다 (보고서에 표로 적었다). 사용자가 표에서 지우면 된다.
-3. **AdMob 광고 ID 두 개**(앱 ID `~`, 광고 단위 ID `/`)를 받았는지. 받았으면 3단계.
-   아직이면 `할일_목록.html` 의 "2. 광고 붙이기" 안내를 화면에 맞춰 보완하는 것이 첫 일이다.
+3. ~~AdMob 광고 ID~~ — 09-11 오후에 받아서 3단계를 끝냈다.
 
-**아무 답이 없어도 할 수 있는 일** — 스토어 설명 글 초안, 개인정보처리방침 초안(이제 Firebase 를 쓰므로
-"익명 식별자 · 별명 · 점수를 구글 Firebase 에 저장" 을 넣어야 한다), 빌드 스크립트 AAB/APK 두 갈래.
+**아무 답이 없어도 할 수 있는 일** — 스토어 설명 글 초안, 개인정보처리방침 초안(Firebase: "익명 식별자 · 별명 · 점수를
+구글 Firebase 에 저장" / AdMob: "광고 식별자를 구글 AdMob 이 광고에 사용"), 데이터 보안 양식 내용,
+**빌드 스크립트 AAB(플레이)/APK(원스토어) 두 갈래 — 스토어용은 `useTestAds` 를 끄고 릴리스 서명.**
+스토어용 빌드에서 `useTestAds` 를 끄는 일은 **그 빌드 메뉴에서만** 하고, 평소 APK 는 테스트 광고로 둘 것.
 
 **작은 것들 (사용자 몫, 캐묻지 말고 보고서에서 한 번만 짚었다)**
 - `strings.csv` 의 "터치하면 시작합니다.!" — `.!` 가 오타인지 모르겠다.
@@ -723,7 +737,7 @@ Firebase 는 익명 로그인 + Firestore 만 쓰므로 서명 지문(SHA-1) 등
 
 ## 아직 없는 것
 
-사운드 / 파티클 / 아이템 / 특수 발판 / 캐릭터 선택 화면 / 광고. (랭킹은 2026-09-11 에 서버까지 붙었다)
+사운드 / 파티클 / 아이템 / 특수 발판 / 캐릭터 선택 화면. (랭킹 서버 · 광고는 2026-09-11 에 붙었다)
 **사운드가 하나도 없다** — 설정 팝업의 빈 자리에 사운드 조절을 넣으려면 그것부터 필요하다.
 HUD 폰트는 x10y12pxDenkiChipHangul (2026-09-08 부터). TMP Essential Resources 는 여전히 미임포트라
 **글자는 전부 옛 방식(UnityEngine.UI.Text)으로 그린다.** TMP 로 옮기면 큰 글자가 더 매끈해지지만
@@ -738,7 +752,25 @@ HUD 폰트는 x10y12pxDenkiChipHangul (2026-09-08 부터). TMP Essential Resourc
 
 ## 랭킹 · 광고 (2026-09-09 1단계 뼈대 → 2026-09-11 2단계 랭킹 서버)
 
-**랭킹은 Firebase 에 붙었다(2단계 끝). 광고(AdMob, 3단계)는 아직이다.**
+**랭킹은 Firebase 에 붙었고(2단계), 광고도 AdMob 에 붙었다(3단계). 둘 다 2026-09-11.**
+
+### 3단계 — 광고 (2026-09-11 오후)
+
+- 플러그인: **Google Mobile Ads 11.5.0** (`Packages/manifest.json` 의 OpenUPM 레지스트리, EDM4U 1.2.187 따라옴).
+  안드로이드 라이브러리(play-services-ads 25.4.0 · UMP 4.0.0)는 **APK 빌드 때** 플러그인의 전처리가
+  `Assets/Plugins/Android/mainTemplate.gradle` 등을 만들고 받아 온다. 그 파일들은 플러그인이 관리하니 손대지 말 것.
+- 코드: `Shell/Scripts/Ads/` — `AdGate`(띄울 때인지) / `AdBreak.TryShow(then)`(길목에서 띄우기, 120초 안전장치) /
+  `AdMobService`(UMP 동의 → SDK 시작 → 미리 불러오기) / `NoAdService`. 끼우는 곳은 `OnlineBoot.BootAds`.
+  광고 SDK 소식은 `Online/MainThread` 우체통으로 본 흐름에 옮겨서 처리한다 (`OnlinePump` 가 매 프레임 비움).
+- **게임 쪽은 각 게임 `Update` 의 한 줄** — `if (tap && State == GameOver && _stateClock >= RetryLockSeconds && Arcade.AdBreak.TryShow(ResetRun)) return;`
+  `Step` 바깥이다. **새 미니게임에도 이 한 줄을 넣을 것.** 로비로 나가기는 `ShellMenu.OnExitToLobbyConfirmed` 가 맡는다.
+- 값은 전부 `ArcadeConfig.asset` — `admobAppId` / `interstitialUnitId` / **`useTestAds`(켜짐 = 구글 테스트 광고)** /
+  `childDirected` / `maxAdContentRating`(PG). 앱 ID 는 Build All 때 `ShellAdsConfig` 가 플러그인 설정에 옮겨 적는다
+  (비어 있으면 플러그인이 APK 빌드를 멈춘다).
+- **minSdk 24.** `JumpJumpBuild.ApplyPlayerSettings` 가 올린다.
+- 광고가 떠 있는 동안 `PopupPanel.Blocking` 이 참 → 게임이 멈춘다. 닫힌 프레임 입력은 `HoldInputThisFrame` 으로 버린다.
+- **아직 없는 것**: 유럽 사용자용 "개인정보 설정" 버튼 (한국만 배포하면 불필요) / 스토어용 빌드에서 `useTestAds` 끄기.
+
 전체 계획과 순서는 작업 폴더의 `랭킹_광고_적용계획.html` 에 있다.
 **2단계 자세한 내용은 `JumpJump/Assets/Shell/README.md` 의 "랭킹 · 별명" 절.**
 
@@ -817,7 +849,7 @@ HUD 폰트는 x10y12pxDenkiChipHangul (2026-09-08 부터). TMP Essential Resourc
 - **에디터에서는 `OnEnable` 이 불리지 않는다.** 그래서 두 창에 `public Refresh()` 를 두고
   배치 미리보기가 직접 부른다. 안 부르면 캡처에 빈 창만 찍힌다.
 
-**아직 없는 것: 광고를 실제로 띄우는 자리(3단계).** (별명 바꾸기 · 욕설 거르기 · 서버는 09-11 에 붙었다)
+(별명 바꾸기 · 욕설 거르기 · 서버 · 광고는 전부 09-11 에 붙었다)
 
 ---
 
@@ -851,7 +883,7 @@ HUD 폰트는 x10y12pxDenkiChipHangul (2026-09-08 부터). TMP Essential Resourc
   화살표 + "로비로 나가시겠습니까?" 팝업 + ShellMenu 가 통째로 만들어진다.
   **게임 쪽 코드는 한 줄도 필요 없다.** 그래야 어느 게임에서나 자리·모양이 같다.
   단 게임의 `Update` 에 `if (Arcade.PopupPanel.Blocking) return;` 한 줄은 넣어야
-  팝업이 떠 있는 동안 게임이 멈춘다.
+  팝업이 떠 있는 동안 게임이 멈춘다. **광고 자리 한 줄**(`Arcade.AdBreak.TryShow(ResetRun)`, 위 "3단계")도 같은 `Update` 에 넣는다.
 - **타이틀/로비의 UI 위치는 픽셀이 아니라 "배경 그림 안의 비율" 이다.**
   (딱 하나, 타이틀의 제목 그림만 **화면** 기준이다 — 배경이 잘려도 제목은 안 잘리도록)
   `AspectFitter` 가 배경을 맞추고 나머지는 앵커로 따라붙는다. 위치를 조정할 일이 생기면

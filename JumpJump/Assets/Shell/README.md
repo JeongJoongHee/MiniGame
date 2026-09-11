@@ -320,6 +320,36 @@ Unity 에 들어 있는 `UnityWebRequest` 로 Firebase 의 웹 주소(REST)에 �
 
 ---
 
+## 광고 (2026-09-11, AdMob 전면 광고)
+
+**2판마다, 사용자가 누른 "길목"에서만** 전면 광고가 뜹니다 — 게임 오버 화면의 **다시하기**와
+"로비로 나가시겠습니까?" 의 **[확인]**. 광고가 닫히면 다시하기는 곧바로 판을 시작하지 않고
+**"터치하면 시작" 화면으로** 돌아갑니다. 게임 도중에는 절대 뜨지 않습니다.
+
+- 게임 오버 **직후**가 아니라 **누른 뒤**인 이유: 점프점프는 계속 두드리는 게임이라, 죽는 순간 광고가 뜨면
+  두드리던 손가락이 광고를 누릅니다. 실수 클릭은 AdMob 정책 위반이고 계정 정지 사유입니다.
+- "띄울 때인지"는 `AdGate`(2판 + 최소 90초), "지금 띄워라"는 `AdBreak.TryShow(then)`, 실제 광고는 `AdMobService`.
+- **광고가 준비 안 됐으면 건너뜁니다** (인터넷 없음 등). 차례는 남아서 다음 길목에서 다시 봅니다.
+  광고가 닫혔다는 소식이 120초 안에 안 오면 닫힌 것으로 칩니다 — 게임이 영영 멈추지 않게.
+- **값은 전부 `Resources/ArcadeConfig.asset`** — 앱 ID(`~`) · 광고 단위 ID(`/`) · `useTestAds` · `childDirected` · `maxAdContentRating`.
+  앱 ID 는 Build All Scenes 때 `ShellAdsConfig` 가 플러그인 설정(`Assets/GoogleMobileAds/Resources/`)에 옮겨 적습니다.
+- **`useTestAds` 가 켜져 있으면 구글 테스트 광고**가 나옵니다. 개발 중에는 반드시 켜 둘 것 — 스토어 빌드에서만 끕니다.
+- 플러그인은 `Packages/manifest.json` 의 OpenUPM 레지스트리로 들어옵니다 (`com.google.ads.mobile` 11.5.0).
+  안드로이드 라이브러리는 **APK 를 구울 때** 플러그인이 gradle 설정을 만들어 받아 옵니다 (인터넷 필요).
+- 동의(UMP): 유럽 등 동의가 필요한 사용자에게만 동의 창이 뜹니다. 그런 사용자에게는 설정 창에
+  **"개인정보 설정" 버튼이 필요**한데 아직 없습니다 — 한국에만 배포하면 필요 없습니다.
+
+### 미니게임을 새로 만들 때
+
+각 게임의 `Update` 에서 `Step` 을 부르기 **바로 앞에** 이 한 줄을 넣습니다 (`Step` 안이 아닙니다):
+
+```csharp
+if (tap && State == GameState.GameOver && _stateClock >= RetryLockSeconds &&
+    Arcade.AdBreak.TryShow(ResetRun)) return;
+```
+
+---
+
 ## 구조
 
 ```
@@ -371,13 +401,15 @@ Assets/Shell/
     OnlineBoot.cs         앱을 켤 때 랭킹을 서버 구현으로 갈아 끼움
     Online/               서버 통신 (Http / FirebaseAuth / Firestore / MiniJson)
     Ranking/              FirebaseRankingService (서버) · LocalRankingService (폰 안)
+    Ads/                  AdGate (띄울 때인지) · AdBreak (길목에서 띄우기) · AdMobService · NoAdService
   Editor/
     ShellArt.cs           작업 폴더 그림 가져오기 + 여백 자르기 + 임포트 설정
     ShellSceneBuilder.cs  씬 자동 생성
     ShellStringsCsv.cs    strings.csv · badword.csv 가져오기 (Tools > Arcade > Apply strings.csv)
     ShellFirebaseConfig.cs google-services.json -> ArcadeConfig 서버 주소
+    ShellAdsConfig.cs     ArcadeConfig 의 AdMob 앱 ID -> 광고 플러그인 설정
     ShellPreview.cs       플레이 모드 없이 화면 PNG 캡처
-    ArcadeSelfTest.cs     서버 없이 규칙 점검 (34건)
+    ArcadeSelfTest.cs     서버 없이 규칙 점검 (41건 — 광고 자리 7건 포함)
     ArcadeOnlineTest.cs   진짜 서버로 점검 (19건, 끝나면 시험 계정 삭제)
 ```
 

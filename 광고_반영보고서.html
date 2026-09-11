@@ -1,0 +1,177 @@
+<title>광고 붙이기</title>
+<meta charset="utf-8">
+<style>
+  :root{
+    --bg:#f7f6f3; --card:#fff; --ink:#1c1b19; --muted:#6b6862;
+    --line:#e3e0da; --accent:#c2410c; --ok:#15803d; --warn:#b45309;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#16151a; --card:#1f1e24; --ink:#eceaf0; --muted:#a3a0ab;
+    --line:#33313b; --accent:#fb923c; --ok:#4ade80; --warn:#fbbf24;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#16151a; --card:#1f1e24; --ink:#eceaf0; --muted:#a3a0ab;
+    --line:#33313b; --accent:#fb923c; --ok:#4ade80; --warn:#fbbf24;
+  }
+  body{background:var(--bg);color:var(--ink);font:16px/1.65 "Malgun Gothic","Segoe UI",system-ui,sans-serif;
+       margin:0;padding:40px 20px 80px}
+  main{max-width:880px;margin:0 auto}
+  h1{font-size:28px;line-height:1.3;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--muted);margin:0 0 36px;font-size:14px}
+  h2{font-size:19px;margin:44px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  h3{font-size:15px;margin:26px 0 8px;color:var(--accent)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 24px 24px;margin-bottom:8px}
+  .tw{overflow-x:auto;margin:14px 0}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:460px}
+  th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-weight:600;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+  tr:last-child td{border-bottom:none}
+  code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:13px;
+       font-family:Consolas,"Cascadia Mono",monospace;word-break:break-all}
+  ul{padding-left:20px} li{margin:6px 0}
+  .tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;border:1px solid currentColor;
+       font-weight:600;vertical-align:middle;white-space:nowrap}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--accent)}
+  .note{border-left:3px solid var(--warn);background:var(--bg);padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0}
+  .stop{border-left-color:var(--accent)}
+  .note p{margin:6px 0}
+  .lead{font-size:17px}
+  .flow{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:16px 0;
+        font-family:Consolas,"Cascadia Mono",monospace;font-size:13px;line-height:1.9;overflow-x:auto;white-space:pre}
+</style>
+
+<main>
+<h1>광고 붙이기 (3단계)</h1>
+<p class="sub">심심할 때 하는 게임 &middot; 2026-09-11 &middot; AdMob 전면 광고 &middot; 배치 모드 검증 + APK 빌드</p>
+
+<section>
+<h2>한 줄 요약</h2>
+<p class="lead"><strong>2판마다, "다시하기"를 누른 순간에 전면 광고가 뜹니다.</strong>
+주신 앱 ID 가 들어갔고, <strong>지금은 구글의 테스트 광고</strong>가 나옵니다 — 폰에서 눌러 봐도 안전합니다.
+진짜 광고로 바꾸는 것은 스토어에 올리는 빌드에서 스위치 하나로 합니다.</p>
+
+<div class="flow">한 판 끝 -> 게임 오버 화면 (광고 없음, 결과를 봄)
+            |
+            +-- "다시하기" 를 누름
+            |      2판째이고 지난 광고로부터 90초가 지났으면  ->  [전면 광고]  ->  닫으면 "터치하면 시작" 화면
+            |      아니면                                   ->  바로 다음 판
+            |
+            +-- 오른쪽 위 화살표 -> "로비로 나가시겠습니까?" [확인]
+                   2판째이고 90초가 지났으면                 ->  [전면 광고]  ->  닫으면 로비</div>
+</section>
+
+<section>
+<h2>왜 게임 오버 "직후"가 아니라 "다시하기를 누른 뒤"인가</h2>
+<p>점프점프는 <strong>화면을 계속 두드리는 게임</strong>입니다. 떨어지는 순간 광고가 튀어나오면,
+점프하려고 두드리던 손가락이 <strong>광고를 누르게 됩니다.</strong> 이런 "실수 클릭"은 AdMob 정책 위반이고,
+심하면 <strong>계정이 정지</strong>됩니다. 정지된 계정은 되돌리기가 매우 어렵습니다.</p>
+<p>반대로 사용자가 "다시하기" 를 <strong>눌러서 다음으로 넘어가는 순간</strong>에 뜨는 광고는 구글이 권하는 자리입니다
+("판과 판 사이", "다음 단계로 넘어가는 문"). 게임 오버 화면에서 점수를 볼 시간도 그대로 남습니다.</p>
+<p>광고를 닫으면 곧바로 판을 시작하지 않고 <strong>"터치하면 시작합니다" 화면</strong>으로 돌려놓습니다.
+광고를 닫자마자 캐릭터가 떨어지기 시작하면 억울하니까요.</p>
+</section>
+
+<section>
+<h2>정해 둔 것 · 바꾸는 곳</h2>
+<p><strong>전부 <code>Assets/Shell/Resources/ArcadeConfig.asset</code></strong> 한 곳입니다. 코드를 고칠 일은 없습니다.</p>
+<div class="tw"><table>
+<tr><th>값</th><th>지금</th><th>뜻</th></tr>
+<tr><td>몇 판마다</td><td>2판</td><td>점프점프 1판 + 활쏘기 1판도 2판입니다 (앱 전체로 셉니다)</td></tr>
+<tr><td>최소 간격</td><td>90초</td><td>2판을 30초 만에 끝내도 광고가 연달아 뜨지 않게</td></tr>
+<tr><td>앱 ID</td><td><code>ca-app-pub-5299482082775448~8677145874</code></td><td>앱에 들어가는 값. 광고 플러그인 설정에도 자동으로 옮겨 적힙니다</td></tr>
+<tr><td>광고 단위 ID</td><td><code>ca-app-pub-5299482082775448/9961955736</code></td><td>진짜 광고로 바꿀 때 쓰입니다</td></tr>
+<tr><td><strong>테스트 광고</strong></td><td><span class="tag warn">켜짐</span></td><td>켜져 있으면 위 광고 단위 대신 구글 테스트 광고. <strong>스토어 빌드에서만 끕니다</strong></td></tr>
+<tr><td>어린이 대상</td><td>꺼짐</td><td>스토어 대상 연령에 13세 미만을 넣으면 켜야 합니다 (아래 결정 1)</td></tr>
+<tr><td>광고 최대 등급</td><td>PG</td><td>보호자 지도 등급까지. 청소년(T) · 성인(MA) 광고는 안 나옵니다</td></tr>
+</table></div>
+<div class="note stop">
+<p><strong>개발 중에 진짜 광고로 바꾸지 마세요.</strong> 내 광고를 내가 보거나 누르면 "부정 클릭"으로 잡혀 계정이 정지될 수 있습니다.
+테스트 광고는 화면 위에 "Test Ad" 라고 적혀 나옵니다 — 폰에서 그 표시가 보이면 안전한 것입니다.</p>
+</div>
+</section>
+
+<section>
+<h2>광고가 없거나 느릴 때</h2>
+<ul>
+<li><strong>게임은 절대 막히지 않습니다.</strong> 광고를 아직 못 불러왔으면 그 차례는 건너뛰고 바로 다음 판으로 갑니다.
+    차례는 남아 있어서, 다음 "다시하기" 때 준비됐으면 그때 뜹니다.</li>
+<li>광고는 앱을 켤 때와 광고를 한 번 보여 준 직후에 <strong>미리 불러 둡니다</strong>. 그래서 누르는 순간 멈칫하지 않습니다.
+    불러오기에 실패하면 10초 · 30초 · 1분 … 간격을 늘려 가며 다시 해 봅니다.</li>
+<li>광고가 닫혔다는 소식이 2분 안에 안 오면 닫힌 것으로 칩니다 — 어떤 경우에도 게임이 영영 멈춰 있지 않게.</li>
+<li>광고가 떠 있는 동안에는 게임이 멈춥니다 (팝업과 같은 방식).</li>
+</ul>
+</section>
+
+<section>
+<h2>동의 창 (유럽 규정)</h2>
+<p>구글의 동의 도구(UMP)를 붙였습니다. <strong>유럽 · 영국 등 동의가 필요한 곳의 사용자에게만</strong> 앱을 켤 때 동의 창이 뜹니다.
+<strong>한국 사용자에게는 아무것도 뜨지 않습니다.</strong></p>
+<p>다만 유럽 사용자에게 광고를 보여 주려면 AdMob 에 "유럽 규정 메시지"를 만들어야 하고, 설정 창에 "개인정보 설정" 버튼도 있어야 합니다.
+<strong>한국에만 배포하시면 둘 다 필요 없습니다</strong> — 아래 결정 2.</p>
+</section>
+
+<section>
+<h2>정해 주실 것</h2>
+<div class="tw"><table>
+<tr><th>#</th><th>무엇</th><th>추천</th></tr>
+<tr><td>1</td><td>플레이 콘솔의 <strong>대상 연령</strong>에 13세 미만을 넣을지</td><td><strong>13세 이상만.</strong> 13세 미만을 넣으면 구글 가족 정책이 붙어 어린이용 광고만 나오고 수익이 줄어듭니다</td></tr>
+<tr><td>2</td><td><strong>배포 국가</strong></td><td><strong>대한민국만.</strong> 해외에도 내시려면 말씀해 주세요 — "개인정보 설정" 버튼을 붙이겠습니다</td></tr>
+</table></div>
+<p>둘 다 지금 당장 정하지 않으셔도 됩니다. 플레이 콘솔에 앱을 만들 때 묻는 항목이라, 그때 알려 주시면 맞춰 넣습니다.</p>
+</section>
+
+<section>
+<h2>무엇을 넣었나 (기술 쪽)</h2>
+<ul>
+<li>광고 플러그인 <strong>Google Mobile Ads 11.5.0</strong> (공식). 안드로이드 광고 라이브러리(play-services-ads 25.4.0)는
+    APK 를 구울 때 자동으로 받아 옵니다. 랭킹과 달리 광고는 플러그인 없이 붙일 방법이 없습니다.</li>
+<li>APK 에 <strong>광고 식별자(AD_ID) 권한</strong>이 들어갑니다. 스토어의 "데이터 보안" 양식에 "광고 식별자 수집"을 적어야 합니다 — 초안은 제가 드립니다.</li>
+<li>게임 쪽 코드는 두 게임의 <code>Update</code> 에 한 줄씩(다시하기 자리)만 들어갔습니다.
+    게임 규칙(<code>Step</code>)은 그대로라 자동 플레이테스트는 광고 없이 똑같이 돕니다.</li>
+</ul>
+</section>
+
+<section>
+<h2>검증</h2>
+<div class="tw"><table>
+<tr><th>무엇</th><th>결과</th></tr>
+<tr><td>광고 플러그인 받기 + 컴파일 + 씬 4장</td><td><span class="tag ok">오류 0</span></td></tr>
+<tr><td>자체 점검 34 → <strong>41건</strong> (광고 자리 7건 추가)</td><td><span class="tag ok">전부 통과</span></td></tr>
+<tr><td>&nbsp;&nbsp;판을 덜 채웠으면 광고 없음 / 2판째 다시하기에서 뜸 / 닫아야 다음 화면 / 90초 안엔 다시 안 뜸 /
+    준비 안 됐으면 건너뜀 / 플레이테스트 중엔 없음 / 앱 ID 가 플러그인에 들어감</td><td><span class="tag ok">7건 통과</span></td></tr>
+<tr><td>점프점프 · 활쏘기 플레이테스트</td><td><span class="tag ok">정상</span> 광고가 끼어들지 않음</td></tr>
+<tr><td>안드로이드 APK 빌드</td><td><span class="tag ok">성공</span> 53.5 MB · 첫 시도는 실패 → 고침 (아래 "APK" 절)</td></tr>
+</table></div>
+<div class="note"><p><strong>광고가 실제로 뜨는 모습은 배치 모드로 볼 수 없습니다.</strong> 에디터에서 Play 하시면 가짜 광고 화면(플러그인이 보여 주는 견본)이,
+폰에 APK 를 넣으시면 "Test Ad" 표시가 붙은 구글 테스트 광고가 뜹니다.</p></div>
+</section>
+
+<section>
+<h2>APK — 폰에서 확인하실 수 있습니다</h2>
+<p><strong><code>D:\00.JumpJump\JumpJump.apk</code></strong> 를 새로 구웠습니다 (53.5 MB, 테스트 광고).
+<strong>09-08 이후의 것이 전부 들어 있습니다</strong> — 설정·나가기 팝업, 글꼴, 한글 HUD, 랭킹 서버, 별명 바꾸기, 게임 칸 랭킹 아이콘, 광고.</p>
+<div class="tw"><table>
+<tr><th>APK 안을 열어 확인한 것</th><th>결과</th></tr>
+<tr><td>AdMob 앱 ID</td><td><code>ca-app-pub-5299482082775448~8677145874</code> <span class="tag ok">들어감</span></td></tr>
+<tr><td>인터넷 권한 (랭킹 · 광고)</td><td><span class="tag ok">들어감</span></td></tr>
+<tr><td>광고 식별자 권한 (AD_ID)</td><td><span class="tag ok">들어감</span> — 스토어 "데이터 보안"에 신고해야 하는 항목</td></tr>
+<tr><td>대상 안드로이드</td><td>7.0 이상 설치 가능 · 최신(API 36) 기준으로 빌드</td></tr>
+</table></div>
+
+<h3>첫 빌드가 멈췄던 이유</h3>
+<p>광고 플러그인이 <strong>안드로이드 7.0(API 24) 이상</strong>을 요구하는데, 앱이 6.0(API 23)부터 설치되게 설정되어 있어서
+빌드 마지막 단계에서 멈췄습니다. 설치 가능한 최소 버전을 7.0 으로 올려 해결했습니다.
+<strong>6.0 폰은 거의 남아 있지 않아서</strong> 실제로 잃는 사용자는 사실상 없습니다.</p>
+
+<h3>폰에서 이렇게 확인해 주세요</h3>
+<ol>
+<li>폰에 있던 예전 앱을 <strong>지우고</strong> 새 APK 를 설치합니다 (서명이 달라 덮어쓰기가 안 될 수 있습니다).</li>
+<li>게임 아무거나 <strong>2판</strong> 끝냅니다 (첫 판 끝에 별명 창이 뜹니다).</li>
+<li>두 번째 게임 오버 화면에서 <strong>다시하기</strong>를 누르면 <strong>"Test Ad" 가 적힌 광고</strong>가 떠야 합니다.</li>
+<li>광고를 닫으면 <strong>"터치하면 시작합니다" 화면</strong>이어야 합니다 (바로 게임이 굴러가면 안 됩니다).</li>
+<li>바로 또 2판 하면 광고가 <strong>안 떠야</strong> 맞습니다 (90초 간격). 90초가 지난 뒤 2판을 채우면 다시 뜹니다.</li>
+<li>광고가 떠 있을 때 <strong>폰의 뒤로 버튼</strong>도 눌러 봐 주세요 — 광고만 닫히고 게임은 정상이어야 합니다.</li>
+</ol>
+<p>앱을 켜고 처음 몇 초는 광고를 불러오는 중이라, 아주 빨리 2판을 끝내면 첫 광고가 한 번 건너뛰어질 수 있습니다. 정상입니다.</p>
+</section>
+</main>
