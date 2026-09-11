@@ -283,8 +283,7 @@ Unity 에 들어 있는 `UnityWebRequest` 로 Firebase 의 웹 주소(REST)에 �
 
 | 어디서 | 무엇을 | 무슨 일이 |
 | --- | --- | --- |
-| 로비 | 게임 칸 번호 자리의 **랭킹 아이콘** | 그 게임의 탭이 골라진 채로 랭킹 창 |
-| 랭킹 창 | 위쪽 게임 이름표(탭) | 다른 게임의 랭킹으로 |
+| 로비 | 게임 칸 번호 자리의 **랭킹 아이콘** | 그 게임의 랭킹 창 ("── 랭킹 ──" 아래 게임 이름 글자) |
 | 미니게임 | 판이 끝남 | 별명이 없으면 별명 창 → 점수 올리기 |
 | 로비 | 톱니바퀴 → **[별명 바꾸기]** | 별명 창 (횟수 제한 없음) |
 
@@ -317,6 +316,20 @@ Unity 에 들어 있는 `UnityWebRequest` 로 Firebase 의 웹 주소(REST)에 �
 **보안 규칙(남의 점수 고치기 / 남의 이름으로 올리기 / 남의 별명 지우기가 `PERMISSION_DENIED` 로 막히는지)** 을
 실제 서버로 확인하고, **끝나면 시험 기록과 시험 계정을 전부 지웁니다.** 기록은 `ranks/selftest` 칸에만 씁니다.
 **사용자의 Firebase 에 계정을 만들었다 지우는 일이므로 돌리기 전에 사용자에게 물어볼 것.**
+
+---
+
+## 치트 — 모든 게임 데이터 초기화 (2026-09-11)
+
+로비 톱니바퀴 → 설정 창의 **빈 윗부분을 3초 안에 5번** 누르면 확인 창이 뜹니다. [확인] 하면
+서버의 내 기록(게임마다 점수 줄 · 별명 자리 · 익명 계정)을 지우고, 폰의 기록(PlayerPrefs)을 전부 지운 뒤 타이틀로 갑니다.
+인터넷이 안 되면 폰 기록만 지웁니다.
+
+- 켜기/끄기 · 횟수 · 시간은 `ArcadeConfig.asset` 의 `cheatsEnabled` / `cheatTaps` / `cheatTapSeconds`.
+  **스토어 빌드에서는 `cheatsEnabled` 를 끕니다.**
+- 에디터에서는 **Tools > Arcade > Reset All Game Data (Editor)** — 에디터 기록만 지웁니다 (서버는 안 지움).
+- 부품: `DataResetPopup`(확인 창) · `CheatTapZone`(보이지 않는 누름 영역) · `Editor/ShellCheatUI`(굽기).
+  나중에 설정 창에 사운드 조절을 넣다가 누름 영역과 겹치면 `ShellCheatUI.HitCenter` 를 옮기세요.
 
 ---
 
@@ -396,7 +409,9 @@ Assets/Shell/
     NicknameRules.cs      금지어 거르기 (badword.csv)
     NicknamePopup.cs      별명 창 (처음 정하기 / 바꾸기)
     NicknameLabel.cs      설정 창의 "내 별명 : ..."
-    RankingPopup.cs       랭킹 창 (ShowFor(gameId) 로 그 게임 탭을 골라 엶)
+    RankingPopup.cs       랭킹 창 (ShowFor(gameId) 로 그 게임의 랭킹을 엶)
+    DataResetPopup.cs     치트 — 모든 게임 데이터 초기화 창
+    CheatTapZone.cs       치트 — 설정 창의 보이지 않는 누름 영역
     RankingFlow.cs        미니게임에서 판 끝 -> 별명 확인 -> 점수 올리기
     OnlineBoot.cs         앱을 켤 때 랭킹을 서버 구현으로 갈아 끼움
     Online/               서버 통신 (Http / FirebaseAuth / Firestore / MiniJson)
@@ -409,7 +424,8 @@ Assets/Shell/
     ShellFirebaseConfig.cs google-services.json -> ArcadeConfig 서버 주소
     ShellAdsConfig.cs     ArcadeConfig 의 AdMob 앱 ID -> 광고 플러그인 설정
     ShellPreview.cs       플레이 모드 없이 화면 PNG 캡처
-    ArcadeSelfTest.cs     서버 없이 규칙 점검 (41건 — 광고 자리 7건 포함)
+    ShellCheatUI.cs       치트 창 굽기 + 에디터 메뉴 Reset All Game Data
+    ArcadeSelfTest.cs     서버 없이 규칙 점검 (44건)
     ArcadeOnlineTest.cs   진짜 서버로 점검 (19건, 끝나면 시험 계정 삭제)
 ```
 

@@ -34,6 +34,22 @@
 
 **2026-09-11 (6번째 세션) 상태 — 마지막 작업일:**
 
+- **같은 날 저녁 `수정사항_03.pdf` 4건 + 치트를 반영했다.** `수정사항_03_반영보고서.html`.
+  1. 랭킹 창 — 이름표 그림 탭을 없애고 **"── 랭킹 ──" 아래 게임 이름을 글자로.** 이름은 strings.csv `game.{id}.name`.
+     탭 부품 `RankingTab.cs` 는 지웠다. 창 안에서 게임을 갈아타는 기능은 이제 없다 (게임 칸 아이콘으로 연다).
+  2. 로비 — 활쏘기 아이콘(꽉 찬 과녁)이 칸의 갈색 테두리를 덮던 것. **`MiniGameEntry.iconScale`** 을 새로 두고
+     활쏘기만 0.8 (테두리 안쪽 지름 = 칸 폭의 0.84 를 로비 그림에서 쟀다). 점프점프 아이콘은 그림에 테두리가 있어 1.
+     **"아이콘" 을 게임 아이콘으로 해석했다** — 랭킹 받침이 아니다. 보고서에 해석을 적어 두었다.
+  3. 미니게임 오른쪽 위 ← 버튼 0.7배 (`BackButtonWidth` 240 → 168). 두 게임 공통.
+  4. 활쏘기 — 과녁이 선 끝까지. **선을 과녁이 튕기는 폭에 딱 맞췄다** (예전엔 양쪽 0.8 씩 더 길었다).
+     선이 짧아 보이지 않게 `playHalfWidth` 3.2 → 3.4 (21:9 폰 화면 절반 폭 3.43 안쪽). 조준 봇 명중 96 → 87 (정확도 100%, 기다리는 시간이 늘어서).
+  - **치트 — 모든 게임 데이터 초기화.** 로비 설정 창 빈 윗부분을 **3초 안에 5번** → 확인 창 → 서버의 내 기록·계정 삭제 +
+    폰 PlayerPrefs 전부 삭제 → 타이틀. `DataResetPopup` / `CheatTapZone` / `ShellCheatUI` / `IRankingService.DeleteMyData`.
+    `ArcadeConfig.cheatsEnabled`(스토어 빌드에서 끌 것) · `cheatTaps` · `cheatTapSeconds`.
+    에디터용은 **Tools > Arcade > Reset All Game Data (Editor)** (에디터 기록만, 서버는 안 지움).
+    **자체 점검은 치트로 실제로 지우지 않는다** — 사용자의 에디터 기록이 날아가므로. 서버 쪽 삭제는 서버 점검이 확인한다.
+  - 검증: 자체 점검 **44건** / 서버 점검 **19건**(치트 삭제 2건 포함) / 두 게임 플레이테스트 / 캡처.
+
 - **같은 날 오후, 광고 3단계(AdMob)까지 끝냈다.** 사용자가 앱 ID · 전면 광고 단위 ID 를 줬다.
   아래 "랭킹 · 광고" 절의 "3단계" 와 `광고_반영보고서.html`. **지금은 구글 테스트 광고다** (`useTestAds` 켜짐).
   - 광고 자리 = **게임 오버에서 "다시하기"를 누른 순간** + **"로비로 나가기" [확인]**. 2판 + 최소 90초.
@@ -47,7 +63,8 @@
   수정사항 5건 전부 반영. `수정사항_02_랭킹서버_반영보고서.html` 참고.
   1. **랭킹 창 이름표(탭)를 눌러도 게임이 안 바뀌던 버그** — 원인은 `ShellSceneBuilder.WireInts` 가
      보통 숫자 필드에도 열거형 방식(`enumValueIndex`)으로 넣어서 **탭 번호가 전부 0 으로 구워진 것.**
-     이제 필드 종류를 보고 넣는다. 자체 점검이 "탭 번호가 0, 1 로 구워졌는가"를 매번 확인한다.
+     이제 필드 종류를 보고 넣는다. 자체 점검이 "숫자 칸에 값이 들어가는가"를 매번 확인한다.
+     (탭 자체는 같은 날 저녁 수정사항_03 으로 없앴다 — 위 항목)
   2. **별명 바꾸기** — 설정 창에 "내 별명 : ○○  [별명 바꾸기]" 한 줄. 횟수 제한 없음 (추천대로).
   3. **금지어 `badword.csv`** — 17,730개. 별명 안 어디에든 들어 있으면 막는다. 아래 "랭킹" 절.
   4. **HUD 한글** — 사용자가 직접 바꿨다. **단, 프로젝트 안 사본(`Resources/strings.csv`)을 고쳤다.**
@@ -181,11 +198,12 @@
 | `할일_목록.html` | **출시까지 남은 일 — 사용자가 할 일 / 내가 할 일 (가장 최신)** |
 | `수정사항_02_랭킹서버_반영보고서.html` | 수정사항_02(09-11) 5건 + 랭킹 서버(Firebase) 연결 |
 | `광고_반영보고서.html` | AdMob 전면 광고 — 자리 · 테스트 광고 · 남은 결정 (09-11) |
+| `수정사항_03_반영보고서.html` | 랭킹 창 게임 이름 글자 · 활쏘기 아이콘 크기 · ← 0.7배 · 과녁 선 + 초기화 치트 (09-11) |
 
 ### 작업 폴더의 APK — 2026-09-11 최신
 
-`D:\00.JumpJump\JumpJump.apk` 는 **2026-09-11 11:50 빌드**다 (53.5MB, 디버그 서명, **테스트 광고**).
-09-11 까지의 모든 작업(팝업 · 글꼴 · 한글 HUD · 랭킹 서버 · 별명 바꾸기 · 게임 칸 랭킹 아이콘 · 광고)이 들어 있다.
+`D:\00.JumpJump\JumpJump.apk` 는 **2026-09-11 13:16 빌드**다 (53.5MB, 디버그 서명, **테스트 광고 · 치트 켜짐**).
+09-11 까지의 모든 작업(팝업 · 글꼴 · 한글 HUD · 랭킹 서버 · 별명 바꾸기 · 게임 칸 랭킹 아이콘 · 광고 · 수정사항_03 · 치트)이 들어 있다.
 APK 안의 매니페스트를 aapt2 로 열어 AdMob 앱 ID · INTERNET · AD_ID 권한을 확인했다.
 (aapt2 는 `Editor/Data/PlaybackEngines/AndroidPlayer/SDK/build-tools/36.0.0/aapt2.exe`)
 **APK 는 git 에 넣지 않는다** — 사용자가 09-11 에 옛 APK/zip 을 "필요 없는 데이터"라며 지웠고, 그 삭제를 커밋했다.
@@ -266,7 +284,7 @@ PROJ="D:/00.JumpJump/JumpJump"
 "$UNITY" -batchmode -quit -projectPath "$PROJ" \
   -executeMethod Archery.EditorTools.ArcheryPreview.Capture -logFile <로그>
 
-# 3c) 랭킹 · 광고 자체 점검 41건 — 서버 없이 (광고 간격 · 광고 자리 / 별명 / 금지어 / 탭 번호 / 게임 칸 아이콘 ...)
+# 3c) 랭킹 · 광고 자체 점검 44건 — 서버 없이 (광고 간격 · 광고 자리 / 별명 / 금지어 / 랭킹 창 / 게임 칸 아이콘 / 치트 ...)
 "$UNITY" -batchmode -quit -projectPath "$PROJ" \
   -executeMethod Arcade.EditorTools.ArcadeSelfTest.Run -logFile <로그>
 
@@ -602,7 +620,7 @@ Unity 에서 UI 버튼이 터치를 받으려면 캔버스에 `GraphicRaycaster`
    그리고 **대상 연령 · 배포 국가** 두 결정 (위 "같은 날 오후" 항목). 결정에 따라 `childDirected` 를 켜거나
    설정 창에 "개인정보 설정" 버튼(UMP `ConsentForm.ShowPrivacyOptionsForm`)을 붙인다.
 1. **에디터에서 Play 로 이번 것을 눌러 봤는지.** 전부 배치로는 "보이는지"까지만 확인됐다.
-   ① 로비 게임 칸의 랭킹 아이콘 → 그 게임 탭으로 열리는지 → 탭을 눌러 바뀌는지
+   ① 로비 게임 칸의 랭킹 아이콘 → 그 게임 이름이 적힌 랭킹 창이 열리는지 (탭은 09-11 저녁에 없앴다)
    ② 톱니바퀴 → [별명 바꾸기] → 바꾼 뒤 설정 창의 "내 별명" 이 바뀌는지
    ③ 금지어가 든 별명을 넣으면 "쓸 수 없는 말이 들어 있습니다" 가 뜨는지
    ④ **한 판 끝낸 뒤 Firebase 콘솔 > Firestore 에 `ranks/jumpjump/scores` 가 생기는지** (진짜 서버 확인)
@@ -806,7 +824,7 @@ HUD 폰트는 x10y12pxDenkiChipHangul (2026-09-08 부터). TMP Essential Resourc
 | `Ads/IAdService.cs` · `NoAdService.cs` · `AdGate.cs` | 광고 겉모양 / 아무것도 안 함 / **띄울 때인지 판정** |
 | `Ranking/IRankingService.cs` · `LocalRankingService.cs` | 랭킹 겉모양 / 폰 안에만 저장 |
 | `Services.cs` | `Services.Ranking` · `Services.Ads`. 나중에 `Use()` 로 갈아 끼운다 |
-| `RankingPopup.cs` · `RankingTab.cs` | 로비의 랭킹 창 (게임 이름표가 탭) |
+| `RankingPopup.cs` | 로비의 랭킹 창 ("랭킹" 아래 게임 이름 글자. 탭은 09-11 에 없앴다) |
 | `NicknamePopup.cs` | 별명 입력 창. **처음 랭킹에 오를 때 한 번** |
 | `RankingFlow.cs` | 미니게임 씬에서 "판 끝 -> 별명 확인 -> 점수 등록" 흐름 |
 | `Editor/ShellConfigAsset.cs` | 설정 에셋이 없으면 만들어 준다 (Build All Scenes 때마다 확인) |
@@ -838,7 +856,7 @@ HUD 폰트는 x10y12pxDenkiChipHangul (2026-09-08 부터). TMP Essential Resourc
 - **랭킹은 로비의 게임 칸마다 붙은 아이콘으로 연다** (2026-09-11 부터. 그전엔 왼쪽 위 하나였다).
   칸 번호(1, 2) 자리에 **동그란 받침(`Rank_Badge.png`, 코드가 그림) + 아이콘**을 얹어 번호를 가린다.
   자리·크기는 `LobbyScreen` 인스펙터의 `rankCenter` / `rankWidth` / `rankBadgeWidth` / `rankHitSize`.
-  누르면 `RankingPopup.ShowFor(gameId)` — 그 게임 탭이 골라진 채로 열린다.
+  누르면 `RankingPopup.ShowFor(gameId)` — 그 게임의 랭킹이 열린다.
   아이콘 그림은 아직 **임시(시상대 모양, 코드가 그림)** 다.
   진짜 그림을 받으면 작업 폴더나 `@리소스 추가_N차` 에 **`Rank.png`** 로 넣으면 자동으로 바뀐다 (받침은 `Rank_Badge.png`).
 - **별명 바꾸기는 설정 창의 [별명 바꾸기]** (2026-09-11). 빈 이름표 그림 위에 글자를 얹은 버튼이다
@@ -847,7 +865,8 @@ HUD 폰트는 x10y12pxDenkiChipHangul (2026-09-08 부터). TMP Essential Resourc
   `ShellArt` 가 `Popup_Panel.png` 에 테두리 34px 를 잡아 두고,
   `ShellSceneBuilder.MakeSlicedPopup` 이 원하는 크기로 늘린다.
   **세로로 긴 창을 만들어도 새 그림이 필요 없다.**
-- 랭킹 창의 탭은 **로비 이름표 그림**을 그대로 쓴다. 게임이 늘면 탭도 저절로 늘어난다.
+- 랭킹 창 위쪽은 **"── 랭킹 ──" + 게임 이름 글자** (수정사항_03). 이름은 strings.csv `game.{id}.name`,
+  없으면 카탈로그 `displayName`. 새 게임을 추가하면 strings.csv 에 이름 줄을 하나 넣을 것.
 - **에디터에서는 `OnEnable` 이 불리지 않는다.** 그래서 두 창에 `public Refresh()` 를 두고
   배치 미리보기가 직접 부른다. 안 부르면 캡처에 빈 창만 찍힌다.
 
