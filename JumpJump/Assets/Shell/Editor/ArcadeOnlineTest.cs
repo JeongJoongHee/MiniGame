@@ -23,13 +23,20 @@ namespace Arcade.EditorTools
     {
         const string Game = "selftest";
 
+        /// <summary>
+        /// 두 번째 시험용 게임 칸. **"앞으로 추가될 게임"** 을 대신합니다 — 같은 별명으로 두 게임에 올라가는지,
+        /// 별명을 바꾸면 두 게임의 점수 줄이 같이 바뀌는지 봅니다. (2026-09-11 사용자 요청)
+        /// </summary>
+        const string Game2 = "selftest_newgame";
+
         /// <summary>시험이 건드리는 PlayerPrefs. 끝나면 전부 원래대로 되돌립니다.</summary>
         static readonly string[] Keys =
         {
             "Arcade.Auth.Refresh", "Arcade.ServerId", "Arcade.Nickname", "Arcade.NicknameRegistered",
-            "Arcade.Rank.Games", "Arcade.Rank." + Game + ".Sent",
+            "Arcade.Rank.Games", "Arcade.Rank." + Game + ".Sent", "Arcade.Rank." + Game2 + ".Sent",
         };
         const string BestKey = "Arcade.Rank." + Game + ".Best";
+        const string BestKey2 = "Arcade.Rank." + Game2 + ".Best";
 
         static readonly Queue<Action> Steps = new Queue<Action>();
         static readonly StringBuilder Log = new StringBuilder();
@@ -37,8 +44,8 @@ namespace Arcade.EditorTools
         static double _deadline;
 
         static Dictionary<string, string> _savedStrings;
-        static bool _hadBest;
-        static int _savedBest;
+        static bool _hadBest, _hadBest2;
+        static int _savedBest, _savedBest2;
 
         static FirebaseRankingService _a, _b;
         static string _uidA, _uidB, _nickA, _nickA2, _nickB;
@@ -106,6 +113,24 @@ namespace Arcade.EditorTools
                 Next();
             }));
 
+            // ---- A : 다른 게임에서도 같은 별명 (앞으로 추가될 게임 포함) --------------------
+            Step(() =>
+            {
+                PlayerPrefs.DeleteKey(BestKey2);
+                _a.Submit(Game2, PlayerIdentity.Nickname, 555, r =>
+                {
+                    Check("[여러 게임] 다른 게임에서는 별명을 다시 묻지 않고 같은 별명으로 올라간다  -> " + r, r == SubmitResult.Ok);
+                    Next();
+                });
+            });
+
+            Step(() => _a.Fetch(Game2, 8, page =>
+            {
+                Check("[여러 게임] 새 게임 랭킹에도 A 가 같은 별명 \"" + _nickA + "\" 으로 보인다",
+                      page.ok && HasRow(page, _nickA, 555));
+                Next();
+            }));
+
             // ---- A : 별명 바꾸기 --------------------------------------------------------
             Step(() => _a.ReserveNickname(_nickA2, r => { Check("A 별명 바꾸기 -> \"" + _nickA2 + "\"  -> " + r, r == NicknameResult.Ok); Next(); }));
 
@@ -118,11 +143,13 @@ namespace Arcade.EditorTools
             }));
 
             Step(() => Read(_a, new[] { "ranks", Game, "scores", _uidA }, doc =>
-            {
-                Check("점수 줄의 별명도 새 별명으로 바뀌었다  -> \"" + Firestore.GetString(doc, "nick") + "\"",
-                      Firestore.GetString(doc, "nick") == _nickA2);
-                Next();
-            }));
+                Read(_a, new[] { "ranks", Game2, "scores", _uidA }, doc2 =>
+                {
+                    Check("[여러 게임] 별명을 바꾸면 두 게임의 점수 줄이 모두 새 별명으로  -> \"" +
+                          Firestore.GetString(doc, "nick") + "\" / \"" + Firestore.GetString(doc2, "nick") + "\"",
+                          Firestore.GetString(doc, "nick") == _nickA2 && Firestore.GetString(doc2, "nick") == _nickA2);
+                    Next();
+                })));
 
             // ---- B : 겹치는 별명 · 보안 규칙 ---------------------------------------------
             Step(() =>
@@ -166,21 +193,22 @@ namespace Arcade.EditorTools
             }));
 
             // ---- 치트 "모든 데이터 초기화" 로 A 를 지워 보기 (2026-09-11) --------------------
-            Step(() => _a.DeleteMyData(new List<string> { Game }, ok =>
+            Step(() => _a.DeleteMyData(new List<string> { Game, Game2 }, ok =>
             {
                 Check("[치트] 모든 데이터 초기화가 서버의 A 기록 · 계정을 지운다", ok);
                 Next();
             }));
 
             // B 는 아직 로그인해 있으므로 B 로 확인합니다 (읽기는 누구나 됩니다).
-            Step(() => Read(_b, new[] { "ranks", Game, "scores", _uidA }, score =>
+            Step(() => Read(_b, new[] { "ranks", Game2, "scores", _uidA }, score2 =>
+                Read(_b, new[] { "ranks", Game, "scores", _uidA }, score =>
                 Read(_b, new[] { "nicknames", PlayerIdentity.KeyOf(_nickA2) }, seat =>
                 Read(_b, new[] { "users", _uidA }, user =>
                 {
                     Check("[치트] 지운 뒤 서버에 A 의 점수 줄 · 별명 자리 · 사람 기록이 남지 않았다",
-                          score == null && seat == null && user == null);
+                          score == null && score2 == null && seat == null && user == null);
                     Next();
-                }))));
+                })))));
 
             // ---- 치우기 ---------------------------------------------------------------
             // (B 도 별명을 잡는 순간 폰에 남은 시험 기록이 B 이름으로 올라가므로 점수 줄까지 지웁니다)
@@ -304,6 +332,7 @@ namespace Arcade.EditorTools
                 service.Db.DeleteWrite(new[] { "users", uid }),
                 service.Db.DeleteWrite(new[] { "nicknames", PlayerIdentity.KeyOf(nick) }),
                 service.Db.DeleteWrite(new[] { "ranks", Game, "scores", uid }),
+                service.Db.DeleteWrite(new[] { "ranks", Game2, "scores", uid }),
             };
 
             service.Db.Commit(writes, deleted =>
@@ -336,6 +365,8 @@ namespace Arcade.EditorTools
 
             _hadBest = PlayerPrefs.HasKey(BestKey);
             _savedBest = PlayerPrefs.GetInt(BestKey, 0);
+            _hadBest2 = PlayerPrefs.HasKey(BestKey2);
+            _savedBest2 = PlayerPrefs.GetInt(BestKey2, 0);
         }
 
         static void Restore()
@@ -348,6 +379,8 @@ namespace Arcade.EditorTools
 
             if (_hadBest) PlayerPrefs.SetInt(BestKey, _savedBest);
             else PlayerPrefs.DeleteKey(BestKey);
+            if (_hadBest2) PlayerPrefs.SetInt(BestKey2, _savedBest2);
+            else PlayerPrefs.DeleteKey(BestKey2);
 
             PlayerPrefs.Save();
             PlayerIdentity.Reload();

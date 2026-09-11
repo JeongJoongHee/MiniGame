@@ -21,7 +21,21 @@ namespace Archery.EditorTools
         const string ConfigPath = ArcheryStageCsv.ConfigPath;
 
         static readonly Color HudColor = new Color(0.13f, 0.18f, 0.30f);
-        static readonly Color RailColor = new Color(0.60f, 0.66f, 0.76f, 0.9f);
+
+        // --- 배경(잔디밭 그림, 2026-09-11)에 맞춘 UI 투명도 ----------------------------------
+        // 예전 배경은 밝은 하늘색 그라데이션이라 글자를 그냥 얹어도 읽혔지만, 잔디밭 그림은
+        // 위쪽이 어두운 숲이고 아래쪽이 꽃·통나무라 글자가 묻힙니다. 그래서 글자마다 반투명 판을 깔고,
+        // 시작·결과 화면의 어두운 막을 짙게, 레일은 운동장 흰 선처럼 반투명 흰색으로 바꿨습니다.
+        // (이 프로젝트는 Linear 색 공간이라 같은 알파라도 눈에는 옅게 보입니다 — 팝업 막 0.70 과 같은 이유)
+
+        /// <summary>과녁이 미끄러지는 레일. 운동장에 그어진 흰 선과 어울리게 반투명 흰색.</summary>
+        static readonly Color RailColor = new Color(1f, 1f, 1f, 0.6f);
+
+        /// <summary>점수판 · 과녁 크기 · 남은 화살 뒤에 까는 판. 셋 다 같은 판이라 화면이 한 벌로 보입니다.</summary>
+        static readonly Color ChipColor = new Color(1f, 1f, 1f, 0.66f);
+
+        /// <summary>시작 안내 / 결과 화면의 막. 밝은 잔디 위에서 흰 글자가 읽히려면 짙어야 합니다 (예전 0.62).</summary>
+        static readonly Color OverlayColor = new Color(0.04f, 0.07f, 0.06f, 0.78f);
 
         [MenuItem("Tools/Archery/Build Archery Scene", priority = 0)]
         public static void BuildScene()
@@ -78,14 +92,12 @@ namespace Archery.EditorTools
             if (camGo.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>() == null)
                 camGo.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
 
-            // ---------- 하늘 ----------
-            // 8x512 짜리 그라데이션 한 장을 화면보다 넉넉하게 늘려서 깝니다.
+            // ---------- 배경 (Art/Sky.png) ----------
             var sky = new GameObject("Sky").AddComponent<SpriteRenderer>();
             sky.sprite = skySprite;
             sky.sortingOrder = -100;
             sky.transform.position = new Vector3(0f, 0f, 5f);
-            var skySize = skySprite.bounds.size;
-            sky.transform.localScale = new Vector3(24f / skySize.x, (config.orthoSize * 2.2f) / skySize.y, 1f);
+            sky.transform.localScale = SkyScale(skySprite.bounds.size, config.orthoSize);
 
             // ---------- 과녁이 미끄러지는 레일 ----------
             // 레일 양 끝 = 과녁이 되돌아오는 자리입니다. 과녁은 가장자리가 playHalfWidth 에 닿으면 튕기므로
@@ -229,7 +241,7 @@ namespace Archery.EditorTools
             scorePanel.transform.SetParent(root, false);
             scorePanel.sprite = round;
             scorePanel.type = Image.Type.Sliced;
-            scorePanel.color = new Color(1f, 1f, 1f, 0.72f);
+            scorePanel.color = ChipColor;
             scorePanel.raycastTarget = false;
             Anchor(scorePanel.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f),
                    new Vector2(-40f, -168f), new Vector2(560f, 150f));
@@ -243,10 +255,10 @@ namespace Archery.EditorTools
             Anchor(best.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.5f), new Vector2(0.5f, 0.5f),
                    new Vector2(-24f, 6f), new Vector2(-48f, -18f));
 
-            // 과녁 크기 : 좌상단
-            var size = MakeText(root, "SizeText", 40, TextAnchor.MiddleLeft);
-            Anchor(size.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f),
-                   new Vector2(44f, -92f), new Vector2(460f, 60f));
+            // 과녁 크기 : 좌상단. 뒤쪽이 어두운 숲이라 판을 깔고 그 위에 씁니다.
+            var sizeChip = MakeChip(root, "SizeChip", round, new Vector2(0f, 1f), new Vector2(30f, -70f), new Vector2(360f, 76f));
+            var size = MakeText(sizeChip, "SizeText", 40, TextAnchor.MiddleLeft);
+            Stretch(size.rectTransform, 22f);
 
             // 남은 화살 : 좌하단. 아이콘 줄 + 숫자
             var ammoIcons = new Object[12];
@@ -262,13 +274,15 @@ namespace Archery.EditorTools
                 ammoIcons[i] = icon;
             }
 
-            var ammo = MakeText(root, "AmmoText", 38, TextAnchor.MiddleLeft);
-            Anchor(ammo.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f),
-                   new Vector2(48f, 170f), new Vector2(420f, 54f));
+            // 남은 화살 숫자 : 뒤쪽이 꽃밭·통나무라 판을 깔고 그 위에 씁니다.
+            var ammoChip = MakeChip(root, "AmmoChip", round, new Vector2(0f, 0f), new Vector2(30f, 160f), new Vector2(330f, 72f));
+            var ammo = MakeText(ammoChip, "AmmoText", 38, TextAnchor.MiddleLeft);
+            Stretch(ammo.rectTransform, 22f);
 
-            // 맞힌 자리에 잠깐 뜨는 "+5 PT"
+            // 맞힌 자리에 잠깐 뜨는 "+5 PT". 잔디 위에서도 보이게 짙은 테두리를 두릅니다.
             var popup = MakeText(root, "HitPopup", 66, TextAnchor.MiddleCenter);
-            popup.color = new Color(0.94f, 0.42f, 0.24f);
+            popup.color = new Color(1f, 0.55f, 0.24f);
+            Arcade.ShellUI.AddOutline(popup, 3f, new Color(0.18f, 0.08f, 0.02f, 0.9f));
             Anchor(popup.rectTransform, new Vector2(0.5f, 0.66f), new Vector2(0.5f, 0.66f), new Vector2(0.5f, 0.5f),
                    Vector2.zero, new Vector2(340f, 90f));
             popup.gameObject.SetActive(false);
@@ -277,7 +291,7 @@ namespace Archery.EditorTools
             var overlay = new GameObject("Overlay", typeof(Image));
             overlay.transform.SetParent(root, false);
             var overlayImg = overlay.GetComponent<Image>();
-            overlayImg.color = new Color(0.06f, 0.10f, 0.18f, 0.62f);
+            overlayImg.color = OverlayColor;
             overlayImg.raycastTarget = false;
             var overlayRect = overlay.GetComponent<RectTransform>();
             Stretch(overlayRect, 0f);
@@ -309,6 +323,39 @@ namespace Archery.EditorTools
             WireArray(hud, "ammoIcons", ammoIcons);
 
             return hud;
+        }
+
+        /// <summary>
+        /// 배경 그림의 크기를 정합니다.
+        ///  - **진짜 그림**(2026-09-11 부터 잔디밭)은 비율을 지킨 채 **화면 위아래를 꽉 채웁니다.**
+        ///    세로로 가장 넓은 폰(9:16)에서도 좌우가 비지 않는지 같이 보고, 남는 좌우는 잘립니다 (20:9 폰은 양옆이 조금 잘림).
+        ///    예전처럼 가로세로를 따로 늘리면 그림이 옆으로 두 배쯤 퍼져 보입니다.
+        ///  - 가느다란 그라데이션 띠(임시 그림, 8x512)는 예전처럼 화면보다 넉넉하게 늘립니다.
+        /// </summary>
+        static Vector3 SkyScale(Vector3 size, float orthoSize)
+        {
+            if (size.x <= 0f || size.y <= 0f) return Vector3.one;
+
+            float screenHeight = orthoSize * 2f;
+            if (size.x / size.y < 0.2f)
+                return new Vector3(24f / size.x, (screenHeight * 1.1f) / size.y, 1f);
+
+            float widestPortraitWidth = screenHeight * 9f / 16f;
+            float scale = Mathf.Max(screenHeight / size.y, widestPortraitWidth / size.x);
+            return new Vector3(scale, scale, 1f);
+        }
+
+        /// <summary>HUD 글자 뒤에 까는 반투명 판 하나 (점수판과 같은 모양 · 같은 투명도).</summary>
+        static RectTransform MakeChip(RectTransform parent, string name, Sprite round, Vector2 corner, Vector2 pos, Vector2 size)
+        {
+            var chip = new GameObject(name, typeof(Image)).GetComponent<Image>();
+            chip.transform.SetParent(parent, false);
+            chip.sprite = round;
+            chip.type = Image.Type.Sliced;
+            chip.color = ChipColor;
+            chip.raycastTarget = false;
+            Anchor(chip.rectTransform, corner, corner, corner, pos, size);
+            return chip.rectTransform;
         }
 
         static Text MakeText(RectTransform parent, string name, int fontSize, TextAnchor anchor)

@@ -370,8 +370,26 @@ namespace Arcade.EditorTools
                 failed += Check(log, "로비 왼쪽 위 랭킹 아이콘은 없어지고, 게임 칸마다 붙을 준비가 되었다",
                                 !oldIcon && wired);
 
-                // 수정사항_03 : 활쏘기 아이콘(꽉 찬 과녁)은 줄여서 칸의 갈색 테두리가 보이게
+                // 모든 게임이 **같은 별명**으로 랭킹에 오를 수 있는가 (2026-09-11 사용자 요청 — 앞으로 추가될 게임도)
+                //  - 별명은 게임이 아니라 사람에게 하나 붙어 있어서(PlayerIdentity), 게임 쪽에서 따로 할 일은 없습니다.
+                //  - 다만 서버 규칙이 게임 id 를 "영문 소문자 · 숫자 · _ (32자까지)" 로만 받습니다.
+                //    다른 모양의 id 로 게임을 추가하면 **그 게임만 점수가 조용히 안 올라가므로** 여기서 미리 잡습니다.
+                //  - 랭킹 창에 나올 게임 이름 줄(strings.csv game.{id}.name)도 같이 봅니다.
                 var catalog = AssetDatabase.LoadAssetAtPath<GameCatalog>(ShellSceneBuilder.CatalogPath);
+                if (catalog != null)
+                {
+                    foreach (var entry in catalog.games)
+                    {
+                        if (entry == null || !entry.IsPlayable) continue;
+                        bool idOk = System.Text.RegularExpressions.Regex.IsMatch(entry.id ?? "", "^[a-z0-9_]{1,32}$");
+                        bool named = StringTable.Get("game." + entry.id + ".name", "").Length > 0;
+                        failed += Check(log, "게임 \"" + entry.id + "\" 은 같은 별명으로 랭킹에 오를 수 있다 (id 모양" +
+                                             (idOk ? " OK" : " ✗ 영문 소문자·숫자·_ 만") + " / 이름 줄" + (named ? " OK" : " ✗ strings.csv") + ")",
+                                        idOk && named);
+                    }
+                }
+
+                // 수정사항_03 : 활쏘기 아이콘(꽉 찬 과녁)은 줄여서 칸의 갈색 테두리가 보이게
                 var archery = catalog != null ? catalog.FindById("archery") : null;
                 failed += Check(log, "활쏘기 아이콘이 칸 테두리 안쪽 크기로 줄었다  -> x" + (archery != null ? archery.iconScale : 0f),
                                 archery != null && archery.iconScale < 0.9f);
