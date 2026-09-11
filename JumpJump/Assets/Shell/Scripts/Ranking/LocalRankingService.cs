@@ -5,8 +5,9 @@ using UnityEngine;
 namespace Arcade
 {
     /// <summary>
-    /// **서버 없이 이 폰 안에만 저장하는 랭킹**입니다. 1단계에서 화면과 흐름을 먼저 만들기 위한 것으로,
-    /// 2단계에서 Firebase 구현으로 갈아 끼웁니다.
+    /// **서버 없이 이 폰 안에만 저장하는 랭킹**입니다. 1단계에서 화면과 흐름을 먼저 만들기 위한 것이었고,
+    /// 지금은 서버 주소가 비어 있거나 <c>ArcadeConfig.onlineRanking</c> 을 껐을 때 쓰입니다.
+    /// 배치 미리보기도 이것으로 찍습니다 (플레이 모드가 아니라 서버 쪽이 끼워지지 않기 때문).
     ///
     /// 내 최고 점수는 진짜로 저장되므로, 갈아 끼운 뒤에도 "내 기록"은 그대로 남습니다.
     ///
@@ -37,21 +38,25 @@ namespace Arcade
 
         public bool IsReady => true;
 
-        public void Submit(string gameId, string nickname, int score, Action<bool> done = null)
+        public void Submit(string gameId, string nickname, int score, Action<SubmitResult> done = null)
         {
-            if (string.IsNullOrEmpty(gameId))
-            {
-                done?.Invoke(false);
-                return;
-            }
+            done?.Invoke(RecordBest(gameId, score) ? SubmitResult.Ok : SubmitResult.Failed);
+        }
+
+        /// <summary>
+        /// 이 폰에 내 최고 점수를 적어 둡니다. 서버 구현도 먼저 여기에 적습니다 —
+        /// 그래야 인터넷이 끊겨 있어도 기록이 사라지지 않고, 다음에 연결될 때 올라갑니다.
+        /// </summary>
+        public static bool RecordBest(string gameId, int score)
+        {
+            if (string.IsNullOrEmpty(gameId)) return false;
 
             if (score > BestOf(gameId))
             {
                 PlayerPrefs.SetInt(BestKey(gameId), score);
                 PlayerPrefs.Save();
             }
-
-            done?.Invoke(true);
+            return true;
         }
 
         public void Fetch(string gameId, int count, Action<RankingPage> done)
@@ -100,15 +105,19 @@ namespace Arcade
                 return;
             }
 
-            foreach (var (nick, _) in SampleRows)
+            if (_useSamples)
             {
-                if (string.Equals(nick, clean, StringComparison.OrdinalIgnoreCase))
+                foreach (var (nick, _) in SampleRows)
                 {
-                    done?.Invoke(NicknameResult.Taken);
-                    return;
+                    if (PlayerIdentity.KeyOf(nick) == PlayerIdentity.KeyOf(clean))
+                    {
+                        done?.Invoke(NicknameResult.Taken);
+                        return;
+                    }
                 }
             }
 
+            PlayerIdentity.Nickname = clean;
             done?.Invoke(NicknameResult.Ok);
         }
 

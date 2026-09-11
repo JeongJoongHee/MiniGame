@@ -98,6 +98,10 @@ namespace JumpJump.EditorTools
             // AAB(스토어 업로드용)가 아니라 기기에 바로 설치할 수 있는 APK 로 굽습니다.
             EditorUserBuildSettings.buildAppBundle = false;
 
+            // 랭킹 서버와 통신합니다. 인터넷 권한을 확실히 넣어 둡니다
+            // (Unity 가 알아서 넣어 주기도 하지만, 빠지면 폰에서 랭킹만 조용히 안 되므로 명시합니다).
+            PlayerSettings.Android.forceInternetPermission = true;
+
             // 서명용 keystore 를 따로 만들지 않았으므로 Unity 의 디버그 키로 서명됩니다.
             // 기기에 직접 설치(사이드로드)하는 데는 문제가 없고, 스토어 업로드는 불가합니다.
             PlayerSettings.Android.useCustomKeystore = false;

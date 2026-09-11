@@ -58,8 +58,13 @@ namespace Arcade.EditorTools
         public const string AskExitPath = Folder + "/Popup_Ask_Exit.png";
         /// <summary>"종료하시겠습니까?" 가 그려진 판.</summary>
         public const string AskQuitPath = Folder + "/Popup_Ask_Quit.png";
-        /// <summary>로비 왼쪽 위 랭킹 아이콘. 없으면 코드가 임시 그림을 그려 둡니다.</summary>
+        /// <summary>로비 게임 칸마다 붙는 랭킹 아이콘 (2026-09-11 전에는 왼쪽 위 하나). 없으면 코드가 임시 그림을 그려 둡니다.</summary>
         public const string RankButtonPath = Folder + "/Rank_Button.png";
+        /// <summary>
+        /// 게임 칸의 랭킹 아이콘 뒤에 깔리는 동그란 받침. 아이콘이 배경에 그려진 **칸 번호(1, 2 ...)를 가립니다.**
+        /// 없으면 코드가 그려 둡니다. 바꾸려면 작업 폴더에 <c>Rank_Badge.png</c> 를 넣으세요.
+        /// </summary>
+        public const string RankBadgePath = Folder + "/Rank_Badge.png";
         public const string OkButtonPath = Folder + "/Ok_Button.png";
         public const string CancelButtonPath = Folder + "/Cancel_Button.png";
         public const string EndButtonPath = Folder + "/End_Button.png";
@@ -84,6 +89,7 @@ namespace Arcade.EditorTools
             (new[] { "End_Button.png" },                              EndButtonPath,     true),
             (new[] { "Close_Button.png" },                            CloseButtonPath,   true),
             (new[] { "Rank.png", "Ranking.png", "Trophy.png" },        RankButtonPath,    true),
+            (new[] { "Rank_Badge.png" },                              RankBadgePath,     true),
         };
 
         [MenuItem("Tools/Arcade/Import Shell Art", priority = 20)]
@@ -105,6 +111,7 @@ namespace Arcade.EditorTools
 
             if (EnsureBlankNamePlate()) changed = true;
             if (EnsureRankIcon()) changed = true;
+            if (EnsureRankBadge()) changed = true;
 
             foreach (var (sources, dest, trim) in Map)
             {
@@ -340,6 +347,45 @@ namespace Arcade.EditorTools
             return true;
         }
 
+        /// <summary>
+        /// 랭킹 아이콘 뒤에 까는 **동그란 받침**을 만들어 둡니다 (빈 이름표와 같은 크림색 + 갈색 테두리).
+        /// 게임 칸의 번호 자리에 아이콘을 얹는데, 아이콘만 얹으면 뒤에 그려진 "2" 같은 숫자가
+        /// 삐져나와 보여서 받침으로 덮습니다. 파일이 이미 있으면 아무것도 하지 않습니다.
+        /// </summary>
+        static bool EnsureRankBadge()
+        {
+            if (File.Exists(RankBadgePath)) return false;
+
+            const int size = 256;
+            var fill = new Color(1f, 0.953f, 0.855f);
+            var edge = new Color(0.545f, 0.353f, 0.169f);
+            float half = size * 0.5f, radius = half - 4f;
+
+            var pixels = new Color[size * size];
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float dx = x + 0.5f - half, dy = y + 0.5f - half;
+                    float dist = Mathf.Sqrt(dx * dx + dy * dy) - radius;   // 0 보다 작으면 원 안쪽
+
+                    Color c = dist > -14f ? edge : fill;                   // 바깥쪽 14px 은 테두리 색
+                    c.a = Mathf.Clamp01(0.5f - dist);
+                    pixels[y * size + x] = c;
+                }
+            }
+
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            tex.SetPixels(pixels);
+            tex.Apply();
+            Directory.CreateDirectory(Folder);
+            File.WriteAllBytes(RankBadgePath, tex.EncodeToPNG());
+            Object.DestroyImmediate(tex);
+
+            Debug.Log("[Arcade] 랭킹 아이콘 받침 그림을 만들었습니다 -> " + RankBadgePath);
+            return true;
+        }
+
         static void Fill(Color[] pixels, int size, int x0, int x1, int y0, int y1, Color color)
         {
             x0 = Mathf.Clamp(x0, 0, size); x1 = Mathf.Clamp(x1, 0, size);
@@ -479,6 +525,7 @@ namespace Arcade.EditorTools
             Configure(SettingButtonPath, 512);
             Configure(BackButtonPath, 512);
             Configure(RankButtonPath, 512);
+            Configure(RankBadgePath, 256);
 
             // 빈 판은 랭킹 창처럼 **세로로 긴 팝업**에도 쓰기 때문에 9-슬라이스로 잡습니다.
             // 테두리 29px 바로 바깥쪽(34px)을 모서리로 두면, 판을 어떤 크기로 늘려도

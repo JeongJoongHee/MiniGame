@@ -59,6 +59,14 @@ namespace Arcade.EditorTools
                     ShootPopup("SettingsPopup", Path.Combine(outputFolder, "00_popup_settings" + suffix + ".png"), height);
                     ShootPopup("QuitPopup", Path.Combine(outputFolder, "00_popup_quit" + suffix + ".png"), height);
                     ShootPopup("RankingPopup", Path.Combine(outputFolder, "00_popup_ranking" + suffix + ".png"), height);
+
+                    // 두 번째 게임 칸의 랭킹 아이콘으로 연 모양 = 두 번째 탭이 골라진 창 (탭 버그 수정 확인용)
+                    ShootPopup("RankingPopup", Path.Combine(outputFolder, "00_popup_ranking_tab2" + suffix + ".png"), height,
+                               popup => { foreach (var v in popup.GetComponentsInChildren<RankingPopup>(true)) v.SelectTab(1); });
+
+                    // 설정 창 위에 뜨는 [별명 바꾸기] 창
+                    ShootPopup("NicknamePopup", Path.Combine(outputFolder, "00_popup_nickname_change" + suffix + ".png"), height,
+                               popup => { foreach (var v in popup.GetComponentsInChildren<NicknamePopup>(true)) v.SetChangingForPreview(true); });
                 }
             }
 
@@ -69,7 +77,7 @@ namespace Arcade.EditorTools
         /// 씬에 꺼진 채로 들어 있는 팝업 하나를 켜서 찍고 다시 끕니다.
         /// (Find 는 꺼진 물체를 못 찾으므로 컴포넌트로 훑습니다)
         /// </summary>
-        public static void ShootPopup(string name, string path, int height)
+        public static void ShootPopup(string name, string path, int height, System.Action<PopupPanel> prepare = null)
         {
             PopupPanel found = null;
             foreach (var popup in Object.FindObjectsByType<PopupPanel>(FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -83,6 +91,8 @@ namespace Arcade.EditorTools
 
             found.Open();
             RefreshViews(found);
+            prepare?.Invoke(found);
+            foreach (var view in found.GetComponentsInChildren<NicknamePopup>(true)) view.Refresh();
             Relayout();
             Shoot(path, height);
             found.Close();
@@ -96,6 +106,7 @@ namespace Arcade.EditorTools
         {
             foreach (var view in popup.GetComponentsInChildren<RankingPopup>(true)) view.Refresh();
             foreach (var view in popup.GetComponentsInChildren<NicknamePopup>(true)) view.Refresh();
+            foreach (var view in popup.GetComponentsInChildren<NicknameLabel>(true)) view.Refresh();
         }
 
         /// <summary>

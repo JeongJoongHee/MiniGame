@@ -18,3 +18,6 @@ MonoBehaviour:
   rankingTopCount: 100
   rankingVisibleRows: 8
   nicknameMaxLength: 8
+  onlineRanking: 1
+  firebaseProjectId: minigame-a0857
+  firebaseApiKey: AIzaSyCMET4m8NObRnbcjoZzShu8zZGQVCJcnvg

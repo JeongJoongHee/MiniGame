@@ -1,29 +1,29 @@
 ﻿Key,Text,Note
-jump.ready.title,JUMP JUMP,점프점프 - 시작 화면 제목
-jump.ready.body,TAP TO JUMP UP\nRIDE THE MOVING PLATFORM,점프점프 - 시작 화면 설명
-jump.ready.hint,TAP TO START,점프점프 - 시작 화면 아래 안내
+jump.ready.title,점프 점프!,점프점프 - 시작 화면 제목
+jump.ready.body,가장 높은곳으로 올라가보세요!,점프점프 - 시작 화면 설명
+jump.ready.hint,터치하면 시작합니다.!,점프점프 - 시작 화면 아래 안내
 jump.over.title,GAME OVER,점프점프 - 종료 화면 제목
-jump.over.body,"{reason}\n\nSCORE   {score}\nHEIGHT  {height}m\nBEST    {best}",점프점프 - 종료 화면 본문
-jump.over.hint,TAP TO RETRY,점프점프 - 종료 화면 아래 안내
-jump.over.fell,FELL DOWN,점프점프 - 떨어져서 끝났을 때
+jump.over.body,{reason}\n\n점수   {score}\n높이  {height}m\n최고점수    {best},점프점프 - 종료 화면 본문
+jump.over.hint,터치하여 다시하기,점프점프 - 종료 화면 아래 안내
+jump.over.fell,캐릭터가 떨어졌어요!,점프점프 - 떨어져서 끝났을 때
 jump.over.timeup,TIME OVER,점프점프 - 시간이 다 됐을 때
-jump.hud.score,Score : {score},점프점프 - 화면 왼쪽 위
-jump.hud.height,Height : {height}m,점프점프 - 화면 오른쪽 위
+jump.hud.score,점수 : {score},점프점프 - 화면 왼쪽 위
+jump.hud.height,높이 : {height}m,점프점프 - 화면 오른쪽 위
 jump.hud.combo,COMBO {combo}   x{multiplier},점프점프 - 콤보 2 이상일 때만 나옴
-archery.ready.title,ARCHERY,활쏘기 - 시작 화면 제목
-archery.ready.body,TAP TO SHOOT\nHIT THE MOVING TARGET\n\nCENTER 5 PT / EDGE 1 PT\nA HIT REFILLS YOUR ARROWS,활쏘기 - 시작 화면 설명
-archery.ready.hint,TAP TO START,활쏘기 - 시작 화면 아래 안내
+archery.ready.title,활쏘기,활쏘기 - 시작 화면 제목
+archery.ready.body,과녁을 맞춰서 높은 점수를 획득하세요!,활쏘기 - 시작 화면 설명
+archery.ready.hint,터치하면 시작합니다.!,활쏘기 - 시작 화면 아래 안내
 archery.over.title,GAME OVER,활쏘기 - 종료 화면 제목
-archery.over.body,"{reason}\n\nSCORE     {score} PT\nHITS      {hits} / {shots}\nACCURACY  {accuracy}%\nBEST      {best} PT",활쏘기 - 종료 화면 본문
-archery.over.hint,TAP TO RETRY,활쏘기 - 종료 화면 아래 안내
-archery.over.noammo,OUT OF ARROWS,활쏘기 - 화살이 다 떨어졌을 때
-archery.hud.score,SCORE : {score} PT,활쏘기 - 오른쪽 위 점수
-archery.hud.best,HIGHEST : {best} PT,활쏘기 - 오른쪽 위 최고 점수
-archery.hud.target,TARGET {size}%,활쏘기 - 왼쪽 위 과녁 크기
-archery.hud.ammo,AMMO {ammo}/{ammoMax},활쏘기 - 왼쪽 아래 남은 화살
+archery.over.body,{reason}\n\n점수     {score} PT\n명중      {hits} / {shots}\n명중률  {accuracy}%\n최고점수      {best} PT,활쏘기 - 종료 화면 본문
+archery.over.hint,터치하여 다시하기,활쏘기 - 종료 화면 아래 안내
+archery.over.noammo,화살이 다 떨어졌어요!,활쏘기 - 화살이 다 떨어졌을 때
+archery.hud.score,점수 : {score} PT,활쏘기 - 오른쪽 위 점수
+archery.hud.best,최고점수 : {best} PT,활쏘기 - 오른쪽 위 최고 점수
+archery.hud.target,과녁크기 {size}%,활쏘기 - 왼쪽 위 과녁 크기
+archery.hud.ammo,남은 화살 {ammo}/{ammoMax},활쏘기 - 왼쪽 아래 남은 화살
 archery.hit.popup,+{point} PT,활쏘기 - 맞혔을 때 과녁 아래 잠깐 뜨는 글자
-
-# 랭킹 · 별명 (2026-09-09)
+,,
+# 랭킹 · 별명 (2026-09-09),,
 rank.title,랭킹,랭킹 창 - 제목
 rank.loading,불러오는 중...,랭킹 창 - 기다리는 동안
 rank.empty,아직 기록이 없습니다,랭킹 창 - 아무도 없을 때
@@ -38,3 +38,11 @@ nick.checking,확인하는 중...,별명 창 - 서버에 물어보는 동안
 nick.empty,별명을 입력해 주세요,별명 창 - 빈 채로 확인을 눌렀을 때
 nick.taken,이미 있는 별명입니다,별명 창 - 남이 쓰고 있을 때
 nick.failed,지금은 등록할 수 없습니다,별명 창 - 확인하지 못했을 때
+,,
+# 별명 바꾸기 · 금지어 (2026-09-11),,
+nick.title.change,새 별명을 정해 주세요,별명 창 - 설정의 [별명 바꾸기] 로 열었을 때 제목
+nick.bad,쓸 수 없는 말이 들어 있습니다,별명 창 - 금지어(badword.csv)에 걸렸을 때
+nick.invalid,쓸 수 없는 별명입니다,별명 창 - 점(.) 하나처럼 저장할 수 없는 이름일 때
+settings.nick,내 별명 : {nick},설정 창 - 지금 별명
+settings.nick.none,아직 별명이 없습니다,설정 창 - 별명을 정한 적이 없을 때
+settings.nick.change,별명 바꾸기,설정 창 - 별명 바꾸기 버튼 위 글자

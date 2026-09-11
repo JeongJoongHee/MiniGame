@@ -52,9 +52,20 @@ namespace Arcade.EditorTools
         // 값은 로비 그림 안에서의 비율이라 폰 해상도가 달라도 같은 자리에 붙습니다.
 
         static readonly Vector2 GearCenter = new Vector2(0.9268f, 0.9496f);
-        /// <summary>왼쪽 위 랭킹 아이콘. 톱니바퀴를 좌우로 뒤집은 자리입니다.</summary>
-        static readonly Vector2 RankCenter = new Vector2(0.0732f, 0.9496f);
+        // (랭킹 아이콘은 2026-09-11 에 왼쪽 위에서 **게임 칸마다**로 옮겼습니다. 자리는 LobbyScreen.rankCenter)
         const float GearWidth = 0.085f;
+
+        // --- 설정 창 안의 "내 별명" 줄 (2026-09-11) --------------------------------
+        // 판 크기를 1 로 본 비율입니다. 버튼(SettingsButtonY)보다 위, 나중에 사운드 조절이 들어갈 자리보다 아래.
+
+        /// <summary>"내 별명 : 홍길동" 과 [별명 바꾸기] 가 놓이는 높이.</summary>
+        const float NicknameRowY = 0.63f;
+        /// <summary>"내 별명 : 홍길동" 글자 칸의 가운데 x 와 폭.</summary>
+        const float NicknameLabelX = 0.37f;
+        const float NicknameLabelWidth = 0.50f;
+        /// <summary>[별명 바꾸기] 버튼의 가운데 x 와 폭.</summary>
+        const float NicknameButtonX = 0.76f;
+        const float NicknameButtonWidth = 0.30f;
         /// <summary>손가락으로 누를 영역은 그림보다 넉넉하게 잡습니다.</summary>
         const float GearHitWidth = 0.135f;
 
@@ -68,6 +79,9 @@ namespace Arcade.EditorTools
 
             // 0b) 껍데기 설정 에셋 (광고 간격 · 랭킹 줄 수 · 별명 길이). 없으면 기본값으로 만들어 둡니다.
             ShellConfigAsset.LoadOrCreate();
+
+            // 0c) 랭킹 서버 주소. 작업 폴더의 google-services.json 에서 설정 에셋으로 옮겨 적습니다.
+            ShellFirebaseConfig.Sync();
 
             // 1) 미니게임 씬들 (각 게임의 빌더가 자기 CSV 동기화까지 같이 합니다)
             JumpJump.EditorTools.JumpJumpSceneBuilder.BuildScene();
@@ -191,7 +205,9 @@ namespace Arcade.EditorTools
                 {
                     settings = MakePopup(root, "SettingsPopup", panelSprite, out var panel, out float aspect);
 
-                    // 판 위쪽은 일부러 비워 둡니다 — 나중에 사운드 조절이 들어갈 자리입니다.
+                    // 판 맨 위쪽은 일부러 비워 둡니다 — 나중에 사운드 조절이 들어갈 자리입니다.
+                    MakeNicknameRow(panel, aspect, menu);
+
                     MakePopupButton(panel, "End", endSprite, new Vector2(PopupButtonLeftX, SettingsButtonY),
                                     aspect, menu, "OnEndPressed");
                     MakePopupButton(panel, "Close", closeSprite, new Vector2(PopupButtonRightX, SettingsButtonY),
@@ -205,6 +221,41 @@ namespace Arcade.EditorTools
             Wire(menu, ("quitPopup", quit));
             if (settings != null) Wire(menu, ("settingsPopup", settings));
             return menu;
+        }
+
+        /// <summary>
+        /// 설정 창 안의 한 줄 — **"내 별명 : 홍길동"  [별명 바꾸기]**. (수정사항_02, 2026-09-11)
+        ///
+        /// [별명 바꾸기] 는 그림 버튼이 아니라 **빈 이름표 그림 위에 글자**를 얹은 버튼입니다.
+        /// 한글 글꼴이 들어 있어서 새 그림 없이도 만들 수 있고, 문구는 strings.csv 에서 바꿉니다.
+        /// 진짜 버튼 그림을 받으면 이 자리를 그림 버튼으로 바꾸면 됩니다.
+        /// </summary>
+        static void MakeNicknameRow(RectTransform panel, float panelAspect, ShellMenu menu)
+        {
+            var ink = new Color(0.231f, 0.106f, 0.078f);
+
+            var label = ShellUI.AddText(panel, "MyNickname", 40, ink);
+            label.alignment = TextAnchor.MiddleLeft;
+            ShellUI.Place(label.rectTransform, new Vector2(NicknameLabelX, NicknameRowY),
+                          new Vector2(NicknameLabelWidth, 0.14f));
+            var view = label.gameObject.AddComponent<NicknameLabel>();
+            Wire(view, ("label", label));
+            view.Refresh();
+
+            var plateSprite = ShellArt.Load(ShellArt.BlankPlatePath);
+            var button = ShellUI.AddImage(panel, "ChangeNickname", plateSprite, raycast: true);
+            float height = plateSprite != null
+                ? ShellUI.HeightForWidth(plateSprite, NicknameButtonWidth, panelAspect)
+                : 0.16f;
+            ShellUI.Place(button.rectTransform, new Vector2(NicknameButtonX, NicknameRowY),
+                          new Vector2(NicknameButtonWidth, height));
+            MakeButton(button, menu, "OnChangeNicknamePressed");
+
+            var text = ShellUI.AddText(button.rectTransform, "Label", 36, ink);
+            ShellUI.Place(text.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.84f, 0.62f));
+            text.text = StringTable.Get("settings.nick.change", "CHANGE");
+            var localized = text.gameObject.AddComponent<LocalizedText>();
+            WireText(localized, ("key", "settings.nick.change"), ("fallback", "CHANGE"));
         }
 
         // ------------------------------------------------------------------ 로비
@@ -243,24 +294,17 @@ namespace Arcade.EditorTools
             ShellUI.Place((RectTransform)gearHit.transform, GearCenter, new Vector2(GearHitWidth, GearHitWidth * frameAspect));
             if (menu != null) BindClick(gearHit, menu, "OnSettingsPressed");
 
-            // 왼쪽 위 랭킹 아이콘. 톱니바퀴와 같은 크기·같은 높이의 대칭 자리입니다.
+            // 랭킹 창. 게임 이름표가 탭이라 카탈로그가 필요합니다.
+            // 여는 버튼은 로비 왼쪽 위가 아니라 **게임 칸마다** 있습니다 (수정사항_02, 2026-09-11).
+            // 칸은 실행할 때 LobbyScreen 이 만들므로, 아이콘 그림과 창을 LobbyScreen 에 넘겨 둡니다.
             // 그림이 없으면 ShellArt 가 임시 그림(시상대 모양)을 만들어 둡니다.
             var rankSprite = ShellArt.Load(ShellArt.RankButtonPath);
-            if (rankSprite != null)
-            {
-                var rankIcon = ShellUI.AddImage(backdrop, "RankIcon", rankSprite);
-                ShellUI.Place(rankIcon.rectTransform, RankCenter,
-                              new Vector2(GearWidth, ShellUI.HeightForWidth(rankSprite, GearWidth, frameAspect)));
-
-                var rankHit = ShellUI.AddHitArea(backdrop, "RankButton");
-                ShellUI.Place((RectTransform)rankHit.transform, RankCenter,
-                              new Vector2(GearHitWidth, GearHitWidth * frameAspect));
-                if (menu != null) BindClick(rankHit, menu, "OnRankingPressed");
-            }
-
-            // 랭킹 창. 게임 이름표가 탭이라 카탈로그가 필요합니다.
             var rankingPopup = ShellRankingUI.BuildRankingPopup(root, catalog, menu);
-            if (menu != null && rankingPopup != null) Wire(menu, ("rankingPopup", rankingPopup));
+            var rankingView = rankingPopup != null ? rankingPopup.GetComponentInChildren<RankingPopup>(true) : null;
+
+            // 별명 창. 설정 창의 [별명 바꾸기] 로 엽니다 (미니게임 씬의 것과 같은 창입니다).
+            var nicknamePopup = ShellRankingUI.BuildNicknamePopup(root);
+            if (menu != null && nicknamePopup != null) Wire(menu, ("nicknamePopup", nicknamePopup));
 
             var screenGo = new GameObject("LobbyScreen");
             var screen = screenGo.AddComponent<LobbyScreen>();
@@ -271,7 +315,10 @@ namespace Arcade.EditorTools
                 ("catalog", catalog),
                 ("backdrop", backdrop),
                 ("fallbackNamePlate", ShellArt.Load(ShellArt.BlankPlatePath)),
-                ("playButton", playSprite));
+                ("playButton", playSprite),
+                ("rankIcon", rankSprite),
+                ("rankBadge", ShellArt.Load(ShellArt.RankBadgePath)),
+                ("ranking", rankingView));
 
             screen.Build();
             return screen;
@@ -596,14 +643,27 @@ namespace Arcade.EditorTools
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
+        /// <summary>
+        /// 숫자 필드와 열거형(enum) 필드를 채웁니다.
+        ///
+        /// **둘은 넣는 방법이 다릅니다.** 예전에는 전부 열거형 방식(`enumValueIndex`)으로 넣었는데,
+        /// 그러면 보통 숫자 필드에는 값이 들어가지 않고 0 으로 남습니다. 그래서 랭킹 창의 탭이
+        /// 전부 0번으로 구워져 **어느 이름표를 눌러도 첫 번째 게임만 나왔습니다.** (수정사항_02, 2026-09-11)
+        /// </summary>
         public static void WireInts(Object target, params (string field, int value)[] fields)
         {
             var so = new SerializedObject(target);
             foreach (var pair in fields)
             {
                 var prop = so.FindProperty(pair.field);
-                if (prop == null) continue;
-                prop.enumValueIndex = pair.value;
+                if (prop == null)
+                {
+                    Debug.LogError("[Arcade] 필드를 찾지 못했습니다: " + target.GetType().Name + "." + pair.field);
+                    continue;
+                }
+
+                if (prop.propertyType == SerializedPropertyType.Enum) prop.enumValueIndex = pair.value;
+                else prop.intValue = pair.value;
             }
             so.ApplyModifiedPropertiesWithoutUndo();
         }
@@ -623,6 +683,23 @@ namespace Arcade.EditorTools
             for (int i = 0; i < values.Count; i++)
                 prop.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
 
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        /// <summary>글자 필드를 채웁니다.</summary>
+        public static void WireText(Object target, params (string field, string value)[] fields)
+        {
+            var so = new SerializedObject(target);
+            foreach (var pair in fields)
+            {
+                var prop = so.FindProperty(pair.field);
+                if (prop == null)
+                {
+                    Debug.LogError("[Arcade] 글자 필드를 찾지 못했습니다: " + target.GetType().Name + "." + pair.field);
+                    continue;
+                }
+                prop.stringValue = pair.value;
+            }
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 

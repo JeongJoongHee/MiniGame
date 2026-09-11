@@ -132,7 +132,11 @@ namespace Arcade
             return key == null ? "" : key.Trim().ToLowerInvariant();
         }
 
-        static int FindColumn(List<string> header, params string[] aliases)
+        /// <summary>
+        /// 머리줄에서 열을 **이름으로** 찾습니다. 대소문자 · 공백 · `_` · `-` 는 무시합니다.
+        /// 못 찾으면 -1. (금지어 표 `badword.csv` 도 이 함수를 씁니다)
+        /// </summary>
+        public static int FindColumn(List<string> header, params string[] aliases)
         {
             for (int i = 0; i < header.Count; i++)
             {
@@ -148,7 +152,7 @@ namespace Arcade
         /// (한글 문장에는 쉼표가 흔해서 이 처리가 꼭 필요합니다. 엑셀이 알아서 따옴표를 붙여 줍니다)
         /// 칸 안의 `""` 는 따옴표 한 개로 읽습니다.
         /// </summary>
-        static List<List<string>> SplitRows(string csv)
+        public static List<List<string>> SplitRows(string csv)
         {
             var rows = new List<List<string>>();
             var row = new List<string>();

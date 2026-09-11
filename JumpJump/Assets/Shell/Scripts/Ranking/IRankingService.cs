@@ -51,11 +51,26 @@ namespace Arcade
         Failed,
     }
 
+    /// <summary>점수를 올리려고 했을 때의 결과.</summary>
+    public enum SubmitResult
+    {
+        /// <summary>올렸습니다 (또는 내 기록보다 낮아서 올릴 필요가 없었습니다).</summary>
+        Ok,
+        /// <summary>
+        /// 별명이 없거나, 예전에 정한 별명을 **이미 남이 쓰고 있습니다.** 별명을 다시 받아야 합니다.
+        /// (1단계 때 폰 안에서만 정한 별명을 서버에 처음 등록할 때 생길 수 있습니다)
+        /// </summary>
+        NeedNickname,
+        /// <summary>올리지 못했습니다 (인터넷이 끊겼을 때 등). 기록은 폰에 남아 있다가 다음에 올라갑니다.</summary>
+        Failed,
+    }
+
     /// <summary>
     /// 랭킹을 올리고 가져오는 물건의 **겉모양**입니다.
-    /// 지금은 폰 안에만 저장하는 <see cref="LocalRankingService"/> 가 들어 있고,
-    /// 2단계에서 Firebase 를 쓰는 구현으로 갈아 끼웁니다.
-    /// <b>그때 게임 코드와 화면 코드는 한 줄도 고치지 않습니다.</b>
+    /// 구현은 두 가지입니다 — 폰 안에만 저장하는 <see cref="LocalRankingService"/> 와
+    /// 서버(Firebase)에 올리는 <see cref="FirebaseRankingService"/>. 어느 쪽을 쓸지는 앱이 켜질 때
+    /// <see cref="OnlineBoot"/> 가 정합니다.
+    /// <b>게임 코드와 화면 코드는 어느 쪽인지 모릅니다.</b>
     ///
     /// 결과를 <c>Action</c> 으로 돌려주는 이유는, 진짜 서버는 답이 <b>몇 초 뒤에</b> 오기 때문입니다.
     /// 지금 구현은 곧바로 부르지만, 화면 쪽은 처음부터 "기다렸다 받는" 모양으로 만들어 둡니다.
@@ -67,9 +82,9 @@ namespace Arcade
 
         /// <summary>
         /// 점수를 올립니다. <b>지금까지의 내 최고 점수보다 높을 때만 갱신됩니다.</b>
-        /// 실패해도 게임은 그대로 굴러가야 하므로, 실패는 <paramref name="done"/> 의 false 로만 알립니다.
+        /// 실패해도 게임은 그대로 굴러가야 하므로, 실패는 <paramref name="done"/> 으로만 알립니다.
         /// </summary>
-        void Submit(string gameId, string nickname, int score, Action<bool> done = null);
+        void Submit(string gameId, string nickname, int score, Action<SubmitResult> done = null);
 
         /// <summary>상위 <paramref name="count"/> 명과 내 순위를 가져옵니다.</summary>
         void Fetch(string gameId, int count, Action<RankingPage> done);
@@ -80,7 +95,9 @@ namespace Arcade
         ///
         /// 진짜 서버에서는 "빈자리인지 확인 + 내 것으로 표시"를 <b>한 번에</b> 처리해야 합니다.
         /// 확인과 저장을 따로 하면 두 사람이 같은 순간에 같은 별명을 잡을 수 있기 때문입니다.
-        /// (Firestore 의 트랜잭션으로 처리합니다 — 2단계)
+        ///
+        /// **별명을 바꿀 때도 이 함수 하나입니다** — 새 별명을 잡으면서 쓰던 별명은 놓아 줍니다
+        /// (역시 한 번에). 성공하면 <see cref="PlayerIdentity.Nickname"/> 도 새 별명으로 바꿔 둡니다.
         /// </summary>
         void ReserveNickname(string nickname, Action<NicknameResult> done);
     }

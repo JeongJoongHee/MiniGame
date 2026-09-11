@@ -48,6 +48,22 @@ namespace Arcade
         [SerializeField] float playWidth = 0.46f;
         [SerializeField] float playOffsetY = -0.715f;
 
+        [Header("게임 칸마다 붙는 랭킹 아이콘 (수정사항_02, 2026-09-11)")]
+        [Tooltip("누르면 그 게임의 랭킹이 골라진 채로 랭킹 창이 열립니다. 비워 두면 아이콘을 붙이지 않습니다")]
+        [SerializeField] Sprite rankIcon;
+        [Tooltip("아이콘 뒤에 까는 동그란 받침. 배경에 그려진 칸 번호를 가립니다. 비워 두면 아이콘만 얹습니다")]
+        [SerializeField] Sprite rankBadge;
+        [SerializeField] RankingPopup ranking;
+        [Tooltip("칸 안에서 아이콘의 가운데 (칸 크기를 1 로 본 값). 기본값은 배경에 그려진 칸 번호(1, 2 ...) 자리입니다")]
+        [SerializeField] Vector2 rankCenter = new Vector2(0.5f, 1.10f);
+        [Tooltip("아이콘 가로 폭 (칸 폭을 1 로 본 값)")]
+        [SerializeField] float rankWidth = 0.22f;
+        [Tooltip("받침 지름 (칸 폭을 1 로 본 값). 칸 번호가 두 자리(10)여도 가려지는 크기입니다")]
+        [SerializeField] float rankBadgeWidth = 0.32f;
+        [Tooltip("손가락으로 누를 영역 (칸 크기를 1 로 본 값). 그림보다 넉넉하게 잡되, " +
+                 "아래로 너무 내려가면 게임 칸을 누른 것까지 먹으므로 세로는 짧게 둡니다")]
+        [SerializeField] Vector2 rankHitSize = new Vector2(0.44f, 0.30f);
+
         readonly List<GameObject> _cards = new List<GameObject>();
 
         void Start()
@@ -131,6 +147,34 @@ namespace Arcade
 
             var captured = entry;
             hit.onClick.AddListener(() => AppFlow.GoToGame(captured));
+
+            // --- 랭킹 아이콘 : 칸 번호 자리에 얹습니다 ---
+            // 게임 칸 터치 영역을 계산한 **뒤에** 만들어야 그 영역에 섞이지 않고, 위에 올라와 먼저 눌립니다.
+            BuildRankButton(card, entry, slotAspect);
+        }
+
+        void BuildRankButton(RectTransform card, MiniGameEntry entry, float slotAspect)
+        {
+            if (rankIcon == null || ranking == null) return;
+
+            if (rankBadge != null)
+            {
+                var badge = ShellUI.AddImage(card, "RankBadge", rankBadge);
+                ShellUI.Place(badge.rectTransform, rankCenter,
+                              new Vector2(rankBadgeWidth, ShellUI.HeightForWidth(rankBadge, rankBadgeWidth, slotAspect)));
+            }
+
+            var icon = ShellUI.AddImage(card, "RankIcon", rankIcon);
+            ShellUI.Place(icon.rectTransform, rankCenter,
+                          new Vector2(rankWidth, ShellUI.HeightForWidth(rankIcon, rankWidth, slotAspect)));
+
+            var hit = ShellUI.AddHitArea(card, "RankButton");
+            ShellUI.Place((RectTransform)hit.transform, rankCenter, rankHitSize);
+            hit.transform.SetAsLastSibling();
+
+            string gameId = entry.id;
+            var view = ranking;
+            hit.onClick.AddListener(() => view.ShowFor(gameId));
         }
 
         /// <summary>형제 요소들을 전부 감싸는 크기로 사각형을 넓힙니다.</summary>

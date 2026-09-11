@@ -31,14 +31,30 @@ namespace Arcade
         public bool adsEnabled = true;
 
         [Header("랭킹")]
-        [Tooltip("서버에서 가져올 상위 몇 명까지")]
+        [Tooltip("서버에서 가져올 상위 몇 명까지. 랭킹 창에 보이는 줄 수(rankingVisibleRows)가 더 적으면 " +
+                 "그만큼만 가져옵니다 — 서버는 읽은 줄 수만큼 사용량이 쌓이기 때문입니다")]
         [Min(1)] public int rankingTopCount = 100;
 
         [Tooltip("팝업 한 장에 보여 줄 줄 수")]
         [Min(1)] public int rankingVisibleRows = 8;
 
-        [Tooltip("별명 최대 글자 수. 한글도 한 글자로 셉니다")]
+        [Tooltip("별명 최대 글자 수. 한글도 한 글자로 셉니다. " +
+                 "12 보다 크게 하려면 firestore.rules 의 글자 수 제한(16)도 같이 보세요")]
         [Min(1)] public int nicknameMaxLength = 8;
+
+        [Header("랭킹 서버 (Firebase)")]
+        [Tooltip("끄면 서버에 올리지 않고 이 폰 안에만 저장합니다 (1단계와 같은 동작)")]
+        public bool onlineRanking = true;
+
+        [Tooltip("작업 폴더의 google-services.json 에서 Build All Scenes 때 자동으로 채웁니다. 손으로 고치지 마세요")]
+        public string firebaseProjectId = "";
+
+        [Tooltip("작업 폴더의 google-services.json 에서 Build All Scenes 때 자동으로 채웁니다. " +
+                 "비밀번호가 아니라 앱 안에 들어가는 주소 값입니다")]
+        public string firebaseApiKey = "";
+
+        /// <summary>서버 주소가 채워져 있는지.</summary>
+        public bool HasFirebase => !string.IsNullOrEmpty(firebaseProjectId) && !string.IsNullOrEmpty(firebaseApiKey);
 
         static ArcadeConfig _instance;
 

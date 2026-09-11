@@ -4,15 +4,14 @@ using UnityEngine.UI;
 namespace Arcade
 {
     /// <summary>
-    /// 로비 왼쪽 위 아이콘으로 여는 **랭킹 창**입니다.
-    /// 게임마다 표가 다르므로 위쪽에 게임 이름표를 탭으로 두고 눌러서 갈아탑니다.
+    /// **랭킹 창**입니다. 로비의 게임 칸마다 붙은 랭킹 아이콘으로 열고(<see cref="ShowFor"/>),
+    /// 연 게임의 탭이 먼저 골라진 채로 뜹니다. (수정사항_02 — 예전에는 로비 왼쪽 위 아이콘 하나였습니다)
+    /// 위쪽의 게임 이름표 탭을 눌러 다른 게임으로 갈아탈 수 있습니다.
     ///
     /// 줄과 글자는 씬을 구울 때 미리 만들어져 있고, 여기서는 **글자만 채웁니다.**
     /// 그래서 창을 열 때 새로 만드는 것이 없어 끊기지 않습니다.
     ///
-    /// 어디서 점수를 가져오는지는 <see cref="Services.Ranking"/> 이 정합니다 —
-    /// 지금은 폰 안에 저장된 내 기록이고, 2단계에서 Firebase 로 바뀝니다.
-    /// **그때 이 파일은 고치지 않습니다.**
+    /// 어디서 점수를 가져오는지는 <see cref="Services.Ranking"/> 이 정합니다 (서버 또는 폰 안).
     /// </summary>
     public class RankingPopup : MonoBehaviour
     {
@@ -34,6 +33,12 @@ namespace Arcade
 
         int _tab;
 
+        /// <summary>
+        /// 몇 번째로 보낸 요청인지. 서버 답은 늦게 올 수 있어서, 그 사이 다른 탭을 눌렀다면
+        /// 먼저 보낸 요청의 답이 나중 탭 위에 덮어써지는 일이 생깁니다. 마지막 요청의 답만 씁니다.
+        /// </summary>
+        int _request;
+
         /// <summary>창이 켜질 때마다 새로 불러옵니다. (점수는 바뀌어 있을 수 있으니까요)</summary>
         void OnEnable()
         {
@@ -42,6 +47,22 @@ namespace Arcade
 
             Refresh();
         }
+
+        /// <summary>
+        /// 이 게임의 탭을 골라 둔 채로 창을 엽니다. 로비 게임 칸의 랭킹 아이콘이 부릅니다.
+        /// 목록에 없는 게임이면 첫 번째 탭으로 엽니다.
+        /// </summary>
+        public void ShowFor(string gameId)
+        {
+            _tab = Mathf.Max(0, gameIds != null ? System.Array.IndexOf(gameIds, gameId) : 0);
+
+            var popup = GetComponentInParent<PopupPanel>(true);
+            if (popup != null && !popup.IsOpen) popup.Open();   // 켜지면서 OnEnable 이 Refresh 합니다
+            else Refresh();
+        }
+
+        /// <summary>지금 골라진 게임 (확인용).</summary>
+        public string SelectedGameId => gameIds != null && _tab < gameIds.Length ? gameIds[_tab] : null;
 
         /// <summary>탭(게임 이름표)을 눌렀을 때. 탭마다 붙은 <see cref="RankingTab"/> 이 부릅니다.</summary>
         public void SelectTab(int index)
@@ -69,16 +90,25 @@ namespace Arcade
             }
 
             SetStatus(StringTable.Get("rank.loading", "LOADING..."));
+            SetMyLine("");
+
+            // 창에 보이는 줄 수만큼만 가져옵니다. 서버는 읽은 줄 수만큼 사용량이 쌓이기 때문입니다.
+            int visible = rankLabels != null && rankLabels.Length > 0 ? rankLabels.Length : 1;
+            int want = Mathf.Clamp(visible, 1, Mathf.Max(1, ArcadeConfig.Instance.rankingTopCount));
 
             // 진짜 서버에서는 답이 몇 초 뒤에 옵니다. 그래서 결과를 받아서 채우는 모양으로 둡니다.
-            int want = Mathf.Max(1, ArcadeConfig.Instance.rankingTopCount);
-            Services.Ranking.Fetch(gameIds[_tab], want, Fill);
+            int request = ++_request;
+            Services.Ranking.Fetch(gameIds[_tab], want, page =>
+            {
+                if (request == _request) Fill(page);
+            });
         }
 
         void Fill(RankingPage page)
         {
-            // 답이 늦게 왔는데 그 사이 창이 닫혔거나 다른 탭으로 넘어갔을 수 있습니다.
-            if (!isActiveAndEnabled) return;
+            // 답이 늦게 왔는데 그 사이 창이 닫혔을 수 있습니다.
+            // (에디터 미리보기는 창이 꺼진 상태에서 채우므로 플레이 중일 때만 봅니다)
+            if (Application.isPlaying && !isActiveAndEnabled) return;
 
             if (page == null || !page.ok)
             {

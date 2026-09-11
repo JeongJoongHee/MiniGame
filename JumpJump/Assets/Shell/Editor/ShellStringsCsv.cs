@@ -48,41 +48,55 @@ namespace Arcade.EditorTools
             Debug.Log($"[Arcade] {FileName} 적용 완료 ({table.Count}줄)\n" + Describe(table));
         }
 
+        /// <summary>금지어 표. 사용자가 작업 폴더에 넣어 준 이름 그대로 씁니다 (2026-09-11).</summary>
+        public const string BadWordAssetPath = "Assets/Shell/Resources/badword.csv";
+        const string BadWordFileName = "badword.csv";
+
         /// <summary>
         /// 바깥 폴더의 strings.csv 가 더 새로우면 가져옵니다. 없으면 지금 코드에 적힌
         /// 기본 문구로 새로 만들어 줍니다. 씬을 구울 때마다 자동으로 불립니다.
+        ///
+        /// **금지어 표 `badword.csv` 도 여기서 같이 가져옵니다** — 이 함수가 씬 빌드 / 미리보기 /
+        /// 플레이테스트 경로에 전부 걸려 있어서, 따로 걸 곳을 늘리지 않으려는 것입니다.
         /// </summary>
         public static void Sync()
         {
-            string outside = OutsidePath();
-            string inside = Path.GetFullPath(AssetPath);
+            if (SyncFile(FileName, AssetPath)) StringTable.Reload();
+            if (SyncFile(BadWordFileName, BadWordAssetPath)) NicknameRules.Reload();
+        }
 
-            if (string.IsNullOrEmpty(outside)) return;
-            if (string.Equals(Path.GetFullPath(outside), inside, System.StringComparison.OrdinalIgnoreCase)) return;
+        /// <summary>바깥이 더 새로우면 안으로 복사합니다. 복사했으면 true.</summary>
+        static bool SyncFile(string fileName, string assetPath)
+        {
+            string outside = OutsidePath(fileName);
+            string inside = Path.GetFullPath(assetPath);
+
+            if (string.IsNullOrEmpty(outside)) return false;
+            if (string.Equals(Path.GetFullPath(outside), inside, System.StringComparison.OrdinalIgnoreCase)) return false;
 
             if (!File.Exists(outside))
             {
                 // 작업 폴더에 표가 없으면 안쪽 사본을 그대로 내보내 줍니다.
                 // 사용자가 "고칠 파일이 어디 있지?" 하고 헤매지 않도록 하는 것입니다.
                 if (File.Exists(inside)) File.Copy(inside, outside, overwrite: false);
-                return;
+                return false;
             }
 
             // 엑셀이 옛 한글 인코딩으로 저장했으면 여기서 UTF-8 로 되돌려 놓습니다.
             // 파일을 고치는 것이라 복사 여부와 상관없이 먼저 합니다.
-            RepairEncoding(outside);
+            RepairEncoding(outside, fileName);
 
             bool needCopy = !File.Exists(inside)
                             || File.GetLastWriteTimeUtc(outside) > File.GetLastWriteTimeUtc(inside);
-            if (!needCopy) return;
+            if (!needCopy) return false;
 
             Directory.CreateDirectory(Path.GetDirectoryName(inside));
             File.Copy(outside, inside, overwrite: true);
-            AssetDatabase.ImportAsset(AssetPath, ImportAssetOptions.ForceUpdate);
-            StringTable.Reload();
+            AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
 
-            Debug.Log($"[Arcade] 바깥 폴더의 {FileName} 이(가) 더 새로워서 가져왔습니다.\n" +
-                      $"  {outside}\n  -> {AssetPath}");
+            Debug.Log($"[Arcade] 바깥 폴더의 {fileName} 이(가) 더 새로워서 가져왔습니다.\n" +
+                      $"  {outside}\n  -> {assetPath}");
+            return true;
         }
 
         /// <summary>
@@ -96,7 +110,7 @@ namespace Arcade.EditorTools
         /// 한글을 못 읽습니다. 그 경우를 여기서 알아채고 UTF-8 로 되돌려 놓습니다.
         /// **덕분에 엑셀에서 어느 쪽으로 저장해도 한글이 깨지지 않습니다.**
         /// </summary>
-        static void RepairEncoding(string path)
+        static void RepairEncoding(string path, string fileName)
         {
             byte[] bytes;
             try { bytes = File.ReadAllBytes(path); }
@@ -125,7 +139,7 @@ namespace Arcade.EditorTools
                 }
                 catch
                 {
-                    Debug.LogWarning($"[Arcade] {FileName} 의 한글을 읽지 못했습니다.\n" +
+                    Debug.LogWarning($"[Arcade] {fileName} 의 한글을 읽지 못했습니다.\n" +
                                      "  엑셀에서 [다른 이름으로 저장] > 파일 형식을 " +
                                      "**\"CSV UTF-8(쉼표로 분리)\"** 로 골라 다시 저장해 주세요.");
                     return;
@@ -134,7 +148,7 @@ namespace Arcade.EditorTools
 
             File.WriteAllText(path, text, new UTF8Encoding(true));   // BOM 을 붙여 다시 씁니다
 
-            Debug.Log($"[Arcade] {FileName} 을(를) UTF-8 로 맞춰 두었습니다. " +
+            Debug.Log($"[Arcade] {fileName} 을(를) UTF-8 로 맞춰 두었습니다. " +
                       (wasLegacy
                           ? "엑셀이 옛 한글 인코딩으로 저장해서 되돌렸습니다."
                           : "엑셀에서 한글이 깨져 보이지 않도록 표시(BOM)를 붙였습니다."));
@@ -156,12 +170,12 @@ namespace Arcade.EditorTools
             return sb.ToString();
         }
 
-        /// <summary>Unity 프로젝트의 부모 폴더(D:\00.JumpJump)에 있는 strings.csv 경로.</summary>
-        static string OutsidePath()
+        /// <summary>Unity 프로젝트의 부모 폴더(D:\00.JumpJump)에 있는 파일 경로.</summary>
+        public static string OutsidePath(string fileName)
         {
             var projectDir = Directory.GetParent(Application.dataPath);
             var workingDir = projectDir != null ? projectDir.Parent : null;
-            return workingDir != null ? Path.Combine(workingDir.FullName, FileName) : null;
+            return workingDir != null ? Path.Combine(workingDir.FullName, fileName) : null;
         }
     }
 }

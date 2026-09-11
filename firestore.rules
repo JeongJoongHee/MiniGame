@@ -1,0 +1,86 @@
+rules_version = '2';
+
+// Ranking server rules - 2026-09-11
+// Paste ALL of this into: Firebase console > Firestore Database > Rules, then Publish.
+// Read: anyone. Write: only your own records.
+//
+//   ranks/{game}/scores/{uid}   { nick, score, at }   one row per player = best score
+//   users/{uid}                 { nick, at }          current nickname
+//   nicknames/{lowercase nick}  { uid }               owner of a nickname (unique in the app)
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function userPath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
+    }
+
+    function seatPath(key) {
+      return /databases/$(database)/documents/nicknames/$(key);
+    }
+
+    function validNick(nick) {
+      return nick is string && nick.size() >= 1 && nick.size() <= 16;
+    }
+
+    // Scores: own row only, never lower than before, nick must be my current nick.
+    match /ranks/{game}/scores/{uid} {
+      allow read: if true;
+
+      allow create, update: if isOwner(uid)
+        && game.matches('^[a-z0-9_]{1,32}$')
+        && request.resource.data.keys().hasOnly(['nick', 'score', 'at'])
+        && request.resource.data.score is int
+        && request.resource.data.score >= 0
+        && request.resource.data.score <= 100000000
+        && (resource == null || request.resource.data.score >= resource.data.score)
+        && request.resource.data.nick == get(userPath(uid)).data.nick;
+
+      allow delete: if isOwner(uid);
+    }
+
+    // Current nickname: the seat must be mine after this write,
+    // and when changing, the old seat must be released in the same write.
+    match /users/{uid} {
+      allow read: if true;
+
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['nick', 'at'])
+        && validNick(request.resource.data.nick)
+        && getAfter(seatPath(request.resource.data.nick.lower())).data.uid == uid
+        && (resource == null
+            || resource.data.nick.lower() == request.resource.data.nick.lower()
+            || !existsAfter(seatPath(resource.data.nick.lower())));
+
+      allow delete: if isOwner(uid)
+        && !existsAfter(seatPath(resource.data.nick.lower()));
+    }
+
+    // Nickname seats: take only a free seat, release only your own seat you no longer use.
+    match /nicknames/{key} {
+      allow read: if true;
+
+      allow create: if signedIn()
+        && key.size() <= 64
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid
+        && getAfter(userPath(request.auth.uid)).data.nick.lower() == key;
+
+      allow update: if false;
+
+      allow delete: if resource == null
+        || (signedIn()
+            && resource.data.uid == request.auth.uid
+            && (!existsAfter(userPath(request.auth.uid))
+                || getAfter(userPath(request.auth.uid)).data.nick.lower() != key));
+    }
+  }
+}

@@ -8,7 +8,8 @@ namespace Arcade
     /// 하나씩 들어가고, **그 씬에 필요한 팝업만 연결되어 있습니다.**
     ///
     ///  - 타이틀 : quitPopup 만            -> 뒤로 = "종료하시겠습니까?"
-    ///  - 로비   : settingsPopup + quitPopup -> 톱니바퀴 = 설정, 설정의 [종료] = 종료 확인
+    ///  - 로비   : settingsPopup + quitPopup + nicknamePopup
+    ///             -> 톱니바퀴 = 설정, 설정의 [종료] = 종료 확인, 설정의 [별명 바꾸기] = 별명 창
     ///  - 미니게임 : exitToLobbyPopup 만     -> 화살표 = "로비로 나가시겠습니까?"
     ///
     /// 버튼은 씬을 구울 때 이 함수들에 미리 걸려 있습니다 (ShellSceneBuilder.BindClick).
@@ -25,8 +26,8 @@ namespace Arcade
         [Tooltip("\"로비로 나가시겠습니까?\" - 미니게임 씬에만 있습니다")]
         [SerializeField] PopupPanel exitToLobbyPopup;
 
-        [Tooltip("로비 왼쪽 위 아이콘으로 여는 랭킹 창. 로비에만 있습니다")]
-        [SerializeField] PopupPanel rankingPopup;
+        [Tooltip("설정 창의 [별명 바꾸기] 로 여는 별명 창. 로비에만 있습니다")]
+        [SerializeField] NicknamePopup nicknamePopup;
 
         // ------------------------------------------------------------ 버튼이 부르는 함수들
 
@@ -43,10 +44,14 @@ namespace Arcade
             if (quitPopup != null) quitPopup.Open();
         }
 
-        /// <summary>로비 왼쪽 위 랭킹 아이콘.</summary>
-        public void OnRankingPressed()
+        /// <summary>
+        /// 설정 창의 [별명 바꾸기]. 설정 창은 열어 둔 채 그 위에 별명 창을 띄웁니다 —
+        /// 다 바꾸고 닫으면 설정 창의 "내 별명" 이 새 별명으로 바뀌어 있습니다.
+        /// 횟수 제한은 없습니다 (2026-09-11 사용자 결정 — "추천 설정대로").
+        /// </summary>
+        public void OnChangeNicknamePressed()
         {
-            if (rankingPopup != null) rankingPopup.Open();
+            if (nicknamePopup != null) nicknamePopup.AskChange();
         }
 
         /// <summary>미니게임 오른쪽 위 뒤로가기 화살표.</summary>

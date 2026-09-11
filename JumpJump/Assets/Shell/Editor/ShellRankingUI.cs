@@ -8,8 +8,8 @@ namespace Arcade.EditorTools
     /// <summary>
     /// **랭킹 창과 별명 창을 굽는 곳**입니다. `ShellSceneBuilder` 가 길어져서 따로 두었습니다.
     ///
-    ///  - 랭킹 창  : 로비에만. 왼쪽 위 아이콘으로 엽니다. 게임 이름표가 탭입니다.
-    ///  - 별명 창  : 미니게임 씬에만. 처음 랭킹에 오를 때 한 번 뜹니다.
+    ///  - 랭킹 창  : 로비에만. 게임 칸마다 붙은 랭킹 아이콘으로 엽니다. 게임 이름표가 탭입니다.
+    ///  - 별명 창  : 미니게임 씬(처음 랭킹에 오를 때 한 번)과 로비(설정의 [별명 바꾸기]).
     ///
     /// 두 창 다 <b>빈 판 그림(Popup_Panel) 하나를 9-슬라이스로 늘려서</b> 만듭니다.
     /// 그래서 세로로 긴 창을 만들어도 테두리 두께가 그대로입니다 — 새 그림이 필요 없습니다.
@@ -135,7 +135,7 @@ namespace Arcade.EditorTools
 
         // ------------------------------------------------------------------ 별명 창
 
-        /// <summary>미니게임 씬에 별명 창을 만들어 붙입니다.</summary>
+        /// <summary>별명 창을 만들어 붙입니다 (미니게임 씬 · 로비 둘 다 이 함수입니다).</summary>
         public static NicknamePopup BuildNicknamePopup(RectTransform canvasRoot)
         {
             var panelSprite = ShellArt.Load(ShellArt.PanelPath);
