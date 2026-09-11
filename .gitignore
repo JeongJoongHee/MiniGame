@@ -21,3 +21,6 @@ Font/*.tar.gz
 *.apk
 *.aab
 /JumpJump.zip
+
+# Unity 안드로이드 빌드가 쓰는 임시 폴더 (빌드할 때마다 바뀜)
+.utmp/
