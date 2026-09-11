@@ -32,8 +32,15 @@ namespace Arcade
         /// 팝업이 떠 있거나 **바로 이 프레임에 닫혔는지.** 미니게임은 이 값을 봅니다.
         /// 닫힌 프레임까지 막는 이유는, [취소] 를 누른 그 터치가 손을 떼기도 전에
         /// 곧바로 점프·발사로 이어지지 않게 하려는 것입니다.
+        /// 전면 광고가 떠 있는 동안(<see cref="AdBreak.Showing"/>)도 막습니다 — 화면을 덮는 것은 똑같으니까요.
         /// </summary>
-        public static bool Blocking => AnyOpen || _lastCloseFrame == Time.frameCount;
+        public static bool Blocking => AnyOpen || _lastCloseFrame == Time.frameCount || AdBreak.Showing;
+
+        /// <summary>이번 프레임의 터치를 게임에 넘기지 않습니다. 광고를 닫은 직후에 씁니다.</summary>
+        public static void HoldInputThisFrame()
+        {
+            _lastCloseFrame = Time.frameCount;
+        }
 
         /// <summary>가장 나중에 열린 팝업. 없으면 null.</summary>
         public static PopupPanel Top

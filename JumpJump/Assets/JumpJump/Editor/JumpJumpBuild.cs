@@ -91,6 +91,11 @@ namespace JumpJump.EditorTools
             PlayerSettings.allowedAutorotateToLandscapeLeft = false;
             PlayerSettings.allowedAutorotateToLandscapeRight = false;
 
+            // 광고 플러그인(Google Mobile Ads 11.5)이 안드로이드 7.0(API 24) 이상을 요구합니다.
+            // 23 으로 두면 gradle 이 "minSdkVersion 23 cannot be smaller than 24" 로 빌드를 멈춥니다 (2026-09-11).
+            if (PlayerSettings.Android.minSdkVersion < AndroidSdkVersions.AndroidApiLevel24)
+                PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
+
             // 요즘 기기는 전부 64비트입니다. ARM64 하나만 구우면 빌드도 빨라집니다.
             PlayerSettings.SetScriptingBackend(android, ScriptingImplementation.IL2CPP);
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
@@ -121,11 +126,13 @@ namespace JumpJump.EditorTools
             double megabytes = File.Exists(output)
                 ? new FileInfo(output).Length / 1024.0 / 1024.0
                 : summary.totalSize / 1024.0 / 1024.0;
+            var arcade = Arcade.EditorTools.ShellConfigAsset.LoadOrCreate();
             Debug.Log($"[JumpJump] APK 빌드 완료\n"
                       + $"  파일   : {output}\n"
                       + $"  크기   : {megabytes:0.0} MB\n"
                       + $"  걸린시간: {summary.totalTime.TotalMinutes:0.0}분\n"
-                      + $"  패키지 : com.zkfpf.jumpjump  (ARM64 / IL2CPP / 디버그 서명)");
+                      + $"  패키지 : com.zkfpf.jumpjump  (ARM64 / IL2CPP / 디버그 서명)\n"
+                      + $"  광고   : {(arcade.adsEnabled ? (arcade.useTestAds ? "테스트 광고 (눌러도 안전)" : "★ 진짜 광고 — 누르지 마세요") : "꺼짐")}");
         }
 
         /// <summary>Unity 프로젝트의 부모 폴더(D:\00.JumpJump).</summary>

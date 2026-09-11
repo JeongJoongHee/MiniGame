@@ -73,6 +73,13 @@ namespace JumpJump
             // 오버레이의 "로비로" 버튼을 누른 것까지 점프로 세지 않도록 UI 위의 터치는 걸러냅니다.
             bool tap = TapInput.Pressed && !TapInput.OverUI;
             if (tap) TapInput.Consume();
+
+            // 게임 오버에서 "다시하기" 를 누른 순간이 광고 자리입니다 (2판마다 · Arcade.AdBreak 설명 참고).
+            // 광고가 뜨면 곧바로 판을 시작하지 않고, 닫힌 뒤 "터치하면 시작" 화면으로 돌려놓습니다.
+            // Step 바깥이라 배치 플레이테스트에는 광고가 끼어들지 않습니다.
+            if (tap && State == GameState.GameOver && _stateClock >= RetryLockSeconds &&
+                Arcade.AdBreak.TryShow(ResetRun)) return;
+
             Step(Time.deltaTime, tap);
         }
 

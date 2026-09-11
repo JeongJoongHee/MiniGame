@@ -83,6 +83,9 @@ namespace Arcade.EditorTools
             // 0c) 랭킹 서버 주소. 작업 폴더의 google-services.json 에서 설정 에셋으로 옮겨 적습니다.
             ShellFirebaseConfig.Sync();
 
+            // 0d) AdMob 앱 ID. 설정 에셋에서 광고 플러그인 설정으로 옮겨 적습니다 (비면 APK 빌드가 멈춤).
+            ShellAdsConfig.Sync();
+
             // 1) 미니게임 씬들 (각 게임의 빌더가 자기 CSV 동기화까지 같이 합니다)
             JumpJump.EditorTools.JumpJumpSceneBuilder.BuildScene();
             Archery.EditorTools.ArcherySceneBuilder.BuildScene();

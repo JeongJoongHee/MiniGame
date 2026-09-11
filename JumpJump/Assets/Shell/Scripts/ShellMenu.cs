@@ -84,6 +84,9 @@ namespace Arcade
         public void OnExitToLobbyConfirmed()
         {
             if (exitToLobbyPopup != null) exitToLobbyPopup.Close();
+
+            // 로비로 나가는 길목도 광고 자리입니다 (2판마다). 광고가 뜨면 닫힌 뒤에 로비로 갑니다.
+            if (AdBreak.TryShow(AppFlow.GoToLobby)) return;
             AppFlow.GoToLobby();
         }
 

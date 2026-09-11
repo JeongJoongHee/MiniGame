@@ -6,7 +6,7 @@ namespace Arcade
     /// <summary>
     /// **광고가 없는 광고 서비스**입니다. 언제 불려도 아무것도 띄우지 않고 곧바로 넘어갑니다.
     ///
-    /// AdMob 을 붙이기 전(1단계)과 배치 모드 검증에서 이것을 씁니다.
+    /// 광고를 껐을 때(<c>adsEnabled</c>)와 배치 모드 검증에서 이것을 씁니다. (진짜 광고는 <see cref="AdMobService"/>)
     /// 로그만 남기므로 "2판마다 여기서 광고가 떴겠구나" 를 배치 모드에서도 확인할 수 있습니다.
     /// </summary>
     public class NoAdService : IAdService

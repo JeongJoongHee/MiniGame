@@ -84,6 +84,9 @@ namespace Arcade.EditorTools
                 failed += Check(log, "판 수를 다시 채워도 최소 간격 안에서는 뜨지 않는다",
                                 config.minSecondsBetweenAds <= 0f || !AdGate.ShouldShow);
 
+                // ---- 광고 자리 : 다시하기 · 로비로 나가기 (3단계, 2026-09-11) ------------------
+                failed += CheckAdBreak(log, config);
+
                 // ---- 별명 -------------------------------------------------------------
                 PlayerIdentity.Nickname = "   김  하늘   ";
                 failed += Check(log, "별명의 앞뒤·연속 공백이 정리된다  -> \"" + PlayerIdentity.Nickname + "\"",
@@ -196,6 +199,80 @@ namespace Arcade.EditorTools
                 Debug.Log("[Arcade 자체 점검] 전부 통과\n" + log);
             else
                 Debug.LogError("[Arcade 자체 점검] " + failed + "건 실패\n" + log);
+        }
+
+        /// <summary>진짜 광고 대신 끼우는 가짜. 띄우라고 하면 "닫기" 를 쥐고 있다가 점검이 직접 누릅니다.</summary>
+        sealed class FakeAds : IAdService
+        {
+            public bool ready = true;
+            public int shows, loads;
+            public System.Action close;
+            public bool IsReady => ready;
+            public void Load() => loads++;
+            public void ShowInterstitial(System.Action onClosed) { shows++; close = onClosed; }
+        }
+
+        /// <summary>
+        /// <see cref="AdBreak"/> 가 **2판마다, 사용자가 누른 길목에서만** 광고를 띄우는지 봅니다.
+        /// 진짜 광고는 배치 모드에서 뜨지 않으므로 가짜 광고를 끼워서 확인합니다.
+        /// </summary>
+        static int CheckAdBreak(StringBuilder log, ArcadeConfig config)
+        {
+            int failed = 0;
+            var previous = Services.Ads;
+            var fake = new FakeAds();
+            Services.Use(fake);
+
+            try
+            {
+                PlayerPrefs.DeleteKey("Arcade.PlaysSinceAd");
+                PlayerPrefs.DeleteKey("Arcade.LastAdUtcTicks");
+                GameSession.Recording = true;
+
+                bool thenCalled = false;
+                failed += Check(log, "[광고] 판을 덜 채웠으면 다시하기를 눌러도 광고 없음",
+                                !AdBreak.TryShow(() => thenCalled = true) && fake.shows == 0);
+
+                for (int i = 0; i < config.playsPerAd; i++) Report("jumpjump", 100 + i);
+                bool shown = AdBreak.TryShow(() => thenCalled = true);
+                failed += Check(log, "[광고] " + config.playsPerAd + "판을 채우면 다시하기에서 광고가 뜬다 (그동안 게임은 멈춤)",
+                                shown && fake.shows == 1 && AdBreak.Showing && PopupPanel.Blocking && !thenCalled);
+
+                fake.close?.Invoke();
+                failed += Check(log, "[광고] 광고를 닫으면 그제야 다음 화면으로 넘어가고, 판 수를 다시 센다",
+                                thenCalled && !AdBreak.Showing && PlayCounter.SinceAd == 0);
+
+                for (int i = 0; i < config.playsPerAd; i++) Report("archery", 100 + i);
+                failed += Check(log, "[광고] 방금 광고를 봤으면 " + config.minSecondsBetweenAds + "초 안에는 다시 안 뜬다",
+                                config.minSecondsBetweenAds <= 0f || !AdBreak.TryShow(null));
+
+                PlayerPrefs.DeleteKey("Arcade.LastAdUtcTicks");
+                fake.ready = false;
+                int loadsBefore = fake.loads;
+                failed += Check(log, "[광고] 광고가 아직 준비 안 됐으면 건너뛰고 (게임을 막지 않고) 다시 불러 둔다",
+                                !AdBreak.TryShow(null) && fake.loads == loadsBefore + 1 && PlayCounter.SinceAd >= config.playsPerAd);
+
+                fake.ready = true;
+                GameSession.Recording = false;
+                failed += Check(log, "[광고] 배치 플레이테스트 중에는 광고가 끼어들지 않는다",
+                                !AdBreak.TryShow(null));
+                GameSession.Recording = true;
+
+                ShellAdsConfig.Sync();
+                string pluginId = ShellAdsConfig.PluginAndroidAppId();
+                failed += Check(log, "[광고] AdMob 앱 ID 가 광고 플러그인 설정에 들어갔다  -> " + pluginId,
+                                !string.IsNullOrEmpty(config.admobAppId) && pluginId == config.admobAppId);
+
+                log.Append("  참고  광고 단위 : ")
+                   .Append(config.useTestAds ? "구글 테스트 광고 (개발 중 — 눌러도 안전)" : "★ 진짜 광고 (" + config.interstitialUnitId + ")")
+                   .Append('\n');
+            }
+            finally
+            {
+                Services.Use(previous);
+            }
+
+            return failed;
         }
 
         /// <summary>

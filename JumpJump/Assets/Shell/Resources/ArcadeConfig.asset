@@ -15,6 +15,11 @@ MonoBehaviour:
   playsPerAd: 2
   minSecondsBetweenAds: 90
   adsEnabled: 1
+  admobAppId: ca-app-pub-5299482082775448~8677145874
+  interstitialUnitId: ca-app-pub-5299482082775448/9961955736
+  useTestAds: 1
+  childDirected: 0
+  maxAdContentRating: PG
   rankingTopCount: 100
   rankingVisibleRows: 8
   nicknameMaxLength: 8

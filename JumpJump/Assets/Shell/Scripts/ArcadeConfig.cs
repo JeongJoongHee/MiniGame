@@ -30,6 +30,26 @@ namespace Arcade
         [Tooltip("끄면 광고를 아예 띄우지 않습니다. 스토어별로 다르게 굽고 싶을 때 씁니다")]
         public bool adsEnabled = true;
 
+        [Tooltip("AdMob 앱 ID — 가운데 기호가 ~ (물결). 비밀이 아니라 앱 안에 들어가는 값입니다. " +
+                 "Build All Scenes 때 광고 플러그인 설정에도 옮겨 적힙니다")]
+        public string admobAppId = "";
+
+        [Tooltip("AdMob 전면 광고 단위 ID — 가운데 기호가 / (빗금)")]
+        public string interstitialUnitId = "";
+
+        [Tooltip("켜 두면 위의 진짜 광고 단위 대신 **구글의 테스트 광고**가 나옵니다. " +
+                 "개발 중에는 반드시 켜 두세요 — 내 광고를 내가 보거나 누르면 AdMob 계정이 정지될 수 있습니다. " +
+                 "스토어에 올리는 빌드에서만 끕니다")]
+        public bool useTestAds = true;
+
+        [Tooltip("어린이 대상 앱으로 표시할지. 스토어의 대상 연령에 13세 미만을 넣으셨으면 켜야 합니다 " +
+                 "(켜면 어린이에게 맞는 광고만 나오고 수익은 줄어듭니다)")]
+        public bool childDirected = false;
+
+        [Tooltip("나올 수 있는 광고의 최대 등급. G(전체) / PG(보호자 지도) / T(청소년) / MA(성인). " +
+                 "누구나 하는 캐주얼 게임이라 기본은 PG 입니다")]
+        public string maxAdContentRating = "PG";
+
         [Header("랭킹")]
         [Tooltip("서버에서 가져올 상위 몇 명까지. 랭킹 창에 보이는 줄 수(rankingVisibleRows)가 더 적으면 " +
                  "그만큼만 가져옵니다 — 서버는 읽은 줄 수만큼 사용량이 쌓이기 때문입니다")]
