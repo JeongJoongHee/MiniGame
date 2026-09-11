@@ -274,6 +274,52 @@ ShellUI.GameFont  ←  타이틀 / 로비 / 점프점프 HUD / 활쏘기 HUD 가
 
 ---
 
+## 랭킹 · 별명 (2026-09-09 뼈대 → 2026-09-11 서버 연결)
+
+**랭킹은 Firebase(익명 로그인 + Firestore)에 올라갑니다.** Firebase SDK 는 넣지 않았습니다 —
+Unity 에 들어 있는 `UnityWebRequest` 로 Firebase 의 웹 주소(REST)에 직접 요청합니다.
+그래서 APK 가 커지지 않고, 안드로이드 빌드 설정(gradle)을 건드릴 일이 없고,
+**배치 모드에서도 게임과 똑같은 코드로 서버를 시험할 수 있습니다.**
+
+| 어디서 | 무엇을 | 무슨 일이 |
+| --- | --- | --- |
+| 로비 | 게임 칸 번호 자리의 **랭킹 아이콘** | 그 게임의 탭이 골라진 채로 랭킹 창 |
+| 랭킹 창 | 위쪽 게임 이름표(탭) | 다른 게임의 랭킹으로 |
+| 미니게임 | 판이 끝남 | 별명이 없으면 별명 창 → 점수 올리기 |
+| 로비 | 톱니바퀴 → **[별명 바꾸기]** | 별명 창 (횟수 제한 없음) |
+
+- **서버 주소는 작업 폴더의 `google-services.json` 에서 옵니다.** Build All Scenes 때
+  `ShellFirebaseConfig` 가 프로젝트 ID · API 키를 `Resources/ArcadeConfig.asset` 에 옮겨 적습니다.
+  값이 비어 있거나 `onlineRanking` 을 끄면 **폰 안에만 저장**합니다 (1단계와 같은 동작).
+- **보안 규칙은 작업 폴더의 `firestore.rules`** 입니다. Firebase 콘솔 > Firestore > 규칙 에
+  붙여 넣어야 적용됩니다 (2026-09-11 에 사용자가 게시함). 규칙 파일은 **영문만** 쓸 것 —
+  한글 주석을 넣었더니 콘솔이 `Line 1: Parse error` 로 거절했습니다.
+- **별명은 앱 전체에서 하나뿐입니다.** `nicknames/{별명 소문자}` 문서를 "자리표"로 쓰고,
+  "없어야만 만든다"는 조건으로 한 번에 잡으므로 동시에 눌러도 한 사람만 잡힙니다.
+  영문은 대소문자를 가리지 않습니다 (`Tom` 이 있으면 `tom` 도 못 씀).
+- **금지어는 작업 폴더의 `badword.csv`** (사용자가 넣은 17,730개). 별명과 금지어를 둘 다
+  소문자로 바꾸고 공백·기호를 뺀 뒤 **금지어가 별명 안 어디에든 있으면** 막습니다.
+  짧은 금지어가 멀쩡한 이름을 막을 수 있습니다 (예: `SM` → `SMILE`, `뽕` → `짬뽕`) — 그 줄을 지우면 됩니다.
+- **인터넷이 끊겨도 기록은 사라지지 않습니다.** 점수는 먼저 폰에 적고, 서버에 올라간 값을 따로 기억해
+  두었다가 다음에 연결될 때(앱을 켤 때 · 다음 판 · 랭킹 창을 열 때) 올립니다.
+- 랭킹 창은 **보이는 줄 수(8)만큼만** 서버에서 읽고, 같은 게임을 20초 안에 다시 열면 다시 읽지 않습니다.
+  Firestore 무료 한도(하루 읽기 5만 번)를 아끼려는 것입니다.
+
+### 서버 점검 (배치 모드)
+
+```bash
+# -quit 을 붙이지 않습니다. 서버 답을 기다리는 동안 에디터가 살아 있어야 해서, 끝나면 스스로 닫습니다.
+"$UNITY" -batchmode -projectPath "$PROJ" \
+  -executeMethod Arcade.EditorTools.ArcadeOnlineTest.Run -logFile <로그>
+```
+
+시험 계정 두 개로 로그인 · 별명 잡기/바꾸기 · 점수 올리기 · 랭킹 가져오기 · 겹치는 별명 거절 ·
+**보안 규칙(남의 점수 고치기 / 남의 이름으로 올리기 / 남의 별명 지우기가 `PERMISSION_DENIED` 로 막히는지)** 을
+실제 서버로 확인하고, **끝나면 시험 기록과 시험 계정을 전부 지웁니다.** 기록은 `ranks/selftest` 칸에만 씁니다.
+**사용자의 Firebase 에 계정을 만들었다 지우는 일이므로 돌리기 전에 사용자에게 물어볼 것.**
+
+---
+
 ## 구조
 
 ```
@@ -292,11 +338,15 @@ Assets/Shell/
     Popup_Ask_Exit.png    "로비로 나가시겠습니까?"          (원본 Popup_01.png)
     Popup_Ask_Quit.png    "종료하시겠습니까?"              (원본 Popup_02.png)
     Ok_Button.png / Cancel_Button.png / End_Button.png / Close_Button.png
+    Rank_Button.png       게임 칸의 랭킹 아이콘 (임시 그림 · 원본 Rank.png 를 넣으면 바뀜)
+    Rank_Badge.png        랭킹 아이콘 뒤 동그란 받침 — 칸 번호를 가림 (코드가 만듦)
     Games/                미니게임 아이콘 (Game_01_Jump.png / Game_02_활쏘기.png ...)
     Names/                미니게임 이름표 (Name_01_점프점프.png ...)
   Resources/
     GameFont.ttf          앱 전체가 쓰는 글꼴 (작업 폴더 Font/ 에서 자동으로 들어옴)
     strings.csv           화면에 나오는 글자표 (작업 폴더 strings.csv 에서 들어옴)
+    badword.csv           별명 금지어 (작업 폴더 badword.csv 에서 들어옴)
+    ArcadeConfig.asset    광고 간격 · 랭킹 · 별명 길이 · 서버 주소
   Scenes/
     TitleScene.unity      앱 시작 지점
     LobbyScene.unity
@@ -312,11 +362,23 @@ Assets/Shell/
     ShellMenu.cs          나가기/설정 버튼이 부르는 함수들 + 폰 뒤로 버튼
     StringTable.cs        strings.csv 를 읽어 화면 글자를 꺼내 줌
     PulseScale.cs         버튼 숨쉬기 애니메이션
+    PlayerIdentity.cs     PID + 별명 + "서버에 등록됐는지"
+    NicknameRules.cs      금지어 거르기 (badword.csv)
+    NicknamePopup.cs      별명 창 (처음 정하기 / 바꾸기)
+    NicknameLabel.cs      설정 창의 "내 별명 : ..."
+    RankingPopup.cs       랭킹 창 (ShowFor(gameId) 로 그 게임 탭을 골라 엶)
+    RankingFlow.cs        미니게임에서 판 끝 -> 별명 확인 -> 점수 올리기
+    OnlineBoot.cs         앱을 켤 때 랭킹을 서버 구현으로 갈아 끼움
+    Online/               서버 통신 (Http / FirebaseAuth / Firestore / MiniJson)
+    Ranking/              FirebaseRankingService (서버) · LocalRankingService (폰 안)
   Editor/
     ShellArt.cs           작업 폴더 그림 가져오기 + 여백 자르기 + 임포트 설정
     ShellSceneBuilder.cs  씬 자동 생성
-    ShellStringsCsv.cs    strings.csv 가져오기 (Tools > Arcade > Apply strings.csv)
+    ShellStringsCsv.cs    strings.csv · badword.csv 가져오기 (Tools > Arcade > Apply strings.csv)
+    ShellFirebaseConfig.cs google-services.json -> ArcadeConfig 서버 주소
     ShellPreview.cs       플레이 모드 없이 화면 PNG 캡처
+    ArcadeSelfTest.cs     서버 없이 규칙 점검 (34건)
+    ArcadeOnlineTest.cs   진짜 서버로 점검 (19건, 끝나면 시험 계정 삭제)
 ```
 
 ## 설계 메모
