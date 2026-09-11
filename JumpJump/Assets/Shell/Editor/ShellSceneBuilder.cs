@@ -43,8 +43,11 @@ namespace Arcade.EditorTools
         /// <summary>빈 판(설정 팝업)의 버튼 높이. 위쪽은 나중에 사운드 조절을 넣을 자리로 비워 둡니다.</summary>
         const float SettingsButtonY = 0.24f;
 
-        /// <summary>미니게임 오른쪽 위 뒤로가기 화살표의 가로 폭 (1080 기준 픽셀).</summary>
-        const float BackButtonWidth = 240f;
+        /// <summary>
+        /// 미니게임 오른쪽 위 뒤로가기 화살표의 가로 폭 (1080 기준 픽셀).
+        /// 240 이었다가 수정사항_03 에서 0.7배(168)로 줄였습니다. 모든 미니게임이 같은 값을 씁니다.
+        /// </summary>
+        const float BackButtonWidth = 168f;
 
         // --- 로비 톱니바퀴 -----------------------------------------------------
         // 2026-09-07 에 로비 그림에서 지웠던 톱니바퀴를, 이번에는 **진짜 버튼**으로 다시 얹습니다.
@@ -308,6 +311,9 @@ namespace Arcade.EditorTools
             // 별명 창. 설정 창의 [별명 바꾸기] 로 엽니다 (미니게임 씬의 것과 같은 창입니다).
             var nicknamePopup = ShellRankingUI.BuildNicknamePopup(root);
             if (menu != null && nicknamePopup != null) Wire(menu, ("nicknamePopup", nicknamePopup));
+
+            // 치트 : 설정 창 윗부분을 빠르게 여러 번 누르면 "모든 게임 데이터 초기화" 창. (ArcadeConfig.cheatsEnabled)
+            ShellCheatUI.Build(root, catalog);
 
             var screenGo = new GameObject("LobbyScreen");
             var screen = screenGo.AddComponent<LobbyScreen>();
@@ -759,6 +765,12 @@ namespace Arcade.EditorTools
         /// 그대로 쓰면 1080 폭 화면에서 너무 두껍게 나와서 조금 줄입니다.
         /// </summary>
         const float PanelSliceScale = 0.55f;
+
+        /// <summary>바깥(다른 빌더)에서 쓰는 <see cref="BindClick"/>.</summary>
+        public static void BindClickPublic(Button button, Object target, string methodName)
+        {
+            BindClick(button, target, methodName);
+        }
 
         /// <summary>버튼의 OnClick 에 "이 컴포넌트의 이 함수" 를 씬에 저장되는 형태로 걸어 줍니다.</summary>
         static void BindClick(Button button, Object target, string methodName)

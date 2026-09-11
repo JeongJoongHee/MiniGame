@@ -60,9 +60,13 @@ namespace Arcade.EditorTools
                     ShootPopup("QuitPopup", Path.Combine(outputFolder, "00_popup_quit" + suffix + ".png"), height);
                     ShootPopup("RankingPopup", Path.Combine(outputFolder, "00_popup_ranking" + suffix + ".png"), height);
 
-                    // 두 번째 게임 칸의 랭킹 아이콘으로 연 모양 = 두 번째 탭이 골라진 창 (탭 버그 수정 확인용)
-                    ShootPopup("RankingPopup", Path.Combine(outputFolder, "00_popup_ranking_tab2" + suffix + ".png"), height,
+                    // 두 번째 게임 칸(활쏘기)의 랭킹 아이콘으로 연 모양 — 창 위쪽 게임 이름이 "활쏘기" 여야 합니다
+                    ShootPopup("RankingPopup", Path.Combine(outputFolder, "00_popup_ranking_archery" + suffix + ".png"), height,
                                popup => { foreach (var v in popup.GetComponentsInChildren<RankingPopup>(true)) v.SelectTab(1); });
+
+                    // 치트 — 모든 게임 데이터 초기화 확인 창
+                    ShootPopup("DataResetPopup", Path.Combine(outputFolder, "00_popup_reset" + suffix + ".png"), height,
+                               popup => { foreach (var v in popup.GetComponentsInChildren<DataResetPopup>(true)) v.Refresh(); });
 
                     // 설정 창 위에 뜨는 [별명 바꾸기] 창
                     ShootPopup("NicknamePopup", Path.Combine(outputFolder, "00_popup_nickname_change" + suffix + ".png"), height,

@@ -26,3 +26,6 @@ MonoBehaviour:
   onlineRanking: 1
   firebaseProjectId: minigame-a0857
   firebaseApiKey: AIzaSyCMET4m8NObRnbcjoZzShu8zZGQVCJcnvg
+  cheatsEnabled: 1
+  cheatTaps: 5
+  cheatTapSeconds: 3

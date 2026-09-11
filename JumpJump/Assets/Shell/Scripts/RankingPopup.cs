@@ -4,9 +4,12 @@ using UnityEngine.UI;
 namespace Arcade
 {
     /// <summary>
-    /// **랭킹 창**입니다. 로비의 게임 칸마다 붙은 랭킹 아이콘으로 열고(<see cref="ShowFor"/>),
-    /// 연 게임의 탭이 먼저 골라진 채로 뜹니다. (수정사항_02 — 예전에는 로비 왼쪽 위 아이콘 하나였습니다)
-    /// 위쪽의 게임 이름표 탭을 눌러 다른 게임으로 갈아탈 수 있습니다.
+    /// **랭킹 창**입니다. 로비의 게임 칸마다 붙은 랭킹 아이콘으로 엽니다(<see cref="ShowFor"/>).
+    /// 창 위쪽에는 **그 게임의 이름이 글자로** 나옵니다 — "랭킹" 아래 "점프점프".
+    /// (수정사항_03 — 예전에는 게임 이름표 그림이 탭으로 늘어서 있었습니다. 게임 칸마다 여는 버튼이 생겨서
+    ///  창 안에서 게임을 갈아탈 필요가 없어졌습니다)
+    ///
+    /// 게임 이름은 strings.csv 의 <c>game.{게임id}.name</c> 줄에서 오고, 그 줄이 없으면 카탈로그의 이름을 씁니다.
     ///
     /// 줄과 글자는 씬을 구울 때 미리 만들어져 있고, 여기서는 **글자만 채웁니다.**
     /// 그래서 창을 열 때 새로 만드는 것이 없어 끊기지 않습니다.
@@ -19,17 +22,18 @@ namespace Arcade
         [SerializeField] Text statusLabel;
         [SerializeField] Text myLine;
 
+        [Tooltip("\"랭킹\" 아래 게임 이름 글자")]
+        [SerializeField] Text gameNameLabel;
+
         [Tooltip("줄마다 순위 / 별명 / 점수 글자 세 개. 셋의 길이는 같습니다")]
         [SerializeField] Text[] rankLabels;
         [SerializeField] Text[] nickLabels;
         [SerializeField] Text[] scoreLabels;
 
-        [Tooltip("게임 이름표 탭. gameIds 와 순서가 같습니다")]
-        [SerializeField] Image[] tabs;
+        [Tooltip("이 창이 보여 줄 수 있는 게임들. gameNames 와 순서가 같습니다")]
         [SerializeField] string[] gameIds;
-
-        static readonly Color TabOn = Color.white;
-        static readonly Color TabOff = new Color(0.62f, 0.60f, 0.58f);
+        [Tooltip("strings.csv 에 이름 줄이 없을 때 쓰는 이름 (카탈로그의 displayName)")]
+        [SerializeField] string[] gameNames;
 
         int _tab;
 
@@ -49,12 +53,13 @@ namespace Arcade
         }
 
         /// <summary>
-        /// 이 게임의 탭을 골라 둔 채로 창을 엽니다. 로비 게임 칸의 랭킹 아이콘이 부릅니다.
-        /// 목록에 없는 게임이면 첫 번째 탭으로 엽니다.
+        /// 이 게임의 랭킹으로 창을 엽니다. 로비 게임 칸의 랭킹 아이콘이 부릅니다.
+        /// 목록에 없는 게임이면 첫 번째 게임으로 엽니다.
         /// </summary>
         public void ShowFor(string gameId)
         {
             _tab = Mathf.Max(0, gameIds != null ? System.Array.IndexOf(gameIds, gameId) : 0);
+            ShowGameName();   // 게임 이름은 서버를 기다릴 필요가 없으니 창이 뜨기 전에 먼저 바꿔 둡니다
 
             var popup = GetComponentInParent<PopupPanel>(true);
             if (popup != null && !popup.IsOpen) popup.Open();   // 켜지면서 OnEnable 이 Refresh 합니다
@@ -64,7 +69,10 @@ namespace Arcade
         /// <summary>지금 골라진 게임 (확인용).</summary>
         public string SelectedGameId => gameIds != null && _tab < gameIds.Length ? gameIds[_tab] : null;
 
-        /// <summary>탭(게임 이름표)을 눌렀을 때. 탭마다 붙은 <see cref="RankingTab"/> 이 부릅니다.</summary>
+        /// <summary>지금 창 위쪽에 나오는 게임 이름 (확인용).</summary>
+        public string SelectedGameName => gameNameLabel != null ? gameNameLabel.text : null;
+
+        /// <summary>몇 번째 게임을 보여 줄지. 미리보기와 자체 점검이 씁니다.</summary>
         public void SelectTab(int index)
         {
             if (gameIds == null || index < 0 || index >= gameIds.Length) return;
@@ -80,7 +88,7 @@ namespace Arcade
         /// </summary>
         public void Refresh()
         {
-            ShowTabs();
+            ShowGameName();
             Clear();
 
             if (gameIds == null || gameIds.Length == 0)
@@ -145,13 +153,14 @@ namespace Arcade
                 : StringTable.Get("rank.me.none", "NO RECORD YET"));
         }
 
-        void ShowTabs()
+        void ShowGameName()
         {
-            if (tabs == null) return;
+            if (titleLabel != null) titleLabel.text = StringTable.Get("rank.title", "RANKING");
+            if (gameNameLabel == null) return;
 
-            for (int i = 0; i < tabs.Length; i++)
-                if (tabs[i] != null)
-                    tabs[i].color = i == _tab ? TabOn : TabOff;
+            string id = SelectedGameId;
+            string fallback = gameNames != null && _tab < gameNames.Length ? gameNames[_tab] : id;
+            gameNameLabel.text = string.IsNullOrEmpty(id) ? "" : StringTable.Get("game." + id + ".name", fallback);
         }
 
         void Clear()

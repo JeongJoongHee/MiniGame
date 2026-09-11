@@ -26,6 +26,11 @@ namespace Arcade
                  "비워 두면 displayName 을 글자로 찍습니다")]
         public Sprite namePlate;
 
+        [Tooltip("로비에서 아이콘 크기 배율. 1 = 칸을 꽉 채움. " +
+                 "아이콘 그림에 칸 테두리가 그려져 있지 않으면(과녁처럼 꽉 찬 그림) 0.8 쯤으로 줄여야 " +
+                 "배경의 갈색 테두리가 보입니다 (수정사항_03)")]
+        [Range(0.3f, 1.2f)] public float iconScale = 1f;
+
         [Tooltip("로비의 몇 번째 칸에 놓을지. 0 = 왼쪽 위, 8 = 오른쪽 아래")]
         [Range(0, 8)] public int slot = 0;
 

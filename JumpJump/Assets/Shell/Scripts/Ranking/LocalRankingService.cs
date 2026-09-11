@@ -121,6 +121,12 @@ namespace Arcade
             done?.Invoke(NicknameResult.Ok);
         }
 
+        /// <summary>서버가 없으니 지울 것도 없습니다. 폰 안 기록은 부른 쪽이 지웁니다.</summary>
+        public void DeleteMyData(IList<string> gameIds, Action<bool> done)
+        {
+            done?.Invoke(true);
+        }
+
         /// <summary>이 게임에서의 내 최고 점수.</summary>
         public static int BestOf(string gameId)
         {

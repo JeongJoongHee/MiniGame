@@ -46,3 +46,12 @@ nick.invalid,쓸 수 없는 별명입니다,별명 창 - 점(.) 하나처럼 저
 settings.nick,내 별명 : {nick},설정 창 - 지금 별명
 settings.nick.none,아직 별명이 없습니다,설정 창 - 별명을 정한 적이 없을 때
 settings.nick.change,별명 바꾸기,설정 창 - 별명 바꾸기 버튼 위 글자
+,,
+# 랭킹 창 게임 이름 · 치트 (2026-09-11 수정사항_03),,
+game.jumpjump.name,점프점프,랭킹 창 - 랭킹 글자 아래 게임 이름
+game.archery.name,활쏘기,랭킹 창 - 랭킹 글자 아래 게임 이름
+cheat.reset.title,모든 데이터 초기화,치트 - 초기화 창 제목
+cheat.reset.body,최고 점수 · 판 수 · 별명 · 랭킹 기록을\n전부 지웁니다. 되돌릴 수 없습니다.,치트 - 초기화 창 설명
+cheat.reset.working,지우는 중...,치트 - 지우는 동안
+cheat.reset.done,다 지웠습니다. 처음 화면으로 갑니다.,치트 - 다 지웠을 때
+cheat.reset.partial,폰 안 기록만 지웠습니다 (서버에 닿지 못함),치트 - 인터넷이 안 될 때

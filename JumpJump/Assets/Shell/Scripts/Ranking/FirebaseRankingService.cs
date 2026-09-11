@@ -381,6 +381,65 @@ namespace Arcade
             FlushAll();
         }
 
+        // ------------------------------------------------------------------ 내 기록 전부 지우기 (치트)
+
+        /// <summary>
+        /// 서버의 내 기록을 **한 번에** 지우고(점수 줄 · 별명 자리 · users), 익명 계정도 지웁니다.
+        /// 보안 규칙이 "내 것만, 별명 자리와 users 는 같이" 지우도록 되어 있어서 한 요청에 담습니다.
+        /// 끝나면 성공이든 실패든 이 폰의 로그인 정보를 잊습니다 — 다음 판부터는 새 사람입니다.
+        /// </summary>
+        public void DeleteMyData(IList<string> gameIds, Action<bool> done)
+        {
+            _auth.EnsureSignedIn(ok =>
+            {
+                if (!ok) { Forget(); done?.Invoke(false); return; }
+
+                string uid = _auth.Uid;
+                _db.Get(new[] { "users", uid }, current =>
+                {
+                    if (!current.Ok && current.code != 404) { Forget(); done?.Invoke(false); return; }
+
+                    var writes = new List<object> { _db.DeleteWrite(new[] { "users", uid }) };
+
+                    string nick = current.Ok ? Firestore.GetString(current.Json, "nick") : null;
+                    string key = string.IsNullOrEmpty(nick) ? null : PlayerIdentity.KeyOf(nick);
+                    if (PlayerIdentity.IsValidKey(key)) writes.Add(_db.DeleteWrite(new[] { "nicknames", key }));
+
+                    var games = KnownGames();
+                    if (gameIds != null)
+                        foreach (var id in gameIds)
+                            if (!string.IsNullOrEmpty(id) && !games.Contains(id)) games.Add(id);
+                    foreach (var id in games)
+                        writes.Add(_db.DeleteWrite(new[] { "ranks", id, ScoresFolder, uid }));
+
+                    _db.Commit(writes, deleted =>
+                    {
+                        if (!deleted.Ok)
+                        {
+                            Debug.LogWarning("[Arcade] 서버의 내 기록을 지우지 못했습니다 — " + deleted);
+                            Forget();
+                            done?.Invoke(false);
+                            return;
+                        }
+
+                        _auth.DeleteAccount(accountGone =>
+                        {
+                            if (!accountGone) Debug.LogWarning("[Arcade] 기록은 지웠지만 익명 계정은 못 지웠습니다 (남아도 문제는 없습니다).");
+                            Forget();
+                            done?.Invoke(true);
+                        });
+                    });
+                });
+            });
+        }
+
+        /// <summary>이 폰의 로그인 정보와 랭킹 캐시를 잊습니다. 다음 로그인은 새 번호입니다.</summary>
+        void Forget()
+        {
+            _auth.Forget();
+            _cache.Clear();
+        }
+
         // ------------------------------------------------------------------ 폰에 적어 두는 것들
 
         static string SentKey(string gameId) => "Arcade.Rank." + gameId + ".Sent";

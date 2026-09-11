@@ -76,6 +76,17 @@ namespace Arcade
         /// <summary>서버 주소가 채워져 있는지.</summary>
         public bool HasFirebase => !string.IsNullOrEmpty(firebaseProjectId) && !string.IsNullOrEmpty(firebaseApiKey);
 
+        [Header("치트 (시험용)")]
+        [Tooltip("켜 두면 설정 창의 빈 윗부분을 빠르게 여러 번 눌러 **모든 게임 데이터 초기화** 창을 열 수 있습니다. " +
+                 "스토어에 올리는 빌드에서는 끄세요 (useTestAds 와 함께)")]
+        public bool cheatsEnabled = true;
+
+        [Tooltip("초기화 창을 열려면 몇 번 눌러야 하는지")]
+        [Min(2)] public int cheatTaps = 5;
+
+        [Tooltip("그 횟수를 몇 초 안에 눌러야 하는지")]
+        [Min(0.5f)] public float cheatTapSeconds = 3f;
+
         static ArcadeConfig _instance;
 
         /// <summary>

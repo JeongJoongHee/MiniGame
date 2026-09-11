@@ -165,9 +165,26 @@ namespace Arcade.EditorTools
                 Next();
             }));
 
+            // ---- 치트 "모든 데이터 초기화" 로 A 를 지워 보기 (2026-09-11) --------------------
+            Step(() => _a.DeleteMyData(new List<string> { Game }, ok =>
+            {
+                Check("[치트] 모든 데이터 초기화가 서버의 A 기록 · 계정을 지운다", ok);
+                Next();
+            }));
+
+            // B 는 아직 로그인해 있으므로 B 로 확인합니다 (읽기는 누구나 됩니다).
+            Step(() => Read(_b, new[] { "ranks", Game, "scores", _uidA }, score =>
+                Read(_b, new[] { "nicknames", PlayerIdentity.KeyOf(_nickA2) }, seat =>
+                Read(_b, new[] { "users", _uidA }, user =>
+                {
+                    Check("[치트] 지운 뒤 서버에 A 의 점수 줄 · 별명 자리 · 사람 기록이 남지 않았다",
+                          score == null && seat == null && user == null);
+                    Next();
+                }))));
+
             // ---- 치우기 ---------------------------------------------------------------
             // (B 도 별명을 잡는 순간 폰에 남은 시험 기록이 B 이름으로 올라가므로 점수 줄까지 지웁니다)
-            Step(() => CleanUp(_b, _uidB, _nickB, () => CleanUp(_a, _uidA, _nickA2, Next)));
+            Step(() => CleanUp(_b, _uidB, _nickB, Next));
 
             Step(Finish);
 

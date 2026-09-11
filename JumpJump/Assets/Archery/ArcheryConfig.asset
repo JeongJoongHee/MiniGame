@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb8a5bdd64ec3504ab462a82cc532d23, type: 3}
   m_Name: ArcheryConfig
   m_EditorClassIdentifier: 
-  playHalfWidth: 3.2
+  playHalfWidth: 3.4
   targetY: 4.6
   bowY: -7.3
   bowWidth: 3.2

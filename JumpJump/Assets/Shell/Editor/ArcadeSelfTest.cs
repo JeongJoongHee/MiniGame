@@ -151,7 +151,14 @@ namespace Arcade.EditorTools
                     failed += Check(log, "strings.csv 에 새 줄이 있다  -> " + key + " = \"" + StringTable.Get(key, "") + "\"",
                                     StringTable.Get(key, "").Length > 0);
 
-                // ---- 로비 씬 : 랭킹 탭 · 게임 칸 랭킹 아이콘 (수정사항_02) --------------------
+                // ---- 씬 굽는 도우미가 숫자를 제대로 넣는가 (09-11 탭 버그의 원인) -------------
+                var probe = ScriptableObject.CreateInstance<ArcadeConfig>();
+                ShellSceneBuilder.WireInts(probe, ("playsPerAd", 7));
+                failed += Check(log, "씬을 구울 때 숫자 칸에 값이 들어간다 (0 으로 남던 버그)  -> " + probe.playsPerAd,
+                                probe.playsPerAd == 7);
+                Object.DestroyImmediate(probe);
+
+                // ---- 로비 씬 : 랭킹 창 · 게임 칸 랭킹 아이콘 (수정사항_02 · 03) ----------------
                 failed += CheckLobbyScene(log);
 
                 // ---- 랭킹 -------------------------------------------------------------
@@ -277,8 +284,8 @@ namespace Arcade.EditorTools
 
         /// <summary>
         /// 구워진 로비 씬을 열어 봅니다. **이번에 고친 버그를 다시 못 들어오게 막는 검사입니다.**
-        ///  - 랭킹 창의 탭이 0, 1, 2 ... 로 구워졌는가 (예전에는 전부 0 이라 탭을 눌러도 안 바뀌었습니다)
-        ///  - 탭을 누르면 / 게임 칸 아이콘으로 열면 그 게임이 골라지는가
+        ///  - 랭킹 창에 이름표 그림 탭이 없고, 연 게임의 이름이 글자로 나오는가 (수정사항_03)
+        ///  - 게임 칸 아이콘으로 열면 그 게임이 골라지는가 (수정사항_02 — 예전엔 늘 첫 게임이었습니다)
         ///  - 로비 왼쪽 위 랭킹 아이콘이 없어지고, 게임 칸마다 아이콘이 붙었는가
         /// </summary>
         static int CheckLobbyScene(StringBuilder log)
@@ -293,43 +300,64 @@ namespace Arcade.EditorTools
             int failed = 0;
             try
             {
-                var tabs = new System.Collections.Generic.List<RankingTab>();
                 RankingPopup view = null;
                 LobbyScreen lobby = null;
                 bool oldIcon = false;
+                int plateTabs = 0;
 
                 foreach (var root in scene.GetRootGameObjects())
                 {
-                    tabs.AddRange(root.GetComponentsInChildren<RankingTab>(true));
                     if (view == null) view = root.GetComponentInChildren<RankingPopup>(true);
                     if (lobby == null) lobby = root.GetComponentInChildren<LobbyScreen>(true);
                     foreach (var t in root.GetComponentsInChildren<Transform>(true))
+                    {
                         if (t.name == "RankButton" && t.parent != null && t.parent.name == "Backdrop") oldIcon = true;
+                        if (t.name.StartsWith("Tab_")) plateTabs++;
+                    }
                 }
 
-                var indices = new System.Collections.Generic.List<int>();
-                foreach (var tab in tabs) indices.Add(new SerializedObject(tab).FindProperty("index").intValue);
-                indices.Sort();
-
-                bool distinct = indices.Count >= 2;
-                for (int i = 0; i < indices.Count; i++) distinct &= indices[i] == i;
-                failed += Check(log, "랭킹 창 탭 번호가 0, 1, ... 로 구워졌다  -> [" + string.Join(", ", indices) + "]", distinct);
+                failed += Check(log, "랭킹 창에 게임 이름표 그림(탭)이 없다", plateTabs == 0);
 
                 if (view != null)
                 {
-                    view.SelectTab(1);
-                    string second = view.SelectedGameId;
                     view.ShowFor("jumpjump");
-                    string first = view.SelectedGameId;
+                    string first = view.SelectedGameId + "/" + view.SelectedGameName;
                     view.ShowFor("archery");
-                    failed += Check(log, "탭을 누르면 게임이 바뀐다 / 게임 칸에서 열면 그 게임이 골라진다  -> " +
-                                         second + ", " + first + ", " + view.SelectedGameId,
-                                    second == "archery" && first == "jumpjump" && view.SelectedGameId == "archery");
+                    string second = view.SelectedGameId + "/" + view.SelectedGameName;
+                    failed += Check(log, "게임 칸에서 열면 그 게임이, 이름은 글자로 나온다  -> " + first + ", " + second,
+                                    first == "jumpjump/" + StringTable.Get("game.jumpjump.name", "?") &&
+                                    second == "archery/" + StringTable.Get("game.archery.name", "?"));
                     view.GetComponentInParent<PopupPanel>(true)?.Close();
                 }
                 else
                 {
                     failed += Check(log, "로비에 랭킹 창이 있다", false);
+                }
+
+                // 치트 : 설정 창의 누름 영역을 정해진 횟수만큼 눌러야 초기화 창이 열린다
+                CheatTapZone zone = null;
+                DataResetPopup reset = null;
+                foreach (var root in scene.GetRootGameObjects())
+                {
+                    if (zone == null) zone = root.GetComponentInChildren<CheatTapZone>(true);
+                    if (reset == null) reset = root.GetComponentInChildren<DataResetPopup>(true);
+                }
+
+                if (zone != null && reset != null)
+                {
+                    var resetPanel = reset.GetComponentInParent<PopupPanel>(true);
+                    int taps = ArcadeConfig.Instance.cheatTaps;
+                    for (int i = 0; i < taps - 1; i++) zone.OnTapped();
+                    bool earlyOpen = resetPanel.IsOpen;
+                    zone.OnTapped();
+                    bool resetOpened = resetPanel.IsOpen;
+                    resetPanel.Close();
+                    failed += Check(log, "[치트] 설정 창 윗부분을 " + taps + "번 눌러야 초기화 창이 열린다 (" + (taps - 1) + "번으로는 안 열림)",
+                                    !earlyOpen && resetOpened);
+                }
+                else
+                {
+                    failed += Check(log, "[치트] 로비에 초기화 창과 누름 영역이 있다", false);
                 }
 
                 bool wired = false;
@@ -341,6 +369,12 @@ namespace Arcade.EditorTools
                 }
                 failed += Check(log, "로비 왼쪽 위 랭킹 아이콘은 없어지고, 게임 칸마다 붙을 준비가 되었다",
                                 !oldIcon && wired);
+
+                // 수정사항_03 : 활쏘기 아이콘(꽉 찬 과녁)은 줄여서 칸의 갈색 테두리가 보이게
+                var catalog = AssetDatabase.LoadAssetAtPath<GameCatalog>(ShellSceneBuilder.CatalogPath);
+                var archery = catalog != null ? catalog.FindById("archery") : null;
+                failed += Check(log, "활쏘기 아이콘이 칸 테두리 안쪽 크기로 줄었다  -> x" + (archery != null ? archery.iconScale : 0f),
+                                archery != null && archery.iconScale < 0.9f);
             }
             finally
             {

@@ -43,41 +43,25 @@ namespace Arcade.EditorTools
 
             var view = panel.gameObject.AddComponent<RankingPopup>();
 
+            // --- 머리 : "── 랭킹 ──" / 게임 이름 / "────  ────" (수정사항_03) ---
+            // 예전에는 게임 이름표 그림이 탭으로 늘어서 있었는데, 게임 칸마다 여는 버튼이 생겨서
+            // 창 안에서 게임을 갈아탈 일이 없어졌습니다. 그래서 그 게임의 이름만 글자로 보여 줍니다.
             var title = ShellUI.AddText(panel, "Title", 56, Ink);
-            ShellUI.Place(title.rectTransform, new Vector2(0.5f, 0.925f), new Vector2(0.7f, 0.075f));
+            ShellUI.Place(title.rectTransform, new Vector2(0.5f, TitleY), new Vector2(0.22f, 0.06f));
+            AddRule(panel, "TitleRuleLeft", 0.08f, 0.39f, TitleY);
+            AddRule(panel, "TitleRuleRight", 0.61f, 0.92f, TitleY);
 
-            // --- 게임 탭 (이름표 그림) ---
-            var tabs = new List<Object>();
+            var gameName = ShellUI.AddText(panel, "GameName", 76, Ink);
+            ShellUI.Place(gameName.rectTransform, new Vector2(0.5f, GameNameY), new Vector2(0.84f, 0.075f));
+            AddRule(panel, "NameRuleLeft", 0.08f, 0.46f, NameRuleY);
+            AddRule(panel, "NameRuleRight", 0.54f, 0.92f, NameRuleY);
+
             var ids = new List<string>();
-            var games = PlayableGames(catalog);
-
-            for (int i = 0; i < games.Count; i++)
+            var names = new List<string>();
+            foreach (var entry in PlayableGames(catalog))
             {
-                var entry = games[i];
-                var plate = entry.namePlate != null ? entry.namePlate : ShellArt.Load(ShellArt.BlankPlatePath);
-
-                float x = games.Count == 1 ? 0.5f : Mathf.Lerp(0.28f, 0.72f, i / (float)(games.Count - 1));
-                float width = games.Count > 2 ? 0.86f / games.Count : 0.40f;
-
-                var image = ShellUI.AddImage(panel, "Tab_" + entry.id, plate, raycast: true);
-                ShellUI.Place(image.rectTransform, new Vector2(x, 0.845f),
-                              new Vector2(width, ShellUI.HeightForWidth(plate, width, aspect)));
-
-                var tab = image.gameObject.AddComponent<RankingTab>();
-                ShellSceneBuilder.WireInts(tab, ("index", i));
-                ShellSceneBuilder.Wire(tab, ("popup", view));
-                ShellSceneBuilder.MakeButtonOn(image, tab, "OnPressed");
-
-                // 이름표가 없는 게임은 그림 위에 이름을 글자로 얹습니다 (로비와 같은 방식).
-                if (entry.namePlate == null)
-                {
-                    var label = ShellUI.AddText(image.rectTransform, "Name", 40, Ink);
-                    ShellUI.Place(label.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.8f, 0.5f));
-                    label.text = entry.displayName;
-                }
-
-                tabs.Add(image);
                 ids.Add(entry.id);
+                names.Add(string.IsNullOrEmpty(entry.displayName) ? entry.id : entry.displayName.TrimEnd('!', ' '));
             }
 
             // --- 줄 ---
@@ -123,14 +107,27 @@ namespace Arcade.EditorTools
                                               aspect, closeTarget, "OnCancelPressed");
 
             ShellSceneBuilder.Wire(view,
-                ("titleLabel", title), ("statusLabel", status), ("myLine", myLine));
+                ("titleLabel", title), ("statusLabel", status), ("myLine", myLine), ("gameNameLabel", gameName));
             ShellSceneBuilder.WireArray(view, "rankLabels", rankLabels);
             ShellSceneBuilder.WireArray(view, "nickLabels", nickLabels);
             ShellSceneBuilder.WireArray(view, "scoreLabels", scoreLabels);
-            ShellSceneBuilder.WireArray(view, "tabs", tabs);
             ShellSceneBuilder.WireStrings(view, "gameIds", ids);
+            ShellSceneBuilder.WireStrings(view, "gameNames", names);
 
             return popup;
+        }
+
+        // 랭킹 창 머리의 높이 (판 높이를 1 로 본 값)
+        const float TitleY = 0.93f;
+        const float GameNameY = 0.862f;
+        const float NameRuleY = 0.806f;
+
+        /// <summary>판 안에 가는 가로줄 하나. 그림 없이 색만 칠한 얇은 사각형입니다.</summary>
+        static void AddRule(RectTransform panel, string name, float fromX, float toX, float y)
+        {
+            var line = ShellUI.AddImage(panel, name, null);
+            line.color = new Color(Ink.r, Ink.g, Ink.b, 0.55f);
+            ShellUI.Place(line.rectTransform, new Vector2((fromX + toX) * 0.5f, y), new Vector2(toX - fromX, 0.0026f));
         }
 
         // ------------------------------------------------------------------ 별명 창

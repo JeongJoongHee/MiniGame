@@ -19,6 +19,7 @@ MonoBehaviour:
     sceneName: GameScene
     icon: {fileID: 21300000, guid: f9b71a7958eb42c458e1b8346d14da2f, type: 3}
     namePlate: {fileID: 21300000, guid: 01cc7f10187ca55488faee732f964278, type: 3}
+    iconScale: 1
     slot: 0
     available: 1
   - id: archery
@@ -26,5 +27,6 @@ MonoBehaviour:
     sceneName: ArcheryScene
     icon: {fileID: 21300000, guid: 69ff6acc4b7cfdb4189b9b0061640945, type: 3}
     namePlate: {fileID: 21300000, guid: 505b57613b341f841ad1bde7d10a964b, type: 3}
+    iconScale: 0.8
     slot: 1
     available: 1

@@ -34,9 +34,10 @@ namespace Archery
     public class ArcheryConfig : ScriptableObject
     {
         [Header("레이아웃 (월드 단위)")]
-        [Tooltip("과녁이 오갈 수 있는 좌우 한계 (중앙 기준 절반 폭). " +
-                 "세로로 긴 폰(20:9)에서도 화면 안에 있어야 하므로 너무 키우지 마세요")]
-        public float playHalfWidth = 3.2f;
+        [Tooltip("과녁이 오갈 수 있는 좌우 한계 (중앙 기준 절반 폭). 과녁 **가장자리**가 여기 닿으면 튕기고, " +
+                 "과녁 밑의 선도 딱 이 폭으로 그려집니다. 세로로 긴 폰(21:9 = 화면 절반 폭 약 3.43)에서도 " +
+                 "화면 안에 있어야 하므로 3.4 보다 키우지 마세요")]
+        public float playHalfWidth = 3.4f;
         [Tooltip("과녁의 높이. 화살은 이 높이를 지나는 순간 명중 판정을 받습니다")]
         public float targetY = 4.6f;
         [Tooltip("활 **밑동**이 놓이는 높이. 활은 고정이고 좌우로 움직이지 않습니다. " +

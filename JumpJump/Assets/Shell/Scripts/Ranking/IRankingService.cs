@@ -100,5 +100,12 @@ namespace Arcade
         /// (역시 한 번에). 성공하면 <see cref="PlayerIdentity.Nickname"/> 도 새 별명으로 바꿔 둡니다.
         /// </summary>
         void ReserveNickname(string nickname, Action<NicknameResult> done);
+
+        /// <summary>
+        /// **서버에 있는 내 기록을 전부 지웁니다** — 게임마다 내 점수 줄, 내 별명 자리, 내 계정.
+        /// 치트의 "모든 데이터 초기화" 가 부릅니다. 폰 안의 기록은 부른 쪽이 지웁니다.
+        /// 서버에 닿지 못해 못 지웠으면 false (폰 안 기록은 그래도 지웁니다).
+        /// </summary>
+        void DeleteMyData(IList<string> gameIds, Action<bool> done);
     }
 }

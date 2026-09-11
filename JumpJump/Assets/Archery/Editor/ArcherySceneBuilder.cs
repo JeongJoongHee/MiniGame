@@ -88,10 +88,13 @@ namespace Archery.EditorTools
             sky.transform.localScale = new Vector3(24f / skySize.x, (config.orthoSize * 2.2f) / skySize.y, 1f);
 
             // ---------- 과녁이 미끄러지는 레일 ----------
+            // 레일 양 끝 = 과녁이 되돌아오는 자리입니다. 과녁은 가장자리가 playHalfWidth 에 닿으면 튕기므로
+            // 레일도 딱 그 폭으로 그립니다. (예전에는 양쪽으로 0.8 씩 더 길어서, 과녁이 선 끝까지
+            //  가지 않고 중간에서 돌아오는 것처럼 보였습니다 — 수정사항_03)
             var rail = new GameObject("Rail").AddComponent<SpriteRenderer>();
             rail.sprite = round;
             rail.drawMode = SpriteDrawMode.Sliced;
-            rail.size = new Vector2(config.playHalfWidth * 2f + 1.6f, 0.16f);
+            rail.size = new Vector2(config.playHalfWidth * 2f, 0.16f);
             rail.color = RailColor;
             rail.sortingOrder = -10;
             rail.transform.position = new Vector3(0f, config.targetY, 0f);
