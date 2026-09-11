@@ -23,6 +23,7 @@ namespace Arcade.EditorTools
         public const string CatalogPath = "Assets/Shell/GameCatalog.asset";
         public const string GameScenePath = "Assets/JumpJump/Scenes/GameScene.unity";
         public const string ArcheryScenePath = "Assets/Archery/Scenes/ArcheryScene.unity";
+        public const string EnchantScenePath = "Assets/Enchant/Scenes/EnchantScene.unity";
         public const string InputActionsPath = "Assets/InputSystem_Actions.inputactions";
 
         static readonly Vector2 ReferenceResolution = new Vector2(1080f, 1920f);
@@ -92,8 +93,9 @@ namespace Arcade.EditorTools
             // 1) 미니게임 씬들 (각 게임의 빌더가 자기 CSV 동기화까지 같이 합니다)
             JumpJump.EditorTools.JumpJumpSceneBuilder.BuildScene();
             Archery.EditorTools.ArcherySceneBuilder.BuildScene();
+            Enchant.EditorTools.EnchantSceneBuilder.BuildScene();
 
-            // 2) 껍데기 화면 두 장
+            // 2) 껍데기 화면 두 장 (로비는 미니게임 빌더가 만든 아이콘을 가져가므로 뒤에 굽습니다)
             BuildTitleScene();
             BuildLobbyScene();
 
@@ -103,11 +105,12 @@ namespace Arcade.EditorTools
             // 앱을 켜면 타이틀부터 나오도록, 마지막에 타이틀 씬을 열어 둡니다.
             EditorSceneManager.OpenScene(TitleScenePath);
 
-            Debug.Log("[Arcade] 화면 4장을 모두 구웠습니다.\n" +
+            Debug.Log("[Arcade] 화면 5장을 모두 구웠습니다.\n" +
                       "  0. " + TitleScenePath + "  (앱 시작 지점)\n" +
                       "  1. " + LobbyScenePath + "\n" +
                       "  2. " + GameScenePath + "   (점프점프)\n" +
                       "  3. " + ArcheryScenePath + "   (활쏘기)\n" +
+                      "  4. " + EnchantScenePath + "   (검 강화)\n" +
                       "  Play 를 누르면 타이틀 -> 로비 -> 미니게임 순으로 들어갑니다.");
         }
 
@@ -603,6 +606,19 @@ namespace Arcade.EditorTools
                 });
             }
 
+            if (catalog.FindById("enchant") == null)
+            {
+                catalog.games.Add(new MiniGameEntry
+                {
+                    id = "enchant",
+                    displayName = "검 강화!",
+                    sceneName = Path.GetFileNameWithoutExtension(EnchantScenePath),
+                    iconScale = 0.8f,   // 임시 아이콘은 테두리 없이 꽉 찬 동그라미라 활쏘기처럼 줄입니다
+                    slot = 2,
+                    available = true,
+                });
+            }
+
             // 아이콘과 이름표가 비어 있으면 Art/Games, Art/Names 에서 순서대로 붙여 줍니다.
             // (Game_01_Jump / Name_01_점프점프 -> 첫 번째 게임)
             var icons = ShellArt.GameIconPaths();
@@ -630,6 +646,7 @@ namespace Arcade.EditorTools
                 new EditorBuildSettingsScene(LobbyScenePath, true),
                 new EditorBuildSettingsScene(GameScenePath, true),
                 new EditorBuildSettingsScene(ArcheryScenePath, true),
+                new EditorBuildSettingsScene(EnchantScenePath, true),
             };
             EditorBuildSettings.scenes = scenes.ToArray();
         }

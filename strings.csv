@@ -55,3 +55,30 @@ cheat.reset.body,최고 점수 · 판 수 · 별명 · 랭킹 기록을\n전부 
 cheat.reset.working,지우는 중...,치트 - 지우는 동안
 cheat.reset.done,다 지웠습니다. 처음 화면으로 갑니다.,치트 - 다 지웠을 때
 cheat.reset.partial,폰 안 기록만 지웠습니다 (서버에 닿지 못함),치트 - 인터넷이 안 될 때
+,,
+# 검 강화 (2026-09-11 · 게임 3번),,
+game.enchant.name,검 강화,랭킹 창 - 랭킹 글자 아래 게임 이름
+game.enchant.score,+{score},랭킹 창 - 검 강화의 점수 모양 (점수가 곧 강화 수치라서 +23 처럼)
+enchant.hud.level,+{level},검 강화 - 왼쪽 위 동그라미 안 강화 수치
+enchant.hud.best,최고 +{best},검 강화 - 동그라미 아래 최고 기록
+enchant.hud.chance,+{next} 강화 성공 확률 {prob}%,검 강화 - 검 아래 확률 줄
+enchant.hud.max,더 이상 강화할 수 없습니다,검 강화 - 표의 확률이 0 인 최고 단계일 때
+enchant.btn.normal,일반 강화,검 강화 - 왼쪽 아래 버튼
+enchant.btn.normal.sub,실패하면 파괴,검 강화 - 일반 강화 버튼 아래 작은 글자
+enchant.btn.safe,안전 강화,검 강화 - 오른쪽 아래 버튼
+enchant.btn.safe.sub,주문서 x{count},검 강화 - 안전 강화 버튼 아래 (가진 주문서 수)
+enchant.btn.melt,분해,검 강화 - 가운데 버튼
+enchant.btn.melt.on,주문서 +{count},검 강화 - 분해할 수 있을 때 받는 주문서 수
+enchant.btn.melt.off,+{level}부터 가능,검 강화 - 아직 분해할 수 없을 때
+enchant.working,강화 중...,검 강화 - 결과를 기다리는 동안
+enchant.result.success,성공!,검 강화 - 강화 성공
+enchant.result.safefail,실패! 검은 무사합니다,검 강화 - 안전 강화 실패
+enchant.result.melt,안전 강화 주문서 +{count},검 강화 - 분해해서 주문서를 받았을 때
+enchant.result.meltempty,주문서가 나오지 않았습니다,검 강화 - 분해했지만 못 받았을 때 (표에 Melt_Prob 열을 넣었을 때만)
+enchant.broken.title,파괴!,검 강화 - 검이 부서졌을 때 제목
+enchant.broken.body,+{level} 검이 부서졌습니다\n\n최고 기록  +{best},검 강화 - 부서졌을 때 설명
+enchant.broken.button,새 검 받기,검 강화 - 부서진 뒤 버튼
+enchant.melt.title,분해하시겠습니까?,검 강화 - 분해 확인 창 제목
+enchant.melt.ask,+{level} 검이 사라지고\n안전 강화 주문서 {count}장을 받습니다,검 강화 - 분해 확인 창 설명
+enchant.over.broken,파괴,검 강화 - 랭킹 기록용 사유 (화면에는 안 나옴)
+enchant.over.melt,분해,검 강화 - 랭킹 기록용 사유 (화면에는 안 나옴)

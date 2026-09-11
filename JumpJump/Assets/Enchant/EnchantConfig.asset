@@ -1,0 +1,308 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6602d85e3763cc4e93d6557f712bb7c, type: 3}
+  m_Name: EnchantConfig
+  m_EditorClassIdentifier: 
+  startSafeScrolls: 0
+  confirmMelt: 1
+  workSeconds: 0.6
+  bannerSeconds: 1.2
+  breakRevealSeconds: 0.8
+  newSwordLockSeconds: 1.4
+  glowByLevel:
+    serializedVersion: 2
+    key0: {r: 1, g: 0.78, b: 0.45, a: 0.55}
+    key1: {r: 0.55, g: 0.8, b: 1, a: 0.95}
+    key2: {r: 0.78, g: 0.52, b: 1, a: 0}
+    key3: {r: 1, g: 0.86, b: 0.3, a: 0}
+    key4: {r: 1, g: 0.36, b: 0.26, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 16384
+    ctime2: 36044
+    ctime3: 52428
+    ctime4: 65535
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 5
+    m_NumAlphaKeys: 2
+  workShake: 16
+  levelCsv: {fileID: 4900000, guid: a2986b676ad53ff4cb08c6ec3183e4e3, type: 3}
+  levels:
+  - level: 0
+    successPer10000: 10000
+    meltScrolls: 0
+    meltPer10000: 10000
+    image: Sword_01
+  - level: 1
+    successPer10000: 10000
+    meltScrolls: 0
+    meltPer10000: 10000
+    image: Sword_01
+  - level: 2
+    successPer10000: 10000
+    meltScrolls: 0
+    meltPer10000: 10000
+    image: Sword_02
+  - level: 3
+    successPer10000: 10000
+    meltScrolls: 0
+    meltPer10000: 10000
+    image: Sword_03
+  - level: 4
+    successPer10000: 10000
+    meltScrolls: 0
+    meltPer10000: 10000
+    image: Sword_04
+  - level: 5
+    successPer10000: 10000
+    meltScrolls: 0
+    meltPer10000: 10000
+    image: Sword_05
+  - level: 6
+    successPer10000: 10000
+    meltScrolls: 0
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 7
+    successPer10000: 9000
+    meltScrolls: 0
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 8
+    successPer10000: 9000
+    meltScrolls: 0
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 9
+    successPer10000: 9000
+    meltScrolls: 0
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 10
+    successPer10000: 9000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 11
+    successPer10000: 9000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 12
+    successPer10000: 9000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 13
+    successPer10000: 9000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 14
+    successPer10000: 8000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 15
+    successPer10000: 8000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 16
+    successPer10000: 8000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 17
+    successPer10000: 8000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 18
+    successPer10000: 8000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 19
+    successPer10000: 8000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 20
+    successPer10000: 8000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 21
+    successPer10000: 7000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 22
+    successPer10000: 7000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 23
+    successPer10000: 7000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 24
+    successPer10000: 7000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 25
+    successPer10000: 7000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 26
+    successPer10000: 6000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 27
+    successPer10000: 6000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 28
+    successPer10000: 6000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 29
+    successPer10000: 6000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 30
+    successPer10000: 6000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 31
+    successPer10000: 5000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 32
+    successPer10000: 5000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 33
+    successPer10000: 5000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 34
+    successPer10000: 5000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 35
+    successPer10000: 5000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 36
+    successPer10000: 4000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 37
+    successPer10000: 4000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 38
+    successPer10000: 4000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 39
+    successPer10000: 4000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 40
+    successPer10000: 4000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 41
+    successPer10000: 3000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 42
+    successPer10000: 3000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 43
+    successPer10000: 3000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 44
+    successPer10000: 3000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 45
+    successPer10000: 3000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 46
+    successPer10000: 3000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 47
+    successPer10000: 3000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 48
+    successPer10000: 3000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 49
+    successPer10000: 3000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06
+  - level: 50
+    successPer10000: 3000
+    meltScrolls: 1
+    meltPer10000: 10000
+    image: Sword_06

@@ -30,3 +30,11 @@ MonoBehaviour:
     iconScale: 0.8
     slot: 1
     available: 1
+  - id: enchant
+    displayName: "\uAC80 \uAC15\uD654!"
+    sceneName: EnchantScene
+    icon: {fileID: 21300000, guid: df16780345aad5841b3acf8104ea2c13, type: 3}
+    namePlate: {fileID: 0}
+    iconScale: 0.8
+    slot: 2
+    available: 1

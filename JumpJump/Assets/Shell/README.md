@@ -10,12 +10,13 @@
                                    └───── ← (확인 팝업) ─────┘
 ```
 
-지금 들어 있는 미니게임은 두 개입니다.
+지금 들어 있는 미니게임은 세 개입니다.
 
 | 칸 | 게임 | 씬 | 폴더 |
 | --- | --- | --- | --- |
 | 1 (slot 0) | 점프점프! | `GameScene` | `Assets/JumpJump/` |
 | 2 (slot 1) | 활쏘기! | `ArcheryScene` | `Assets/Archery/` |
+| 3 (slot 2) | 검 강화! | `EnchantScene` | `Assets/Enchant/` (2026-09-11) |
 
 ## 만들고 확인하기
 
@@ -83,8 +84,13 @@ PROJ="D:/00.JumpJump/JumpJump"
 
 > **씬을 Build Settings 에 넣는 것을 잊지 마세요.** 여기만은 코드를 고쳐야 합니다.
 > `ShellSceneBuilder` 의 씬 경로 상수에 한 줄, `RegisterBuildSettings()` 목록에 한 줄,
-> `BuildAll()` 에 그 게임의 씬 빌더 호출 한 줄 — 활쏘기를 붙일 때 고친 곳이 그 세 군데입니다.
+> `BuildAll()` 에 그 게임의 씬 빌더 호출 한 줄 — 활쏘기 · 검 강화를 붙일 때 고친 곳이 그 세 군데입니다.
 > (APK 에 넣으려면 `JumpJumpBuild.Scenes` 목록에도 추가해야 합니다)
+> 기본 카탈로그 줄은 `LoadOrCreateCatalog()` 에 넣어 두면 빌드할 때 없으면 만들어 줍니다.
+> **빠뜨리면 자체 점검(`ArcadeSelfTest`)이 "씬이 Build Settings / APK 목록에 들어 있다" 에서 실패합니다** (2026-09-11 부터).
+>
+> 랭킹 창의 점수는 숫자로 나옵니다. 모양을 바꾸고 싶으면 `strings.csv` 에 `game.{id}.score` 줄을 넣으세요
+> (검 강화는 `+{score}` — "+23"). 없으면 숫자만 나옵니다.
 
 ### 로비 칸 번호
 
@@ -383,7 +389,7 @@ Assets/Shell/
     Ok_Button.png / Cancel_Button.png / End_Button.png / Close_Button.png
     Rank_Button.png       게임 칸의 랭킹 아이콘 (임시 그림 · 원본 Rank.png 를 넣으면 바뀜)
     Rank_Badge.png        랭킹 아이콘 뒤 동그란 받침 — 칸 번호를 가림 (코드가 만듦)
-    Games/                미니게임 아이콘 (Game_01_Jump.png / Game_02_활쏘기.png ...)
+    Games/                미니게임 아이콘 (Game_01_Jump.png / Game_02_활쏘기.png / Game_03_검강화.png(임시) ...)
     Names/                미니게임 이름표 (Name_01_점프점프.png ...)
   Resources/
     GameFont.ttf          앱 전체가 쓰는 글꼴 (작업 폴더 Font/ 에서 자동으로 들어옴)
@@ -425,7 +431,7 @@ Assets/Shell/
     ShellAdsConfig.cs     ArcadeConfig 의 AdMob 앱 ID -> 광고 플러그인 설정
     ShellPreview.cs       플레이 모드 없이 화면 PNG 캡처
     ShellCheatUI.cs       치트 창 굽기 + 에디터 메뉴 Reset All Game Data
-    ArcadeSelfTest.cs     서버 없이 규칙 점검 (44건)
+    ArcadeSelfTest.cs     서버 없이 규칙 점검 (51건)
     ArcadeOnlineTest.cs   진짜 서버로 점검 (19건, 끝나면 시험 계정 삭제)
 ```
 
@@ -438,7 +444,7 @@ Assets/Shell/
 - **로비 칸은 실행할 때 코드로 만듭니다.** 그래야 게임을 추가할 때
   `GameCatalog.asset` 한 줄만 늘리면 되고 씬을 다시 구울 필요가 없습니다.
 - **껍데기와 게임은 서로 다른 네임스페이스입니다.** 껍데기는 `Arcade`,
-  점프점프는 `JumpJump`, 활쏘기는 `Archery`. 게임이 껍데기를 부를 일은
+  점프점프는 `JumpJump`, 활쏘기는 `Archery`, 검 강화는 `Enchant`. 게임이 껍데기를 부를 일은
   `AppFlow.GoToLobby()` 하나뿐이고, 게임끼리는 서로를 부르지 않습니다.
 - 게임 안에서 "로비로" 버튼을 눌렀을 때 그게 점프로도 세지 않도록,
   `TapInput.OverUI` 가 UI 위의 터치를 걸러 냅니다.

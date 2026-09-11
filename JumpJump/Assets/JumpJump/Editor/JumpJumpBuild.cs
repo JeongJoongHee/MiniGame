@@ -18,13 +18,17 @@ namespace JumpJump.EditorTools
         const string ScenePath = "Assets/JumpJump/Scenes/GameScene.unity";
         const string ApkName = "JumpJump.apk";
 
-        /// <summary>APK 에 들어가는 화면 순서. 0번이 앱을 켤 때 처음 열리는 씬입니다.</summary>
-        static readonly string[] Scenes =
+        /// <summary>
+        /// APK 에 들어가는 화면 순서. 0번이 앱을 켤 때 처음 열리는 씬입니다.
+        /// **미니게임을 추가하면 여기에도 한 줄.** 빠뜨리면 폰에서만 그 게임이 안 열립니다 (자체 점검이 잡아 줍니다).
+        /// </summary>
+        public static readonly string[] Scenes =
         {
             Arcade.EditorTools.ShellSceneBuilder.TitleScenePath,
             Arcade.EditorTools.ShellSceneBuilder.LobbyScenePath,
             ScenePath,                                                    // 점프점프
             Arcade.EditorTools.ShellSceneBuilder.ArcheryScenePath,        // 활쏘기
+            Arcade.EditorTools.ShellSceneBuilder.EnchantScenePath,        // 검 강화
         };
 
         [MenuItem("Tools/JumpJump/Build Android APK", priority = 40)]

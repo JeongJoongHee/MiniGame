@@ -327,6 +327,13 @@ namespace Arcade.EditorTools
                     failed += Check(log, "게임 칸에서 열면 그 게임이, 이름은 글자로 나온다  -> " + first + ", " + second,
                                     first == "jumpjump/" + StringTable.Get("game.jumpjump.name", "?") &&
                                     second == "archery/" + StringTable.Get("game.archery.name", "?"));
+
+                    // 게임 3번 검 강화 (2026-09-11) : 랭킹 창에 들어 있고, 점수가 "+23" 모양으로 나온다
+                    view.ShowFor("enchant");
+                    string third = view.SelectedGameId + "/" + view.SelectedGameName;
+                    string score = StringTable.Format("game.enchant.score", "{score}", ("score", "23"));
+                    failed += Check(log, "검 강화도 랭킹 창에 있고 점수는 강화 수치 모양이다  -> " + third + ", " + score,
+                                    third == "enchant/" + StringTable.Get("game.enchant.name", "?") && score == "+23");
                     view.GetComponentInParent<PopupPanel>(true)?.Close();
                 }
                 else
@@ -386,6 +393,15 @@ namespace Arcade.EditorTools
                         failed += Check(log, "게임 \"" + entry.id + "\" 은 같은 별명으로 랭킹에 오를 수 있다 (id 모양" +
                                              (idOk ? " OK" : " ✗ 영문 소문자·숫자·_ 만") + " / 이름 줄" + (named ? " OK" : " ✗ strings.csv") + ")",
                                         idOk && named);
+
+                        // 게임을 추가할 때 코드를 고쳐야 하는 딱 두 군데 — 빠뜨리면 에디터에선 되는데 폰에서만 안 열립니다.
+                        bool inBuild = System.Array.Exists(EditorBuildSettings.scenes,
+                            s => s.enabled && System.IO.Path.GetFileNameWithoutExtension(s.path) == entry.sceneName);
+                        bool inApk = System.Array.Exists(JumpJump.EditorTools.JumpJumpBuild.Scenes,
+                            s => System.IO.Path.GetFileNameWithoutExtension(s) == entry.sceneName);
+                        failed += Check(log, "게임 \"" + entry.id + "\" 의 씬(" + entry.sceneName + ")이 Build Settings" +
+                                             (inBuild ? " OK" : " ✗") + " / APK 목록" + (inApk ? " OK" : " ✗") + " 에 들어 있다",
+                                        inBuild && inApk);
                     }
                 }
 

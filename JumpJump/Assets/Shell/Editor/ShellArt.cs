@@ -403,8 +403,9 @@ namespace Arcade.EditorTools
         /// 사용자가 리소스를 `@리소스 추가_1차` 같은 폴더에 묶음으로 넣어 주기 때문입니다.
         /// **뒤에 오는 폴더가 이깁니다** — `_2차` 폴더에 같은 이름의 그림을 넣으면
         /// 코드를 고치지 않아도 그쪽이 쓰입니다.
+        /// (검 강화의 검 그림도 같은 폴더들에서 찾습니다 — EnchantArt)
         /// </summary>
-        static List<string> SourceFolders()
+        public static List<string> SourceFolders()
         {
             var folders = new List<string> { WorkingDir() };
 

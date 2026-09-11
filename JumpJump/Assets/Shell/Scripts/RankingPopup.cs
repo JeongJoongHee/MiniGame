@@ -144,13 +144,26 @@ namespace Arcade
 
                 Set(rankLabels, i, StringTable.Format("rank.place", "{rank}", ("rank", row.rank)), color);
                 Set(nickLabels, i, row.nickname, color);
-                Set(scoreLabels, i, row.score.ToString("N0"), color);
+                Set(scoreLabels, i, ScoreText(row.score), color);
             }
 
             SetMyLine(page.myRank > 0
                 ? StringTable.Format("rank.me", "MY RANK : {rank}   {score}",
-                                     ("rank", page.myRank), ("score", page.myScore.ToString("N0")))
+                                     ("rank", page.myRank), ("score", ScoreText(page.myScore)))
                 : StringTable.Get("rank.me.none", "NO RECORD YET"));
+        }
+
+        /// <summary>
+        /// 점수 글자. strings.csv 에 <c>game.{게임id}.score</c> 줄이 있으면 그 모양으로 씁니다
+        /// (검 강화는 "+{score}" — 점수가 곧 강화 수치라서 "+23" 으로 보여 줍니다). 없으면 숫자만.
+        /// </summary>
+        string ScoreText(int score)
+        {
+            string number = score.ToString("N0");
+            string id = SelectedGameId;
+            return string.IsNullOrEmpty(id)
+                ? number
+                : StringTable.Format("game." + id + ".score", "{score}", ("score", number));
         }
 
         void ShowGameName()
