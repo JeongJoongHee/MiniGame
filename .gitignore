@@ -16,3 +16,8 @@ MemoryCaptures/
 # 글꼴 원본의 압축본은 저장소에 넣지 않는다 (같은 글꼴의 .ttf/.otf 만 있으면 된다)
 Font/*.zip
 Font/*.tar.gz
+
+# 빌드 결과물은 저장소에 넣지 않는다 (필요하면 다시 구우면 된다)
+*.apk
+*.aab
+/JumpJump.zip
