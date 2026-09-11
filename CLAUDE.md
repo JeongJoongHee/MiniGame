@@ -188,7 +188,9 @@
 09-11 까지의 모든 작업(팝업 · 글꼴 · 한글 HUD · 랭킹 서버 · 별명 바꾸기 · 게임 칸 랭킹 아이콘 · 광고)이 들어 있다.
 APK 안의 매니페스트를 aapt2 로 열어 AdMob 앱 ID · INTERNET · AD_ID 권한을 확인했다.
 (aapt2 는 `Editor/Data/PlaybackEngines/AndroidPlayer/SDK/build-tools/36.0.0/aapt2.exe`)
-**APK 는 git 에 넣지 않는다** — 사용자가 09-11 에 저장소의 옛 APK/zip 을 지웠다 (그 삭제는 아직 커밋 안 됨, 사용자에게 물어봄).
+**APK 는 git 에 넣지 않는다** — 사용자가 09-11 에 옛 APK/zip 을 "필요 없는 데이터"라며 지웠고, 그 삭제를 커밋했다.
+`.gitignore` 에 `*.apk` / `*.aab` 를 넣어서 새로 구운 APK 는 폴더에만 있고 저장소에는 안 들어간다.
+(옛 APK 는 **과거 커밋 안에는 남아 있어서** 저장소 크기(약 1.5GB)는 그대로다. 줄이려면 기록을 고쳐 써야 하는데, 원격이 없으니 급하지 않다)
 
 다시 구우려면 **Tools > JumpJump > Build Android APK**.
 IL2CPP 라 10분 이상 걸리므로 배치로 돌릴 때는 백그라운드로 띄울 것.
