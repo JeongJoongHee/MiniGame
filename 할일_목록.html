@@ -70,14 +70,16 @@
 
 <main>
 <h1>출시까지 할 일</h1>
-<p class="sub">심심할 때 하는 게임 &middot; 2026-09-11 기준 &middot; <strong>▸ 자세한 방법</strong> 을 누르면 하는 법이 나옵니다 &middot; 체크는 이 브라우저에 저장됩니다</p>
+<p class="sub">심심할 때 하는 게임 &middot; 2026-09-11 늦은 밤 기준 (게임 3번 검 강화 추가) &middot; <strong>▸ 자세한 방법</strong> 을 누르면 하는 법이 나옵니다 &middot; 체크는 이 브라우저에 저장됩니다</p>
 
 <section>
 <h2>지금 어디까지 왔나</h2>
-<p class="lead">게임 두 개와 화면, <strong>랭킹 서버와 광고까지 다 됐습니다.</strong>
-남은 것은 <strong>두 스토어에 올리는 것</strong>입니다 (서명 · 개인정보처리방침 · 스토어 등록).</p>
+<p class="lead">게임 세 개와 화면, <strong>랭킹 서버와 광고까지 다 됐습니다.</strong>
+<strong>3번 &ldquo;검 강화!&rdquo; 는 방금 붙여서 확인 전</strong>이고 그림이 임시입니다 (아래 0-1).
+그 밖에 남은 것은 <strong>두 스토어에 올리는 것</strong>입니다 (서명 · 개인정보처리방침 · 스토어 등록).</p>
 
 <div class="flow">[끝] 점프점프 · 활쏘기 · 타이틀 · 로비 · 팝업 · 글꼴 · 글자표
+[끝] 게임 3번 검 강화 (확인 · 그림 남음)    &lt;- 2026-09-11 늦은 밤
 [끝] 랭킹 뼈대 + 랭킹 창 + 별명 창          &lt;- 2026-09-09
 [끝] 2단계  랭킹을 Firebase 에 연결          &lt;- 2026-09-11  (+ 수정사항_02 5건)
 [끝] 3단계  광고(AdMob) 붙이기               &lt;- 2026-09-11  (지금은 테스트 광고)
@@ -103,8 +105,8 @@
 <ul class="todo">
 <li>
 <label><input type="checkbox" data-k="n0"><span class="what">
-  <b>폰에 최신 APK 넣어 보기 (09-11 밤, 56.8MB)</b>
-  <span>테스트 광고 · 잔디밭 배경 활쏘기 · 게임 칸 랭킹 아이콘 · 별명 바꾸기 · 데이터 초기화 치트가 전부 들어 있습니다.</span></span></label>
+  <b>폰에 최신 APK 넣어 보기 (09-11 늦은 밤, 56.9MB)</b>
+  <span>테스트 광고 · 잔디밭 배경 활쏘기 · 게임 칸 랭킹 아이콘 · 별명 바꾸기 · 데이터 초기화 치트 · <strong>검 강화</strong>가 전부 들어 있습니다.</span></span></label>
 <details><summary>자세한 방법</summary><div class="body">
 <ol>
 <li>폰의 예전 앱을 <strong>지우고</strong> <code>D:\00.JumpJump\JumpJump.apk</code> 를 설치합니다.</li>
@@ -223,6 +225,56 @@
     길어지면 넘칠 수 있어, 바꾼 뒤 화면을 캡처해서 확인해 드리겠습니다.</li>
 </ol>
 </div></details>
+</li>
+</ul>
+</section>
+
+<section>
+<h2>0-1. 게임 3번 &ldquo;검 강화!&rdquo; <span class="tag you">사용자</span> — 2026-09-11 늦은 밤 추가</h2>
+<p>보고서는 <code>검강화_추가보고서.html</code>. 규칙 · 확률 · 저장은 배치 모드로 검증했고, <strong>제가 정한 것과 그림이 남았습니다.</strong></p>
+<ul class="todo">
+<li>
+<label><input type="checkbox" data-k="k1"><span class="what">
+  <b>제가 정한 12가지 확인 — 특히 ①~⑤</b>
+  <span>① 일반 강화는 공짜 ② 분해하면 주문서 100% ③ +50 넘어도 30% 로 계속 ④ 강화 수치 · 주문서가 폰에 저장 ⑤ 랭킹 = 강화 수치, 검 한 자루가 한 판</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<ol>
+<li><code>검강화_추가보고서.html</code> 3절의 표를 봐 주세요. 각 줄 오른쪽 칸에 &ldquo;바꾸려면&rdquo; 이 적혀 있습니다.</li>
+<li>②③ 은 <strong>표(<code>@Enchant_Sword.csv</code>)만 고치면 됩니다</strong> — ② 는 <code>Melt_Prob</code> 열 추가(만분율), ③ 은 확률 0 인 줄 추가.</li>
+<li>① 재화를 넣으시려면 &ldquo;재화를 어떻게 버는지&rdquo; 기획을 먼저 주세요 (분해? 시간? 광고?).</li>
+</ol>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="k2"><span class="what">
+  <b>검 그림 6장 넣기</b>
+  <span>작업 폴더(또는 <code>@리소스 추가_2차</code>)에 <code>Sword_01.png</code> ~ <code>Sword_06.png</code> &rarr; Build All Scenes</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<ul>
+<li>이름은 표의 <code>Image</code> 열과 같게. <code>@Sword_01.png</code> 처럼 앞에 @ 를 붙여도 됩니다.</li>
+<li><strong>위를 향한 세로 그림</strong>이면 크기 · 여백은 상관없습니다 (여백을 잘라 검 칸 높이에 맞춥니다).</li>
+<li>빌드 로그의 &ldquo;검 그림 6장&rdquo; 에 이름마다 &ldquo;진짜 그림 / 임시 그림&rdquo; 이 찍힙니다.</li>
+</ul>
+</div></details>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="k3"><span class="what">
+  <b>로비 아이콘 · 이름표</b>
+  <span><code>@Game_03_검강화.png</code> <strong>덮어쓰기</strong>(지금 것은 제가 만든 임시) &middot; <code>@Name_03_검강화.png</code> <strong>새로</strong>(가로:세로 약 2.15:1, 이름이 그려진 그림)</span></span></label>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="k4"><span class="what">
+  <b>(선택) 배경 · 게임 이름</b>
+  <span>배경은 <code>@Enchant_BG.png</code>(세로형). 이름 &ldquo;검 강화!&rdquo; 는 임시 — 로비는 <code>GameCatalog.asset</code>, 랭킹 창은 <code>strings.csv</code> 의 <code>game.enchant.name</code></span></span></label>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="k5"><span class="what">
+  <b>폰에서 눌러 보기</b>
+  <span>버튼 셋 · 분해 확인 창 · 부서진 뒤 1.4초 뒤 [새 검 받기] · 2자루 끝낸 뒤 [새 검 받기] 에서 테스트 광고 · 앱을 껐다 켜도 검이 그대로인지</span></span></label>
 </li>
 </ul>
 </section>
@@ -703,6 +755,7 @@
 <tr><td><code>광고_반영보고서.html</code></td><td>AdMob 전면 광고 — 언제 뜨는지 · 테스트 광고 · 남은 결정 (2026-09-11)</td></tr>
 <tr><td><code>수정사항_03_반영보고서.html</code></td><td>랭킹 창 글자 · 아이콘 크기 · ← 버튼 · 과녁 선 + 데이터 초기화 치트 (2026-09-11)</td></tr>
 <tr><td><code>활쏘기_배경_별명_보고서.html</code></td><td>잔디밭 배경 + UI 투명도 / 별명이 기기마다 다른 이유 (2026-09-11)</td></tr>
+<tr><td><code>검강화_추가보고서.html</code></td><td>게임 3번 검 강화 — 화면 · 규칙 · 제가 정한 12가지 · 그림 넣는 법 · 밸런스 (2026-09-11 늦은 밤)</td></tr>
 <tr><td><code>firestore.rules</code></td><td>서버 보안 규칙 (콘솔에 붙여 넣은 원본)</td></tr>
 <tr><td><code>글자크기_조정_반영보고서.html</code></td><td>버튼 글자 0.7배</td></tr>
 <tr><td><code>CLAUDE.md</code></td><td>프로젝트 전체 인수인계 (제가 다음에 읽는 문서)</td></tr>
