@@ -31,10 +31,13 @@ namespace Enchant.EditorTools
 
         /// <summary>왼쪽 위 강화 수치 동그라미의 지름.</summary>
         const float BadgeSize = 250f;
-        /// <summary>검 칸의 폭. 세로는 위 · 아래 여백 사이를 꽉 채웁니다.</summary>
-        const float SwordWidth = 560f;
+        /// <summary>
+        /// 검 칸의 폭. 세로는 위 · 아래 여백 사이를 꽉 채웁니다.
+        /// 2026-09-13 진짜 검 그림(Sword_01~19)이 **대각선으로 누운 정사각형 그림**이라 560 -> 760 으로 넓혔습니다.
+        /// </summary>
+        const float SwordWidth = 760f;
         /// <summary>검 칸 아래끝 (화면 아래에서) / 위끝 (화면 위에서).</summary>
-        const float SwordBottom = 640f;
+        const float SwordBottom = 660f;
         const float SwordTop = 340f;
         /// <summary>검 뒤의 빛 지름.</summary>
         const float GlowSize = 1000f;
@@ -51,7 +54,20 @@ namespace Enchant.EditorTools
         static readonly Vector2 MeltButtonSize = new Vector2(400f, 170f);
         const float MeltButtonY = 340f;
         /// <summary>"+14 강화 성공 확률 90%" 줄의 높이.</summary>
-        const float ChanceY = 548f;
+        const float ChanceY = 572f;
+
+        /// <summary>
+        /// 버튼 그림(Art/Buttons)이 있을 때의 [분해] 칸. 그림은 이 칸 안에 비율대로 들어갑니다.
+        /// 그림에는 "분해" 만 그려져 있어서 "주문서 +1" / "+10부터 가능" 줄은 **버튼 바로 아래** 글자로 둡니다.
+        /// </summary>
+        static readonly Vector2 MeltArtSize = new Vector2(400f, 200f);
+        const float MeltArtY = 356f;
+        const float MeltSubY = 304f;
+        /// <summary>안전 강화 그림의 {} 자리에 얹는 주문서 수 글자.</summary>
+        const int SafeCountFontSize = 60;
+        static readonly Color ArtInk = new Color(0.02f, 0.06f, 0.18f, 1f);   // 그림 속 글자의 남색 테두리
+        static readonly Color ArtPressedColor = new Color(0.80f, 0.80f, 0.80f, 1f);
+        static readonly Color ArtDisabledColor = new Color(0.45f, 0.45f, 0.45f, 1f);
 
         /// <summary>버튼 판 그림의 한 점이 화면에서 몇 픽셀이 되는지. 클수록 테두리가 굵습니다.</summary>
         const float ButtonPixel = 6f;
@@ -142,6 +158,8 @@ namespace Enchant.EditorTools
             var fitter = bg.gameObject.AddComponent<AspectFitter>();
             ShellSceneBuilder.WireInts(fitter, ("mode", (int)AspectFitMode.Cover));
             fitter.Aspect = background.rect.width / background.rect.height;
+            // 배경을 조금 비치게 해서(뒤는 카메라의 어두운 바탕) 검이 더 잘 보이게 합니다. EnchantConfig.backgroundAlpha
+            bg.color = new Color(1f, 1f, 1f, config.backgroundAlpha);
 
             // ---------- 가운데 : 검 ----------
             var area = new GameObject("SwordArea", typeof(RectTransform)).GetComponent<RectTransform>();
@@ -193,22 +211,64 @@ namespace Enchant.EditorTools
             Anchor(chance.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
                    new Vector2(0f, ChanceY), new Vector2(1040f, 72f));
 
-            var normal = MakeButton(root, "NormalButton", buttonSprite, NormalColor, new Vector2(0f, 0f),
+            // 버튼 그림(글자가 그려진 그림, 2026-09-13)이 있으면 그것을, 없으면 예전의 색 판 + 글자를 씁니다.
+            var normalArt = AssetDatabase.LoadAssetAtPath<Sprite>(EnchantArt.NormalButtonArtPath);
+            var safeArt = AssetDatabase.LoadAssetAtPath<Sprite>(EnchantArt.SafeButtonArtPath);
+            var meltArt = AssetDatabase.LoadAssetAtPath<Sprite>(EnchantArt.MeltButtonArtPath);
+
+            Button normal;
+            if (normalArt != null)
+            {
+                var slot = Slot(root, "NormalSlot");
+                HalfWidth(slot, right: false);
+                normal = ArtButton(slot, "NormalButton", normalArt, game, "PressNormal");
+            }
+            else
+            {
+                normal = MakeButton(root, "NormalButton", buttonSprite, NormalColor, new Vector2(0f, 0f),
                                     Vector2.zero, Vector2.zero, game, "PressNormal");
-            HalfWidth((RectTransform)normal.transform, right: false);
-            ButtonTitle(normal, "enchant.btn.normal", "ENCHANT", 64);
-            StaticSub(normal, "enchant.btn.normal.sub", "FAIL = DESTROYED");
+                HalfWidth((RectTransform)normal.transform, right: false);
+                ButtonTitle(normal, "enchant.btn.normal", "ENCHANT", 64);
+                StaticSub(normal, "enchant.btn.normal.sub", "FAIL = DESTROYED");
+            }
 
-            var safe = MakeButton(root, "SafeButton", buttonSprite, SafeColor, new Vector2(1f, 0f),
+            Button safe;
+            Text safeSub;
+            if (safeArt != null)
+            {
+                var slot = Slot(root, "SafeSlot");
+                HalfWidth(slot, right: true);
+                safe = ArtButton(slot, "SafeButton", safeArt, game, "PressSafe");
+                safeSub = SafeCount(safe);
+            }
+            else
+            {
+                safe = MakeButton(root, "SafeButton", buttonSprite, SafeColor, new Vector2(1f, 0f),
                                   Vector2.zero, Vector2.zero, game, "PressSafe");
-            HalfWidth((RectTransform)safe.transform, right: true);
-            ButtonTitle(safe, "enchant.btn.safe", "SAFE", 64);
-            var safeSub = Sub(safe, 44);
+                HalfWidth((RectTransform)safe.transform, right: true);
+                ButtonTitle(safe, "enchant.btn.safe", "SAFE", 64);
+                safeSub = Sub(safe, 44);
+            }
 
-            var melt = MakeButton(root, "MeltButton", buttonSprite, MeltColor, new Vector2(0.5f, 0f),
+            Button melt;
+            Text meltSub;
+            if (meltArt != null)
+            {
+                var slot = Slot(root, "MeltSlot");
+                Anchor(slot, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+                       new Vector2(0f, MeltArtY), MeltArtSize);
+                melt = ArtButton(slot, "MeltButton", meltArt, game, "PressMelt");
+                meltSub = Label(root, "MeltSub", 36, SubColor, 3f);
+                Anchor(meltSub.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+                       new Vector2(0f, MeltSubY), new Vector2(600f, 50f));
+            }
+            else
+            {
+                melt = MakeButton(root, "MeltButton", buttonSprite, MeltColor, new Vector2(0.5f, 0f),
                                   new Vector2(0f, MeltButtonY), MeltButtonSize, game, "PressMelt");
-            ButtonTitle(melt, "enchant.btn.melt", "MELT", 56);
-            var meltSub = Sub(melt, 36);
+                ButtonTitle(melt, "enchant.btn.melt", "MELT", 56);
+                meltSub = Sub(melt, 36);
+            }
 
             // ---------- 검이 부서졌을 때 ----------
             var overlay = ShellUI.AddImage(root, "BrokenOverlay", null, raycast: true);   // 뒤쪽 버튼을 막습니다
@@ -350,6 +410,68 @@ namespace Enchant.EditorTools
 
             ShellSceneBuilder.BindClickPublic(button, target, method);
             return button;
+        }
+
+        /// <summary>버튼 그림이 들어갈 빈 칸. 그림은 이 칸 안에 비율대로 가운데 놓입니다.</summary>
+        static RectTransform Slot(RectTransform parent, string name)
+        {
+            var rt = new GameObject(name, typeof(RectTransform)).GetComponent<RectTransform>();
+            rt.SetParent(parent, false);
+            return rt;
+        }
+
+        /// <summary>
+        /// 글자가 그려진 버튼 그림. 칸 안에 **원본 비율 그대로** 들어가고(AspectFitter Contain),
+        /// 누르면 살짝 어두워지고, 누를 수 없을 때는 회색이 됩니다.
+        /// </summary>
+        static Button ArtButton(RectTransform slot, string name, Sprite sprite, Object target, string method)
+        {
+            var image = ShellUI.AddImage(slot, name, sprite, raycast: true);
+            var fitter = image.gameObject.AddComponent<AspectFitter>();
+            ShellSceneBuilder.WireInts(fitter, ("mode", (int)AspectFitMode.Contain));
+            fitter.Aspect = sprite.rect.width / sprite.rect.height;
+
+            var button = image.gameObject.AddComponent<Button>();
+            button.targetGraphic = image;
+            button.transition = Selectable.Transition.ColorTint;
+            var colors = button.colors;
+            colors.normalColor = Color.white;
+            colors.highlightedColor = Color.white;
+            colors.selectedColor = Color.white;
+            colors.pressedColor = ArtPressedColor;
+            colors.disabledColor = ArtDisabledColor;
+            colors.colorMultiplier = 1f;
+            colors.fadeDuration = 0.05f;
+            button.colors = colors;
+            image.color = Color.white;
+
+            ShellSceneBuilder.BindClickPublic(button, target, method);
+            return button;
+        }
+
+        /// <summary>
+        /// 안전 강화 그림의 "주문서 x {}" 에서 {} 자리에 얹는 숫자. 자리는 <see cref="EnchantArt.SafeCountSlot"/>
+        /// (그 칸은 가져올 때 버튼 바탕색으로 덮여 있습니다). 숫자가 길어지면 오른쪽 테두리 앞까지 쓰고, 넘치면 글자가 작아집니다.
+        /// </summary>
+        static Text SafeCount(Button button)
+        {
+            var text = ShellUI.AddText((RectTransform)button.transform, "Count", SafeCountFontSize, Color.white);
+            ShellUI.AddOutline(text, 4f, ArtInk);
+            text.alignment = TextAnchor.MiddleLeft;
+            text.horizontalOverflow = HorizontalWrapMode.Wrap;
+            text.verticalOverflow = VerticalWrapMode.Overflow;
+            text.resizeTextForBestFit = true;
+            text.resizeTextMinSize = 24;
+            text.resizeTextMaxSize = SafeCountFontSize;
+
+            var slot = EnchantArt.SafeCountSlot;
+            var rt = text.rectTransform;
+            rt.anchorMin = new Vector2(slot.xMin, slot.yMin);
+            rt.anchorMax = new Vector2(0.93f, slot.yMax);   // 그림 오른쪽 테두리 안쪽까지
+            rt.pivot = new Vector2(0f, 0.5f);
+            rt.offsetMin = rt.offsetMax = Vector2.zero;
+            text.text = "0";
+            return text;
         }
 
         /// <summary>화면 아래의 큰 버튼 하나를 화면 왼쪽(또는 오른쪽) 절반에 맞춥니다.</summary>

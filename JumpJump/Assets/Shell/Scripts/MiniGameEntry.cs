@@ -31,6 +31,16 @@ namespace Arcade
                  "배경의 갈색 테두리가 보입니다 (수정사항_03)")]
         [Range(0.3f, 1.2f)] public float iconScale = 1f;
 
+        [Tooltip("켜면 아이콘 그림을 **동그랗게 잘라서** 칸의 동그라미 안에 넣습니다. 네모난 그림(검 강화처럼 꽉 찬 그림)에 씁니다. " +
+                 "원본은 그대로 두고 Build All Scenes 때 Art/GamesRound/ 에 잘린 사본을 만듭니다 (2026-09-13)")]
+        public bool roundIcon = false;
+
+        [Tooltip("roundIcon 이 켜져 있을 때 Build All Scenes 가 채우는 동그란 사본. 손으로 넣지 마세요")]
+        public Sprite roundedIcon;
+
+        /// <summary>로비 칸에 실제로 그리는 아이콘 — 동그랗게 자른 사본이 있으면 그것, 없으면 원본.</summary>
+        public Sprite LobbyIcon => roundIcon && roundedIcon != null ? roundedIcon : icon;
+
         [Tooltip("로비의 몇 번째 칸에 놓을지. 0 = 왼쪽 위, 8 = 오른쪽 아래")]
         [Range(0, 8)] public int slot = 0;
 

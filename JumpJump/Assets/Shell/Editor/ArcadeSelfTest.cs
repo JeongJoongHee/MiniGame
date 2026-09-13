@@ -177,6 +177,17 @@ namespace Arcade.EditorTools
                 failed += Check(log, "랭킹을 가져오면 내 줄이 1등으로 잡힌다",
                                 page != null && page.ok && page.myRank == 1 && page.myScore == 500);
 
+                // ---- 버튼 클릭 소리 (2026-09-13) ---------------------------------------
+                failed += Check(log, "클릭 소리 파일이 Resources/" + UiClickSound.ClickResource + " 에 있다",
+                                Resources.Load<AudioClip>(UiClickSound.ClickResource) != null);
+                var probeButton = new GameObject("SelfTestButton", typeof(RectTransform), typeof(UnityEngine.UI.Image),
+                                                 typeof(UnityEngine.UI.Button)).GetComponent<UnityEngine.UI.Button>();
+                bool attachedFirst = UiClickSound.Attach(probeButton);
+                bool attachedAgain = UiClickSound.Attach(probeButton);
+                failed += Check(log, "같은 버튼에 클릭 소리를 두 번 붙여도 한 번만 붙는다",
+                                attachedFirst && !attachedAgain && probeButton.GetComponents<UiClickSound>().Length == 1);
+                Object.DestroyImmediate(probeButton.gameObject);
+
                 // ---- 배치 플레이테스트 보호 --------------------------------------------
                 GameSession.Recording = false;
                 int locked = PlayCounter.Total;
@@ -409,6 +420,13 @@ namespace Arcade.EditorTools
                 var archery = catalog != null ? catalog.FindById("archery") : null;
                 failed += Check(log, "활쏘기 아이콘이 칸 테두리 안쪽 크기로 줄었다  -> x" + (archery != null ? archery.iconScale : 0f),
                                 archery != null && archery.iconScale < 0.9f);
+
+                // 2026-09-13 : 검 강화 아이콘(네모난 그림)은 동그랗게 잘라 칸의 동그라미 안에 넣는다
+                var enchant = catalog != null ? catalog.FindById("enchant") : null;
+                string roundPath = enchant != null && enchant.roundedIcon != null ? AssetDatabase.GetAssetPath(enchant.roundedIcon) : "";
+                failed += Check(log, "검 강화 아이콘이 동그랗게 잘린 사본을 쓰고, 그 그림의 모서리는 투명하다  -> " + roundPath,
+                                enchant != null && enchant.roundIcon && enchant.LobbyIcon == enchant.roundedIcon
+                                && ShellArt.CornerIsTransparent(roundPath));
             }
             finally
             {

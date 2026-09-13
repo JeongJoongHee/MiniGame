@@ -114,8 +114,8 @@ namespace Arcade
             // 게임마다 배율이 다릅니다 — 점프점프 아이콘은 그림 안에 칸 테두리가 그려져 있어 꽉 채우고,
             // 활쏘기(과녁)는 꽉 찬 그림이라 줄여서 배경의 갈색 테두리가 보이게 합니다. (GameCatalog 의 iconScale)
             float width = iconWidth * Mathf.Max(0.01f, entry.iconScale);
-            var icon = ShellUI.AddImage(card, "Icon", entry.icon);
-            float iconHeight = ShellUI.HeightForWidth(entry.icon, width, slotAspect);
+            var icon = ShellUI.AddImage(card, "Icon", entry.LobbyIcon);   // roundIcon 이면 동그랗게 자른 사본
+            float iconHeight = ShellUI.HeightForWidth(entry.LobbyIcon, width, slotAspect);
             ShellUI.Place(icon.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(width, iconHeight));
 
             // --- 이름표 ---

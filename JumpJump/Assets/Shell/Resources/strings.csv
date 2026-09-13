@@ -63,11 +63,11 @@ enchant.hud.level,+{level},검 강화 - 왼쪽 위 동그라미 안 강화 수�
 enchant.hud.best,최고 +{best},검 강화 - 동그라미 아래 최고 기록
 enchant.hud.chance,+{next} 강화 성공 확률 {prob}%,검 강화 - 검 아래 확률 줄
 enchant.hud.max,더 이상 강화할 수 없습니다,검 강화 - 표의 확률이 0 인 최고 단계일 때
-enchant.btn.normal,일반 강화,검 강화 - 왼쪽 아래 버튼
-enchant.btn.normal.sub,실패하면 파괴,검 강화 - 일반 강화 버튼 아래 작은 글자
-enchant.btn.safe,안전 강화,검 강화 - 오른쪽 아래 버튼
-enchant.btn.safe.sub,주문서 x{count},검 강화 - 안전 강화 버튼 아래 (가진 주문서 수)
-enchant.btn.melt,분해,검 강화 - 가운데 버튼
+enchant.btn.normal,일반 강화,검 강화 - 왼쪽 아래 버튼 (2026-09-13 부터 버튼 그림에 글자가 그려져 있어 화면에는 안 나옴)
+enchant.btn.normal.sub,실패하면 파괴,검 강화 - 일반 강화 버튼 아래 작은 글자 (지금은 그림에 그려져 있어 안 나옴)
+enchant.btn.safe,안전 강화,검 강화 - 오른쪽 아래 버튼 (지금은 그림에 그려져 있어 안 나옴)
+enchant.btn.safe.sub,{count},검 강화 - 안전 강화 버튼 그림의 "주문서 x" 뒤에 들어가는 숫자 (가진 주문서 수)
+enchant.btn.melt,분해,검 강화 - 가운데 버튼 (지금은 그림에 그려져 있어 안 나옴)
 enchant.btn.melt.on,주문서 +{count},검 강화 - 분해할 수 있을 때 받는 주문서 수
 enchant.btn.melt.off,+{level}부터 가능,검 강화 - 아직 분해할 수 없을 때
 enchant.working,강화 중...,검 강화 - 결과를 기다리는 동안

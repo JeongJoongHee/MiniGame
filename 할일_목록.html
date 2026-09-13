@@ -70,16 +70,17 @@
 
 <main>
 <h1>출시까지 할 일</h1>
-<p class="sub">심심할 때 하는 게임 &middot; 2026-09-11 늦은 밤 기준 (게임 3번 검 강화 추가) &middot; <strong>▸ 자세한 방법</strong> 을 누르면 하는 법이 나옵니다 &middot; 체크는 이 브라우저에 저장됩니다</p>
+<p class="sub">심심할 때 하는 게임 &middot; 2026-09-13 기준 (검 강화 그림 · 버튼 · 클릭 소리) &middot; <strong>▸ 자세한 방법</strong> 을 누르면 하는 법이 나옵니다 &middot; 체크는 이 브라우저에 저장됩니다</p>
 
 <section>
 <h2>지금 어디까지 왔나</h2>
 <p class="lead">게임 세 개와 화면, <strong>랭킹 서버와 광고까지 다 됐습니다.</strong>
-<strong>3번 &ldquo;검 강화!&rdquo; 는 방금 붙여서 확인 전</strong>이고 그림이 임시입니다 (아래 0-1).
+<strong>3번 &ldquo;검 강화!&rdquo; 는 9월 13일에 보내 주신 그림 · 버튼 · 소리까지 들어갔고</strong>, 제 쪽 화면 점검(캡처)이 아직 남았습니다 (아래 0-1).
 그 밖에 남은 것은 <strong>두 스토어에 올리는 것</strong>입니다 (서명 · 개인정보처리방침 · 스토어 등록).</p>
 
 <div class="flow">[끝] 점프점프 · 활쏘기 · 타이틀 · 로비 · 팝업 · 글꼴 · 글자표
-[끝] 게임 3번 검 강화 (확인 · 그림 남음)    &lt;- 2026-09-11 늦은 밤
+[끝] 게임 3번 검 강화                       &lt;- 2026-09-11 늦은 밤
+[끝] 검 강화 그림 · 버튼 · 클릭 소리 · 동그란 아이콘  &lt;- 2026-09-13  (제 화면 점검 남음)
 [끝] 랭킹 뼈대 + 랭킹 창 + 별명 창          &lt;- 2026-09-09
 [끝] 2단계  랭킹을 Firebase 에 연결          &lt;- 2026-09-11  (+ 수정사항_02 5건)
 [끝] 3단계  광고(AdMob) 붙이기               &lt;- 2026-09-11  (지금은 테스트 광고)
@@ -230,12 +231,34 @@
 </section>
 
 <section>
-<h2>0-1. 게임 3번 &ldquo;검 강화!&rdquo; <span class="tag you">사용자</span> — 2026-09-11 늦은 밤 추가</h2>
-<p>보고서는 <code>검강화_추가보고서.html</code>. 규칙 · 확률 · 저장은 배치 모드로 검증했고, <strong>제가 정한 것과 그림이 남았습니다.</strong></p>
+<h2>0-1. 게임 3번 &ldquo;검 강화!&rdquo; <span class="tag you">사용자</span> — 2026-09-11 추가 · 2026-09-13 그림 · 소리</h2>
+<p>보고서는 <code>검강화_추가보고서.html</code>. <strong>12가지는 &ldquo;그대로 좋음&rdquo; 으로 확정</strong>, 그림도 넣어 주셨습니다.
+9월 13일 것(버튼 그림 · 클릭 소리 · 동그란 아이콘 · 배경 투명도)은 <strong>Unity 가 켜져 있어서 제가 화면 점검을 아직 못 했습니다.</strong></p>
 <ul class="todo">
 <li>
+<label><input type="checkbox" data-k="k6"><span class="what">
+  <b>다음에 시작할 때 Unity 에디터를 닫고 알려 주기</b>
+  <span>제가 밀린 점검(자체 점검 · 검 강화 점검 · 화면 캡처)을 돌리고, 캡처를 넣은 보고서를 드립니다.</span></span></label>
+</li>
+
+<li>
+<label><input type="checkbox" data-k="k7"><span class="what">
+  <b>에디터 Play 로 9월 13일 것 확인</b>
+  <span>버튼을 누를 때 <strong>딸깍 소리</strong>가 나는지 · 검 강화 배경 밝기(지금 0.55) · 로비 3번 칸 동그란 아이콘 크기 · 안전 강화 버튼의 주문서 숫자 자리 · 검 19장이 수치마다 바뀌는지</span></span></label>
+<details><summary>자세한 방법</summary><div class="body">
+<ul>
+<li>배경 밝기 : <code>Assets/Enchant/EnchantConfig.asset</code> 의 <strong>Background Alpha</strong> (1 = 원래 그림, 낮을수록 어둡게) → Build All Scenes.</li>
+<li>소리 크기 : <code>Assets/Shell/Resources/ArcadeConfig.asset</code> 의 <strong>Click Volume</strong> (0 = 끔).</li>
+<li>아이콘 크기 : <code>Assets/Shell/GameCatalog.asset</code> 검 강화 줄의 <strong>Icon Scale</strong> (지금 0.8). 동그랗게 자르기는 <strong>Round Icon</strong>.</li>
+<li>검 그림 나눔 : <code>@Enchant_Sword.csv</code> 의 <code>Image</code> 열 (+7 부터 약 3단계마다 한 장, 19장 기준). <strong>지금 <code>Art/Swords</code> 에 16장뿐이라 +41~+50 은 임시 검</strong>이 나옵니다 — 17~19 를 다시 넣으시거나, 16장으로 다시 나눠 달라고 해 주세요.</li>
+<li>버튼 · 배경 · 아이콘 그림 오른쪽 아래의 작은 <strong>✦ 표시</strong>(그림 만든 도구의 표시)를 지울지도 알려 주세요.</li>
+</ul>
+</div></details>
+</li>
+
+<li>
 <label><input type="checkbox" data-k="k1"><span class="what">
-  <b>제가 정한 12가지 확인 — 특히 ①~⑤</b>
+  <b>[끝 · 09-13 &ldquo;그대로 좋음&rdquo;] 제가 정한 12가지 확인 — 특히 ①~⑤</b>
   <span>① 일반 강화는 공짜 ② 분해하면 주문서 100% ③ +50 넘어도 30% 로 계속 ④ 강화 수치 · 주문서가 폰에 저장 ⑤ 랭킹 = 강화 수치, 검 한 자루가 한 판</span></span></label>
 <details><summary>자세한 방법</summary><div class="body">
 <ol>
@@ -248,7 +271,7 @@
 
 <li>
 <label><input type="checkbox" data-k="k2"><span class="what">
-  <b>검 그림 6장 넣기</b>
+  <b>검 그림 넣기 — 지금 16장 (<code>Sword_17~19</code> 가 빠져 있습니다)</b>
   <span>작업 폴더(또는 <code>@리소스 추가_2차</code>)에 <code>Sword_01.png</code> ~ <code>Sword_06.png</code> &rarr; Build All Scenes</span></span></label>
 <details><summary>자세한 방법</summary><div class="body">
 <ul>
@@ -261,13 +284,13 @@
 
 <li>
 <label><input type="checkbox" data-k="k3"><span class="what">
-  <b>로비 아이콘 · 이름표</b>
+  <b>[끝 · 09-13 넣어 주심, 아이콘은 동그랗게 잘라 넣음] 로비 아이콘 · 이름표</b>
   <span><code>@Game_03_검강화.png</code> <strong>덮어쓰기</strong>(지금 것은 제가 만든 임시) &middot; <code>@Name_03_검강화.png</code> <strong>새로</strong>(가로:세로 약 2.15:1, 이름이 그려진 그림)</span></span></label>
 </li>
 
 <li>
 <label><input type="checkbox" data-k="k4"><span class="what">
-  <b>(선택) 배경 · 게임 이름</b>
+  <b>[배경 끝 · 09-13 대장간] (선택) 배경 · 게임 이름</b>
   <span>배경은 <code>@Enchant_BG.png</code>(세로형). 이름 &ldquo;검 강화!&rdquo; 는 임시 — 로비는 <code>GameCatalog.asset</code>, 랭킹 창은 <code>strings.csv</code> 의 <code>game.enchant.name</code></span></span></label>
 </li>
 

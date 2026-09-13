@@ -27,66 +27,66 @@ MonoBehaviour:
   orthoSize: 8
   stageCsv: {fileID: 4900000, guid: 3de7022dc279c1247a9cdab7faacc6f9, type: 3}
   stageBands:
-  - upToHits: 4
-    targetSpeed: 1.6
+  - upToHits: 15
+    targetSpeed: 4
     shrinkPercent: 1
     sizeMinPercent: 35
     ammoMax: 5
-    arrowSpeed: 16
-  - upToHits: 9
-    targetSpeed: 2
+    arrowSpeed: 9
+  - upToHits: 30
+    targetSpeed: 4
     shrinkPercent: 1
     sizeMinPercent: 35
     ammoMax: 5
-    arrowSpeed: 16
-  - upToHits: 19
-    targetSpeed: 2.5
+    arrowSpeed: 9
+  - upToHits: 45
+    targetSpeed: 5
     shrinkPercent: 1
     sizeMinPercent: 35
     ammoMax: 5
-    arrowSpeed: 17
-  - upToHits: 29
-    targetSpeed: 3
+    arrowSpeed: 9
+  - upToHits: 60
+    targetSpeed: 5
     shrinkPercent: 1
     sizeMinPercent: 35
     ammoMax: 5
-    arrowSpeed: 17
-  - upToHits: 44
-    targetSpeed: 3.6
-    shrinkPercent: 1
-    sizeMinPercent: 35
-    ammoMax: 5
-    arrowSpeed: 18
-  - upToHits: 59
-    targetSpeed: 4.2
-    shrinkPercent: 1
-    sizeMinPercent: 35
-    ammoMax: 4
-    arrowSpeed: 18
-  - upToHits: 79
-    targetSpeed: 4.8
-    shrinkPercent: 1
-    sizeMinPercent: 35
-    ammoMax: 4
-    arrowSpeed: 19
-  - upToHits: 99
-    targetSpeed: 5.4
-    shrinkPercent: 1
-    sizeMinPercent: 35
-    ammoMax: 4
-    arrowSpeed: 19
-  - upToHits: 129
+    arrowSpeed: 9
+  - upToHits: 75
     targetSpeed: 6
     shrinkPercent: 1
     sizeMinPercent: 35
-    ammoMax: 3
-    arrowSpeed: 20
-  - upToHits: 9999
-    targetSpeed: 6.8
+    ammoMax: 5
+    arrowSpeed: 9
+  - upToHits: 90
+    targetSpeed: 6
+    shrinkPercent: 1
+    sizeMinPercent: 35
+    ammoMax: 4
+    arrowSpeed: 9
+  - upToHits: 105
+    targetSpeed: 7
+    shrinkPercent: 1
+    sizeMinPercent: 35
+    ammoMax: 4
+    arrowSpeed: 9
+  - upToHits: 120
+    targetSpeed: 7
+    shrinkPercent: 1
+    sizeMinPercent: 35
+    ammoMax: 4
+    arrowSpeed: 9
+  - upToHits: 135
+    targetSpeed: 8
     shrinkPercent: 1
     sizeMinPercent: 35
     ammoMax: 3
-    arrowSpeed: 20
+    arrowSpeed: 9
+  - upToHits: 9999
+    targetSpeed: 9
+    shrinkPercent: 1
+    sizeMinPercent: 35
+    ammoMax: 3
+    arrowSpeed: 9
   targetHitPunch: 0.12
   targetHitRecovery: 9
   bowRecoil: 0.18

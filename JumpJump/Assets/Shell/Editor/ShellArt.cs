@@ -30,6 +30,18 @@ namespace Arcade.EditorTools
         public const string FontFolder = "Assets/Shell/Resources";
 
         /// <summary>
+        /// 소리가 들어가는 곳 (2026-09-13). 실행 중에 <see cref="UiClickSound"/> 가 `Resources.Load` 로 찾습니다.
+        /// 작업 폴더(또는 `@리소스` 폴더)의 같은 이름 파일이 더 새로우면 가져옵니다.
+        /// </summary>
+        public const string SoundFolder = "Assets/Shell/Resources/Sounds";
+        public const string ClickSoundPath = SoundFolder + "/Click.wav";
+
+        static readonly (string[] sources, string dest)[] SoundMap =
+        {
+            (new[] { "Click.wav", "@Click.wav" }, ClickSoundPath),
+        };
+
+        /// <summary>
         /// 글꼴 원본을 놓는 폴더. 작업 폴더 아래 `Font` 입니다.
         /// **여기에 `.ttf` 나 `.otf` 를 넣기만 하면 됩니다** — 파일 이름은 아무거나 좋습니다.
         /// </summary>
@@ -134,6 +146,7 @@ namespace Arcade.EditorTools
 
             if (TrimStrayArt(report)) changed = true;
             if (SyncFont(force, report)) changed = true;
+            if (SyncSounds(force, report)) changed = true;
 
             if (changed)
             {
@@ -545,6 +558,124 @@ namespace Arcade.EditorTools
                 Configure(path, 1024);           // 이름표에는 글자가 들어 있어서 아이콘보다 크게 잡습니다
 
             ConfigureFont();
+            ConfigureSounds();
+        }
+
+        /// <summary>
+        /// 로비 아이콘을 동그랗게 자른 사본이 들어가는 곳 (2026-09-13). `Art/Games` **바깥**에 둡니다 —
+        /// 그 안에 두면 아이콘 목록(GameIconPaths)에 섞여 게임 순서가 어긋납니다.
+        /// </summary>
+        public const string RoundIconsFolder = Folder + "/GamesRound";
+
+        /// <summary>
+        /// 아이콘을 **가운데 정사각형으로 맞춘 뒤 동그랗게 잘라** RoundIconsFolder 에 PNG 로 씁니다. 원본은 건드리지 않습니다.
+        /// 원 밖은 투명, 가장자리 1px 은 반투명으로 부드럽게. 원본이 사본보다 새로우면 다시 자릅니다.
+        /// (MiniGameEntry.roundIcon 이 켜진 게임만. 네모난 그림을 로비 칸의 동그라미 안에 넣을 때)
+        /// </summary>
+        public static Sprite RoundIcon(Sprite icon)
+        {
+            string source = AssetDatabase.GetAssetPath(icon);
+            if (string.IsNullOrEmpty(source) || !File.Exists(source)) return null;
+            string dest = RoundIconsFolder + "/" + Path.GetFileNameWithoutExtension(source) + ".png";
+
+            if (!File.Exists(dest) || File.GetLastWriteTimeUtc(dest) < File.GetLastWriteTimeUtc(source))
+            {
+                var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                try
+                {
+                    if (!texture.LoadImage(File.ReadAllBytes(source))) return null;
+                    int w = texture.width, h = texture.height, size = Mathf.Min(w, h);
+                    int ox = (w - size) / 2, oy = (h - size) / 2;
+                    var src = texture.GetPixels32();
+                    var dst = new Color32[size * size];
+                    float radius = size * 0.5f;
+
+                    for (int y = 0; y < size; y++)
+                        for (int x = 0; x < size; x++)
+                        {
+                            var p = src[(oy + y) * w + ox + x];
+                            float dx = x + 0.5f - radius, dy = y + 0.5f - radius;
+                            float cover = Mathf.Clamp01(radius - Mathf.Sqrt(dx * dx + dy * dy));   // 원 밖 0, 가장자리 1px 부드럽게
+                            p.a = (byte)Mathf.RoundToInt(p.a * cover);
+                            dst[y * size + x] = p;
+                        }
+
+                    var round = new Texture2D(size, size, TextureFormat.RGBA32, false);
+                    round.SetPixels32(dst);
+                    round.Apply();
+                    Directory.CreateDirectory(RoundIconsFolder);
+                    File.WriteAllBytes(dest, round.EncodeToPNG());
+                    Object.DestroyImmediate(round);
+                }
+                finally
+                {
+                    Object.DestroyImmediate(texture);
+                }
+
+                AssetDatabase.ImportAsset(dest);
+                Debug.Log("[Arcade] 로비 아이콘을 동그랗게 잘랐습니다  " + source + " -> " + dest);
+            }
+
+            Configure(dest, 512);
+            return AssetDatabase.LoadAssetAtPath<Sprite>(dest);
+        }
+
+        /// <summary>자체 점검용 — 그림의 왼쪽 아래 모서리가 투명하고 한가운데는 불투명한지 (동그랗게 잘렸는지).</summary>
+        public static bool CornerIsTransparent(string path)
+        {
+            if (string.IsNullOrEmpty(path) || !File.Exists(path)) return false;
+            var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                if (!texture.LoadImage(File.ReadAllBytes(path))) return false;
+                return texture.GetPixel(0, 0).a < 0.05f
+                    && texture.GetPixel(texture.width / 2, texture.height / 2).a > 0.9f;
+            }
+            finally
+            {
+                Object.DestroyImmediate(texture);
+            }
+        }
+
+        /// <summary>작업 폴더 · `@리소스` 폴더의 소리 파일이 더 새로우면 Resources/Sounds 로 가져옵니다.</summary>
+        static bool SyncSounds(bool force, StringBuilder report)
+        {
+            bool changed = false;
+            foreach (var (sources, dest) in SoundMap)
+            {
+                string source = FindSource(sources);
+                if (source == null) continue;
+                if (!force && File.Exists(dest) && File.GetLastWriteTimeUtc(dest) >= File.GetLastWriteTimeUtc(source)) continue;
+
+                Directory.CreateDirectory(Path.GetDirectoryName(dest));
+                File.Copy(source, dest, true);
+                report.Append("  ").Append(Path.GetFileName(source)).Append(" -> ").Append(dest).Append('\n');
+                changed = true;
+            }
+            return changed;
+        }
+
+        /// <summary>
+        /// 버튼 소리는 아주 짧아서 **압축하지 않고(PCM) 불러올 때 풀어 둡니다** — 누르는 순간 늦지 않게.
+        /// 한 채널(모노)로 합칩니다 (화면 UI 소리라 좌우가 필요 없습니다).
+        /// </summary>
+        static void ConfigureSounds()
+        {
+            const string marker = "arcade-sound-v1";
+            foreach (var (_, path) in SoundMap)
+            {
+                var importer = AssetImporter.GetAtPath(path) as AudioImporter;
+                if (importer == null || importer.userData == marker) continue;
+
+                importer.forceToMono = true;
+                var settings = importer.defaultSampleSettings;
+                settings.loadType = AudioClipLoadType.DecompressOnLoad;
+                settings.compressionFormat = AudioCompressionFormat.PCM;
+                settings.preloadAudioData = true;
+                importer.defaultSampleSettings = settings;
+                importer.userData = marker;
+                importer.SaveAndReimport();
+            }
         }
 
         /// <summary>Art/Games 의 아이콘들. Game_01, Game_02 ... 이름 순서입니다.</summary>

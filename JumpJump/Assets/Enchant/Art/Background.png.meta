@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -164,6 +164,6 @@ TextureImporter:
       Background_0: -1955448553306655712
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  userData: enchant-art-v1|Point|2048|(0.00, 0.00, 0.00, 0.00)
+  userData: enchant-art-v1|Bilinear|2048|(0.00, 0.00, 0.00, 0.00)
   assetBundleName: 
   assetBundleVariant: 

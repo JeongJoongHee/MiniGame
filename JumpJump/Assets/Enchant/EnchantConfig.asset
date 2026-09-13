@@ -18,6 +18,7 @@ MonoBehaviour:
   bannerSeconds: 1.2
   breakRevealSeconds: 0.8
   newSwordLockSeconds: 1.4
+  backgroundAlpha: 0.55
   glowByLevel:
     serializedVersion: 2
     key0: {r: 1, g: 0.78, b: 0.45, a: 0.55}
@@ -90,219 +91,219 @@ MonoBehaviour:
     successPer10000: 9000
     meltScrolls: 0
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_07
   - level: 8
     successPer10000: 9000
     meltScrolls: 0
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_07
   - level: 9
     successPer10000: 9000
     meltScrolls: 0
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_07
   - level: 10
     successPer10000: 9000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_07
   - level: 11
     successPer10000: 9000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_08
   - level: 12
     successPer10000: 9000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_08
   - level: 13
     successPer10000: 9000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_08
   - level: 14
     successPer10000: 8000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_09
   - level: 15
     successPer10000: 8000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_09
   - level: 16
     successPer10000: 8000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_09
   - level: 17
     successPer10000: 8000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_09
   - level: 18
     successPer10000: 8000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_10
   - level: 19
     successPer10000: 8000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_10
   - level: 20
     successPer10000: 8000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_10
   - level: 21
     successPer10000: 7000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_11
   - level: 22
     successPer10000: 7000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_11
   - level: 23
     successPer10000: 7000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_11
   - level: 24
     successPer10000: 7000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_12
   - level: 25
     successPer10000: 7000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_12
   - level: 26
     successPer10000: 6000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_12
   - level: 27
     successPer10000: 6000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_12
   - level: 28
     successPer10000: 6000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_13
   - level: 29
     successPer10000: 6000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_13
   - level: 30
     successPer10000: 6000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_13
   - level: 31
     successPer10000: 5000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_14
   - level: 32
     successPer10000: 5000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_14
   - level: 33
     successPer10000: 5000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_14
   - level: 34
     successPer10000: 5000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_14
   - level: 35
     successPer10000: 5000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_15
   - level: 36
     successPer10000: 4000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_15
   - level: 37
     successPer10000: 4000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_15
   - level: 38
     successPer10000: 4000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_16
   - level: 39
     successPer10000: 4000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_16
   - level: 40
     successPer10000: 4000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_16
   - level: 41
     successPer10000: 3000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_17
   - level: 42
     successPer10000: 3000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_17
   - level: 43
     successPer10000: 3000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_17
   - level: 44
     successPer10000: 3000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_17
   - level: 45
     successPer10000: 3000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_18
   - level: 46
     successPer10000: 3000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_18
   - level: 47
     successPer10000: 3000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_18
   - level: 48
     successPer10000: 3000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_19
   - level: 49
     successPer10000: 3000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_19
   - level: 50
     successPer10000: 3000
     meltScrolls: 1
     meltPer10000: 10000
-    image: Sword_06
+    image: Sword_19

@@ -55,6 +55,11 @@ namespace Enchant
                  "그 자리에서 곧바로 넘어가거나 광고를 누르지 않게 하는 잠금입니다")]
         public float newSwordLockSeconds = 1.4f;
 
+        [Header("화면")]
+        [Tooltip("배경 그림의 불투명도. 1 = 그림 그대로, 낮출수록 뒤의 어두운 바탕이 비쳐 배경이 어두워지고 검이 도드라집니다. " +
+                 "씬을 구울 때 들어가므로 바꾸면 Build All Scenes 를 한 번 (2026-09-13)")]
+        [Range(0f, 1f)] public float backgroundAlpha = 0.55f;
+
         [Header("연출")]
         [Tooltip("검 뒤의 빛 색. 왼쪽 = +0, 오른쪽 = 표의 마지막 강화 수치")]
         public Gradient glowByLevel = DefaultGlow();

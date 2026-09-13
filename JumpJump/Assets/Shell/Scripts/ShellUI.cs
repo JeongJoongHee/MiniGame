@@ -116,6 +116,7 @@ namespace Arcade
 
             var button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.None;
+            if (Application.isPlaying) UiClickSound.Attach(button);   // 실행 중에 만든 버튼도 딸깍 소리
             return button;
         }
     }

@@ -613,7 +613,8 @@ namespace Arcade.EditorTools
                     id = "enchant",
                     displayName = "검 강화!",
                     sceneName = Path.GetFileNameWithoutExtension(EnchantScenePath),
-                    iconScale = 0.8f,   // 임시 아이콘은 테두리 없이 꽉 찬 동그라미라 활쏘기처럼 줄입니다
+                    iconScale = 0.8f,   // 아이콘은 테두리 없이 꽉 찬 그림이라 활쏘기처럼 줄입니다
+                    roundIcon = true,   // 네모난 그림이라 동그랗게 잘라 칸의 동그라미 안에 넣습니다 (2026-09-13)
                     slot = 2,
                     available = true,
                 });
@@ -631,6 +632,9 @@ namespace Arcade.EditorTools
                     entry.icon = AssetDatabase.LoadAssetAtPath<Sprite>(icons[i]);
                 if (entry.namePlate == null && i < plates.Count)
                     entry.namePlate = AssetDatabase.LoadAssetAtPath<Sprite>(plates[i]);
+
+                // 네모난 아이콘은 동그랗게 자른 사본을 만들어 둡니다 (원본이 바뀌면 다시 자릅니다).
+                entry.roundedIcon = entry.roundIcon && entry.icon != null ? ShellArt.RoundIcon(entry.icon) : null;
             }
 
             EditorUtility.SetDirty(catalog);

@@ -20,6 +20,8 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: f9b71a7958eb42c458e1b8346d14da2f, type: 3}
     namePlate: {fileID: 21300000, guid: 01cc7f10187ca55488faee732f964278, type: 3}
     iconScale: 1
+    roundIcon: 0
+    roundedIcon: {fileID: 0}
     slot: 0
     available: 1
   - id: archery
@@ -28,13 +30,17 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: 69ff6acc4b7cfdb4189b9b0061640945, type: 3}
     namePlate: {fileID: 21300000, guid: 505b57613b341f841ad1bde7d10a964b, type: 3}
     iconScale: 0.8
+    roundIcon: 0
+    roundedIcon: {fileID: 0}
     slot: 1
     available: 1
   - id: enchant
     displayName: "\uAC80 \uAC15\uD654!"
     sceneName: EnchantScene
     icon: {fileID: 21300000, guid: df16780345aad5841b3acf8104ea2c13, type: 3}
-    namePlate: {fileID: 0}
+    namePlate: {fileID: 21300000, guid: 02d880ff9de4fba43b093f2bbe870860, type: 3}
     iconScale: 0.8
+    roundIcon: 1
+    roundedIcon: {fileID: 21300000, guid: 2a1cc936fc7a4264389bb3876695a0e4, type: 3}
     slot: 2
     available: 1

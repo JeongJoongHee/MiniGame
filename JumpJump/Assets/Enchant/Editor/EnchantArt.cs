@@ -32,11 +32,38 @@ namespace Enchant.EditorTools
         public const string ButtonPath = ArtFolder + "/Button.png";
         public const string GlowPath = ArtFolder + "/Glow.png";
 
+        /// <summary>
+        /// [일반 강화] [안전 강화] [분해] 버튼 그림 (2026-09-13, `@리소스 추가 2차`). **글자가 그림에 그려져 있습니다.**
+        /// 없으면 예전처럼 코드가 그린 판(Button.png) 위에 strings.csv 글자를 얹습니다.
+        /// </summary>
+        public const string ButtonsFolder = ArtFolder + "/Buttons";
+        public const string NormalButtonArtPath = ButtonsFolder + "/Normal_Enchant.png";
+        public const string SafeButtonArtPath = ButtonsFolder + "/Safe_Enchant.png";
+        public const string MeltButtonArtPath = ButtonsFolder + "/Melting.png";
+
+        static readonly (string[] sources, string dest)[] ButtonArt =
+        {
+            (new[] { "Normal_Enchant.png", "@Normal_Enchant.png" }, NormalButtonArtPath),
+            (new[] { "Safe_Enchant.png", "@Safe_Enchant.png" },     SafeButtonArtPath),
+            (new[] { "Melting.png", "@Melting.png", "Melt.png" },   MeltButtonArtPath),
+        };
+
+        /// <summary>
+        /// 안전 강화 그림의 **"주문서 x {}" 에서 {} 자리** — 여백을 자른 그림 안의 비율 (왼쪽 아래가 0,0).
+        /// 가져올 때 이 칸을 버튼 바탕색으로 덮고, 화면에서는 같은 칸에 가진 주문서 수를 글자로 얹습니다.
+        /// **안전 강화 그림을 다른 모양으로 바꾸면 이 칸을 다시 재야 합니다** (2026-09-13 그림 1380x752 기준).
+        /// </summary>
+        public static readonly Rect SafeCountSlot = new Rect(0.6787f, 0.2091f, 0.1530f, 0.2658f);
+
         /// <summary>로비 아이콘의 원본. 작업 폴더(D:\00.JumpJump)에 놓입니다. 게임 순서 3번째.</summary>
         public const string LobbyIconName = "@Game_03_검강화.png";
         const string LobbyIconPattern = "Game_03_*.png";
 
-        static readonly string[] BackgroundSources = { "@Enchant_BG.png", "Enchant_BG.png", "@Enchant_Background.png" };
+        /// <summary>
+        /// 배경 원본 이름. `BG_03.png` 는 "게임 3번의 배경" — 활쏘기(2번) 잔디밭이 `@리소스 추가_1차/BG_02.png` 였던 것과 같은 이름 규칙입니다
+        /// (2026-09-13 `@리소스 추가 2차/BG_03.png` 대장간). 한 폴더 안에서는 뒤에 적은 이름이 이깁니다.
+        /// </summary>
+        static readonly string[] BackgroundSources = { "BG_03.png", "@Enchant_BG.png", "Enchant_BG.png", "@Enchant_Background.png" };
 
         const int SwordW = 32, SwordH = 96;
         const int BgW = 135, BgH = 240;          // 1080x1920 의 1/8. 한 칸이 화면에서 8픽셀짜리 점이 됩니다
@@ -90,6 +117,7 @@ namespace Enchant.EditorTools
             }
 
             ImportBackground(report);
+            ImportButtons(report);
             ImportRealSwords(report);
             EnsureLobbyIcon(report);
 
@@ -174,6 +202,94 @@ namespace Enchant.EditorTools
             report.Append($"  {Path.GetFileName(source)} -> {BackgroundPath}\n");
         }
 
+        static bool IsLargePicture(string path)
+        {
+            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer == null) return false;
+            importer.GetSourceTextureWidthAndHeight(out int w, out int h);
+            return w > BgW * 2;
+        }
+
+        /// <summary>
+        /// 버튼 그림 셋을 Art/Buttons 로 가져옵니다 (여백을 잘라서). 작업 폴더 · `@리소스` 폴더에서 찾고 뒤쪽 폴더가 이깁니다.
+        /// 안전 강화 그림은 가져오면서 {} 자리를 덮습니다 (<see cref="SafeCountSlot"/>).
+        /// </summary>
+        static void ImportButtons(StringBuilder report)
+        {
+            foreach (var (sources, dest) in ButtonArt)
+            {
+                string source = null;
+                foreach (var dir in Arcade.EditorTools.ShellArt.SourceFolders())
+                    foreach (var name in sources)
+                    {
+                        string path = Path.Combine(dir, name);
+                        if (!File.Exists(path)) continue;
+                        source = path;   // 뒤쪽 폴더가 이깁니다
+                        break;           // 한 폴더 안에서는 앞에 적은 이름이 이깁니다
+                    }
+
+                if (source == null) continue;
+                if (File.Exists(dest) && File.GetLastWriteTimeUtc(dest) >= File.GetLastWriteTimeUtc(source)) continue;
+
+                Directory.CreateDirectory(ButtonsFolder);
+                if (TrimToContent(source, dest, out var size, out var trimmed))
+                    report.Append($"  {Path.GetFileName(source)} -> {dest}  여백 잘라냄 {size.x}x{size.y} -> {trimmed.x}x{trimmed.y}\n");
+                else
+                {
+                    File.Copy(source, dest, true);
+                    report.Append($"  {Path.GetFileName(source)} -> {dest}\n");
+                }
+
+                if (dest == SafeButtonArtPath && EraseSlot(dest, SafeCountSlot))
+                    report.Append("    그림의 {} 자리를 버튼 바탕색으로 덮었습니다 (주문서 수가 들어갈 자리)\n");
+            }
+        }
+
+        /// <summary>그림의 한 칸(비율)을 그 칸 둘레의 가운데 색으로 칠합니다. 그림에 그려진 자리표시 글자를 지우는 용도.</summary>
+        static bool EraseSlot(string path, Rect slot)
+        {
+            var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                if (!texture.LoadImage(File.ReadAllBytes(path))) return false;
+                int w = texture.width, h = texture.height;
+                int x0 = Mathf.Clamp(Mathf.RoundToInt(slot.xMin * w), 0, w), x1 = Mathf.Clamp(Mathf.RoundToInt(slot.xMax * w), 0, w);
+                int y0 = Mathf.Clamp(Mathf.RoundToInt(slot.yMin * h), 0, h), y1 = Mathf.Clamp(Mathf.RoundToInt(slot.yMax * h), 0, h);
+                if (x1 <= x0 || y1 <= y0) return false;
+
+                var pixels = texture.GetPixels32();
+
+                // 칸 바로 바깥 4px 둘레의 색들 중 가운데값 = 버튼 바탕색 (글자 테두리 같은 튀는 색은 가운데값에 묻힙니다)
+                const int ring = 4;
+                var reds = new List<byte>(); var greens = new List<byte>(); var blues = new List<byte>();
+                for (int y = Mathf.Max(0, y0 - ring); y < Mathf.Min(h, y1 + ring); y++)
+                    for (int x = Mathf.Max(0, x0 - ring); x < Mathf.Min(w, x1 + ring); x++)
+                    {
+                        if (x >= x0 && x < x1 && y >= y0 && y < y1) continue;
+                        var c = pixels[y * w + x];
+                        if (c.a < 200) continue;
+                        reds.Add(c.r); greens.Add(c.g); blues.Add(c.b);
+                    }
+                if (reds.Count == 0) return false;
+                reds.Sort(); greens.Sort(); blues.Sort();
+                int mid = reds.Count / 2;
+                var fill = new Color32(reds[mid], greens[mid], blues[mid], 255);
+
+                for (int y = y0; y < y1; y++)
+                    for (int x = x0; x < x1; x++)
+                        pixels[y * w + x] = fill;
+
+                texture.SetPixels32(pixels);
+                texture.Apply();
+                File.WriteAllBytes(path, texture.EncodeToPNG());
+                return true;
+            }
+            finally
+            {
+                Object.DestroyImmediate(texture);
+            }
+        }
+
         /// <summary>
         /// 로비 칸의 동그란 아이콘을 작업 폴더에 만들어 둡니다 (활쏘기와 같은 방식).
         /// **진짜 그림이 이미 있으면 아무것도 하지 않습니다** — 프로젝트의 Art/Games 와 작업 폴더 · @리소스 폴더를 다 봅니다.
@@ -196,7 +312,12 @@ namespace Enchant.EditorTools
 
         static void ConfigureAll()
         {
-            Configure(BackgroundPath, FilterMode.Point, 2048, Vector4.zero);
+            // 임시 배경(135x240)은 점이 또렷하게 Point, 사람이 넣은 큰 그림은 화면에 맞춰 줄어드니 Bilinear.
+            Configure(BackgroundPath, IsLargePicture(BackgroundPath) ? FilterMode.Bilinear : FilterMode.Point, 2048, Vector4.zero);
+
+            // 버튼 그림은 2000px 넘는 그림이 화면에서 500px 로 줄어듭니다. 1024 로 받아 두고 부드럽게 줄입니다.
+            foreach (var (_, path) in ButtonArt)
+                Configure(path, FilterMode.Bilinear, 1024, Vector4.zero);
             Configure(BadgePath, FilterMode.Point, 256, Vector4.zero);
             Configure(ButtonPath, FilterMode.Point, 64,
                       new Vector4(ButtonBorder, ButtonBorder, ButtonBorder, ButtonBorder));
