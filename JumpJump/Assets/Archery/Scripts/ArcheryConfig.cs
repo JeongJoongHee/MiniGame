@@ -61,8 +61,8 @@ namespace Archery
         [Tooltip("화살 한 발의 길이. 화살 촉이 과녁 높이를 지나면 명중 판정을 합니다. " +
                  "어떤 그림을 넣어도 이 길이가 되도록 PPU 가 자동 계산됩니다")]
         public float arrowLength = 1.6f;
-        [Tooltip("연타로 화살이 겹쳐 나가지 않도록 하는 최소 간격(초)")]
-        public float fireCooldown = 0.12f;
+        [Tooltip("화살 한 발을 쏜 뒤 다음 발을 쏠 수 있기까지의 간격(초). 2026-09-14 사용자 요청으로 0.12 -> 0.5")]
+        public float fireCooldown = 0.5f;
         [Tooltip("빗나간 화살이 화면 위로 이 만큼 더 올라가면 회수합니다")]
         public float arrowRecycleMargin = 3f;
         [Tooltip("화살이 한 번에 날 수 있는 최대 개수. 화살 수보다 넉넉하게 잡아 둡니다")]

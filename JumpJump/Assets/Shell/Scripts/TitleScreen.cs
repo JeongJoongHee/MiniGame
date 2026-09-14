@@ -67,6 +67,7 @@ namespace Arcade
 
         public void OnStartPressed()
         {
+            Sfx.PlayInsteadOfClick(Sfx.GameEnter);   // 딸깍 대신 "들어가는" 소리
             AppFlow.GoToLobby();
         }
     }

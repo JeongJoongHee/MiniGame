@@ -188,6 +188,14 @@ namespace Arcade.EditorTools
                                 attachedFirst && !attachedAgain && probeButton.GetComponents<UiClickSound>().Length == 1);
                 Object.DestroyImmediate(probeButton.gameObject);
 
+                // ---- 효과음 (2026-09-14) -----------------------------------------------
+                var missingSounds = new System.Collections.Generic.List<string>();
+                foreach (var name in Sfx.All)
+                    if (Resources.Load<AudioClip>(Sfx.Folder + name) == null) missingSounds.Add(name);
+                failed += Check(log, "코드가 부르는 소리 " + Sfx.All.Length + "개가 전부 Resources/" + Sfx.Folder + " 에 있다" +
+                                     (missingSounds.Count > 0 ? " (없음: " + string.Join(", ", missingSounds) + ")" : ""),
+                                missingSounds.Count == 0);
+
                 // ---- 배치 플레이테스트 보호 --------------------------------------------
                 GameSession.Recording = false;
                 int locked = PlayCounter.Total;

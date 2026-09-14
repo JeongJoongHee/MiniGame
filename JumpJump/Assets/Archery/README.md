@@ -141,7 +141,7 @@ PROJ="D:/00.JumpJump/JumpJump"
 | 과녁 기본 크기 | `ArcheryConfig.targetRadius` (100% 일 때의 반지름) |
 | 링 개수 (= 가운데 점수) | `ArcheryConfig.rings` |
 | 과녁이 납작해 보이는 정도 | `ArcheryConfig.targetFlatten` (**판정에는 영향 없음**) |
-| 연타 간격 | `ArcheryConfig.fireCooldown` |
+| 연타 간격 | `ArcheryConfig.fireCooldown` — **한 발당 0.5초** (2026-09-14 사용자 요청, 예전 0.12) |
 | 활 반동 / 과녁 움찔 / "+5 PT" 표시 시간 | `ArcheryConfig` 의 "연출" 항목 |
 
 ## 구조

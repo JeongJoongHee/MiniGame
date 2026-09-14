@@ -45,6 +45,9 @@ namespace Enchant
         [Tooltip("강화 버튼을 누르고 결과가 나오기까지. 검이 떨리며 두근거리는 시간입니다")]
         public float workSeconds = 0.6f;
 
+        [Tooltip("강화 중 망치질 소리를 몇 번 낼지. 위 시간 안에 고르게 나눕니다 (2026-09-14)")]
+        [Min(1)] public int hammerHits = 2;
+
         [Tooltip("\"성공!\" 같은 결과 글자가 화면에 남아 있는 시간")]
         public float bannerSeconds = 1.2f;
 

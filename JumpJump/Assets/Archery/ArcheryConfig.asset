@@ -21,7 +21,7 @@ MonoBehaviour:
   rings: 5
   targetFlatten: 0.42
   arrowLength: 1.6
-  fireCooldown: 0.12
+  fireCooldown: 0.5
   arrowRecycleMargin: 3
   arrowPoolSize: 12
   orthoSize: 8

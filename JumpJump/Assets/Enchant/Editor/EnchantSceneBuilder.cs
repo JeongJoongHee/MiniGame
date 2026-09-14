@@ -37,8 +37,10 @@ namespace Enchant.EditorTools
         /// </summary>
         const float SwordWidth = 760f;
         /// <summary>검 칸 아래끝 (화면 아래에서) / 위끝 (화면 위에서).</summary>
-        const float SwordBottom = 660f;
-        const float SwordTop = 340f;
+        // 위아래를 같게 = 검 칸의 가운데가 **화면 한가운데** (2026-09-14. 예전 660 / 340 은 가운데보다 160 위였다).
+        // 폰 비율이 달라도(20:9) 가운데는 그대로입니다. 그림마다 치우친 만큼은 EnchantHud 가 따로 맞춥니다.
+        const float SwordBottom = 580f;
+        const float SwordTop = 580f;
         /// <summary>검 뒤의 빛 지름.</summary>
         const float GlowSize = 1000f;
 
@@ -305,6 +307,7 @@ namespace Enchant.EditorTools
 
             var swordNames = new List<string>();
             var swordSprites = new List<Object>();
+            var swordCenters = new List<Vector2>();
             var art = new StringBuilder();
             foreach (var name in names)
             {
@@ -312,8 +315,11 @@ namespace Enchant.EditorTools
                 if (sprite == null) continue;
                 swordNames.Add(name);
                 swordSprites.Add(sprite);
+                var center = EnchantArt.VisualCenter(sprite);
+                swordCenters.Add(center);
                 bool real = AssetDatabase.GetAssetPath(sprite).StartsWith(EnchantArt.SwordsFolder);
-                art.Append("  ").Append(name).Append(real ? "  진짜 그림" : "  임시 그림").Append('\n');
+                art.Append("  ").Append(name).Append(real ? "  진짜 그림" : "  임시 그림")
+                   .Append($"  보이는 가운데 {center.x:0.000}, {center.y:0.000}").Append('\n');
             }
             Debug.Log("[Enchant] 검 그림 " + swordNames.Count + "장\n" + art);
 
@@ -329,6 +335,13 @@ namespace Enchant.EditorTools
                 ("meltQuestion", meltQuestion));
             ShellSceneBuilder.WireStrings(hud, "swordNames", swordNames);
             ShellSceneBuilder.WireArray(hud, "swordSprites", swordSprites);
+
+            var hudSo = new SerializedObject(hud);
+            var centersProp = hudSo.FindProperty("swordCenters");
+            centersProp.arraySize = swordCenters.Count;
+            for (int i = 0; i < swordCenters.Count; i++)
+                centersProp.GetArrayElementAtIndex(i).vector2Value = swordCenters[i];
+            hudSo.ApplyModifiedPropertiesWithoutUndo();
 
             return game;
         }

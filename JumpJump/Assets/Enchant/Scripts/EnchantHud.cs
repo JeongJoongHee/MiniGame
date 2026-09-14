@@ -45,6 +45,8 @@ namespace Enchant
         [Header("검 그림 (씬을 구울 때 Art/Swords 에서 채워집니다)")]
         [SerializeField] string[] swordNames = new string[0];
         [SerializeField] Sprite[] swordSprites = new Sprite[0];
+        [Tooltip("그림마다 눈에 보이는 가운데 (0~1). 이만큼 옮겨서 검이 칸 한가운데 보이게 합니다 (2026-09-14)")]
+        [SerializeField] Vector2[] swordCenters = new Vector2[0];
 
         static readonly Color SuccessColor = new Color(1f, 0.86f, 0.30f);
         static readonly Color SafeFailColor = new Color(0.72f, 0.86f, 1f);
@@ -58,6 +60,7 @@ namespace Enchant
         float _lastOutcomeAge = -1f;
         bool _based;
         Vector2 _swordBase;
+        Vector2 _swordCenter = new Vector2(0.5f, 0.5f);
 
         public void Refresh(EnchantGame game)
         {
@@ -103,6 +106,7 @@ namespace Enchant
             levelText.text = T("enchant.hud.level", "+{level}", ("level", shown));
             bestText.text = T("enchant.hud.best", "BEST +{best}", ("best", game.BestLevel));
             sword.sprite = SwordFor(config.ImageFor(shown));
+            _swordCenter = CenterFor(sword.sprite);
 
             if (game.State == EnchantState.Broken) chanceText.text = "";
             else if (canEnchant)
@@ -260,6 +264,7 @@ namespace Enchant
                 swordRoot.localRotation = Quaternion.Euler(0f, 0f, angle);
             }
             sword.color = swordColor;
+            CenterSword();
 
             if (glow != null)
             {
@@ -287,6 +292,29 @@ namespace Enchant
         static void SetActive(GameObject go, bool on)
         {
             if (go != null && go.activeSelf != on) go.SetActive(on);
+        }
+
+        /// <summary>
+        /// 그림 속 검이 한쪽으로 치우친 만큼 반대로 옮겨서, **눈에 보이는 가운데가 칸 한가운데** 오게 합니다.
+        /// 흔들림 · 커짐 · 기울기는 부모(swordRoot)의 가운데를 기준으로 하므로 그대로 자연스럽습니다.
+        /// </summary>
+        void CenterSword()
+        {
+            if (sword == null || sword.sprite == null) return;
+            var box = swordRoot != null ? swordRoot.rect : sword.rectTransform.rect;
+            var r = sword.sprite.rect;
+            float aspect = r.width / Mathf.Max(1f, r.height);
+            float w = Mathf.Min(box.width, box.height * aspect);   // preserveAspect 로 실제 그려지는 크기
+            float h = w / Mathf.Max(0.01f, aspect);
+            sword.rectTransform.anchoredPosition = new Vector2((0.5f - _swordCenter.x) * w, (0.5f - _swordCenter.y) * h);
+        }
+
+        Vector2 CenterFor(Sprite sprite)
+        {
+            if (sprite != null && swordSprites != null && swordCenters != null)
+                for (int i = 0; i < swordSprites.Length && i < swordCenters.Length; i++)
+                    if (swordSprites[i] == sprite) return swordCenters[i];
+            return new Vector2(0.5f, 0.5f);
         }
 
         /// <summary>표의 그림 이름으로 검 그림을 찾습니다. 그 이름의 그림이 없으면 첫 그림을 씁니다 (빌드 로그가 경고합니다).</summary>

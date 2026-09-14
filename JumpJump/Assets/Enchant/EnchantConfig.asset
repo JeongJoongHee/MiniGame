@@ -15,6 +15,7 @@ MonoBehaviour:
   startSafeScrolls: 0
   confirmMelt: 1
   workSeconds: 0.6
+  hammerHits: 2
   bannerSeconds: 1.2
   breakRevealSeconds: 0.8
   newSwordLockSeconds: 1.4

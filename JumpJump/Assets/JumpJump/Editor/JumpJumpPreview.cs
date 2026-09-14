@@ -63,6 +63,13 @@ namespace JumpJump.EditorTools
             Settle(game, 30);
             Shoot(cam, Path.Combine(outputFolder, "02_playing.png"));
 
+            // 착지하는 순간 발밑에서 튀는 풀잎 (2026-09-14). 한 칸 더 올라가 착지한 뒤 몇 프레임.
+            StepUntilRow(game, targetRow: game.TopRow + 1, maxSteps: 900);
+            Settle(game, 6);
+            var leaves = Object.FindFirstObjectByType<LandingLeaves>();
+            Shoot(cam, Path.Combine(outputFolder, "06_landing_leaves.png"));
+            Debug.Log("[JumpJump] 착지 풀잎 캡처 — 떠 있는 풀잎 " + (leaves != null ? leaves.ActiveCount : -1) + "장");
+
             StepUntilRow(game, targetRow: 20, maxSteps: 3600);
             Settle(game, 30);
             Shoot(cam, Path.Combine(outputFolder, "03_higher.png"));

@@ -151,6 +151,44 @@ namespace Enchant.EditorTools
         // ------------------------------------------------------------------ 진짜 그림 가져오기
 
         /// <summary>
+        /// 그림에서 **눈에 보이는 가운데** — 불투명한 픽셀의 무게 중심 (0~1, 왼쪽 아래 기준) (2026-09-14).
+        /// 대각선 검은 손잡이 · 날밑이 한쪽에 몰려 있어서 그림 한가운데와 조금씩 어긋납니다. EnchantHud 가 이만큼 옮겨 그립니다.
+        /// 읽을 수 없으면 (0.5, 0.5).
+        /// </summary>
+        public static Vector2 VisualCenter(Sprite sprite)
+        {
+            var middle = new Vector2(0.5f, 0.5f);
+            string path = sprite != null ? AssetDatabase.GetAssetPath(sprite) : null;
+            if (string.IsNullOrEmpty(path) || !File.Exists(path)) return middle;
+
+            var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                if (!texture.LoadImage(File.ReadAllBytes(path))) return middle;
+                int w = texture.width, h = texture.height;
+                var pixels = texture.GetPixels32();
+                int step = Mathf.Max(1, Mathf.Max(w, h) / 256);   // 큰 그림은 건너뛰며 (결과는 거의 같습니다)
+
+                double sx = 0, sy = 0, sum = 0;
+                for (int y = 0; y < h; y += step)
+                    for (int x = 0; x < w; x += step)
+                    {
+                        byte a = pixels[y * w + x].a;
+                        if (a < 20) continue;
+                        sx += (x + 0.5) * a;
+                        sy += (y + 0.5) * a;
+                        sum += a;
+                    }
+                if (sum <= 0) return middle;
+                return new Vector2((float)(sx / sum / w), (float)(sy / sum / h));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(texture);
+            }
+        }
+
+        /// <summary>
         /// 작업 폴더 · `@리소스` 폴더들의 `Sword_*.png` / `@Sword_*.png` 를 Art/Swords 로 가져옵니다 (여백을 잘라서).
         /// Art/Swords 에 **직접 넣은** 그림도 여백을 잘라 둡니다.
         /// </summary>

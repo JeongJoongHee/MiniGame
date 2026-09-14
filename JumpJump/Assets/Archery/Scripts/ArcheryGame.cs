@@ -180,12 +180,16 @@ namespace Archery
             Shots++;
             _fireClock = 0f;
             bow.Fire();
+            Arcade.Sfx.Play(Arcade.Sfx.ArcheryShoot);
         }
 
         /// <summary>화살 한 발이 과녁 높이를 지났을 때 ArrowPool 이 부릅니다.</summary>
         void OnArrowResolved(ArrowResult result)
         {
             if (result.points <= 0) return;   // 빗나감 — 화살은 이미 줄어 있습니다
+
+            Arcade.Sfx.Play(Arcade.Sfx.ArcheryHit);
+            if (result.points >= config.rings) Arcade.Sfx.Play(Arcade.Sfx.ArcheryBullseye);   // 한가운데
 
             Score += result.points;
             Hits++;
@@ -205,6 +209,9 @@ namespace Archery
             if (State == GameState.GameOver) return;
 
             LastResultReason = reason;
+
+            // 최고 점수를 넘었으면 GameOver 대신 NewRecord. 처음 한 판(최고 0)은 제외.
+            Arcade.Sfx.Play(BestScore > 0 && Score > BestScore ? Arcade.Sfx.NewRecord : Arcade.Sfx.GameOver);
 
             if (Score > BestScore)
             {

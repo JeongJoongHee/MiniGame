@@ -149,7 +149,11 @@ namespace Arcade
             hit.transform.SetAsLastSibling();
 
             var captured = entry;
-            hit.onClick.AddListener(() => AppFlow.GoToGame(captured));
+            hit.onClick.AddListener(() =>
+            {
+                Sfx.PlayInsteadOfClick(Sfx.GameEnter);   // 딸깍 대신 "들어가는" 소리
+                AppFlow.GoToGame(captured);
+            });
 
             // --- 랭킹 아이콘 : 칸 번호 자리에 얹습니다 ---
             // 게임 칸 터치 영역을 계산한 **뒤에** 만들어야 그 영역에 섞이지 않고, 위에 올라와 먼저 눌립니다.

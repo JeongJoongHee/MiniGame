@@ -51,6 +51,7 @@ namespace JumpJump.EditorTools
 
             var round = AssetDatabase.LoadAssetAtPath<Sprite>(JumpJumpArtGenerator.RoundPath);
             var blockSprite = AssetDatabase.LoadAssetAtPath<Sprite>(JumpJumpArtSetup.BasePath);
+            var leafSprite = AssetDatabase.LoadAssetAtPath<Sprite>(JumpJumpArtGenerator.LeafPath);
             SyncBackdropBands(config);
 
             var characterPaths = JumpJumpArtSetup.CharacterPaths();
@@ -112,6 +113,10 @@ namespace JumpJump.EditorTools
             characterSr.sortingOrder = 10;
             var characterAnimator = visual.AddComponent<CharacterAnimator>();
 
+            // ---------- 착지 풀잎 이펙트 (2026-09-14) ----------
+            // 풀잎은 월드에 흩어져 날아가므로 플레이어 밑이 아니라 따로 둡니다. 잎 오브젝트는 처음 착지할 때 만들어집니다.
+            var landingLeaves = new GameObject("LandingLeaves").AddComponent<LandingLeaves>();
+
             // ---------- HUD ----------
             var hud = BuildHud(round);
 
@@ -130,8 +135,11 @@ namespace JumpJump.EditorTools
                                 ("current", backdropCurrent), ("next", backdropNext));
             Wire(characterAnimator, ("config", (Object)config), ("spriteRenderer", characterSr));
             WireArray(characterAnimator, "characterSprites", characterSprites);
-            Wire(player, ("config", (Object)config), ("platforms", platforms), ("cameraRig", cameraRig), ("characterAnimator", characterAnimator));
-            Wire(game, ("config", (Object)config), ("player", player), ("platforms", platforms), ("cameraRig", cameraRig), ("backdrop", backdropTiler), ("hud", hud));
+            Wire(landingLeaves, ("config", (Object)config), ("leafSprite", leafSprite));
+            Wire(player, ("config", (Object)config), ("platforms", platforms), ("cameraRig", cameraRig), ("characterAnimator", characterAnimator),
+                         ("landingLeaves", landingLeaves));
+            Wire(game, ("config", (Object)config), ("player", player), ("platforms", platforms), ("cameraRig", cameraRig), ("backdrop", backdropTiler), ("hud", hud),
+                       ("landingLeaves", landingLeaves));
 
             return game;
         }

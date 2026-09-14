@@ -1,0 +1,162 @@
+<title>사운드 목록</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#23201b;--sub:#6b655b;--line:#e3ded3;--must:#c2410c;--good:#2563eb;--later:#8a8478;--done:#15803d;--chip:#f1ede4}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1a17;--card:#25231f;--ink:#ece8df;--sub:#a59f93;--line:#3a372f;--must:#fb923c;--good:#7aa7ff;--later:#8f897d;--done:#4ade80;--chip:#302d27}}
+:root[data-theme="dark"]{--bg:#1b1a17;--card:#25231f;--ink:#ece8df;--sub:#a59f93;--line:#3a372f;--must:#fb923c;--good:#7aa7ff;--later:#8f897d;--done:#4ade80;--chip:#302d27}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,"Malgun Gothic",sans-serif;padding-inline:16px;padding-block:28px 60px}
+main{max-width:960px;margin:0 auto}
+h1{font-size:26px;margin:0 0 4px}
+h2{font-size:19px;margin:36px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+p.lead{color:var(--sub);margin:0 0 18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:14px 0}
+.box h3{margin:0 0 6px;font-size:15px}
+.box ul{margin:4px 0;padding-left:20px}
+.wrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font-size:13px;color:var(--sub);font-weight:600;background:var(--chip)}
+tr:last-child td{border-bottom:0}
+td.ck{width:34px;text-align:center}
+code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+.pri{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.p1{color:var(--must)}.p2{color:var(--good)}.p3{color:var(--later)}.ok{color:var(--done)}
+tr.have td{opacity:.55}
+.sum{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.sum div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;flex:1 1 150px}
+.sum b{font-size:22px;display:block}
+small{color:var(--sub)}
+</style>
+
+<main>
+<h1>사운드 목록 — 어디에 · 어떤 소리</h1>
+<p class="lead">심심할 때 하는 게임 · 2026-09-14 · 세 게임의 코드를 읽고 "소리가 나야 자연스러운 순간"을 전부 뽑았습니다.<br>
+왼쪽 칸에 체크하면 이 브라우저에 남습니다 (파일을 만들었는지 표시용).</p>
+
+<div class="box"><b class="ok">2026-09-14 적용됨</b> — <code>Sound\</code> 폴더에 넣어 주신 16개가 전부 연결됐어요 (1순위 12개 전부 + GameEnter · NewRecord · Archery_Bullseye). <b>Jump_Combo 는 같은 날 요청으로 뺐어요.</b>
+아직 없는 것: Archery_Miss · Jump_Tick · Jump_Stage · Enchant_Milestone · Enchant_NewSword · Enchant_Denied · Popup · Jump_Miss · Archery_LastArrow · 배경음 4곡.
+자세한 건 <code>검가운데_소리_반영보고서.html</code>.</div>
+
+<div class="sum">
+  <div><b class="p1">1순위 12개</b><small>이것만 있어도 "소리 있는 게임"이 됩니다</small></div>
+  <div><b class="p2">2순위 10개</b><small>손맛·재미를 올려 주는 것</small></div>
+  <div><b class="p3">나중 7개</b><small>배경음 · 설정 창 음량 조절과 같이</small></div>
+  <div><b class="ok">이미 있음 2개</b><small>Click.wav (적용됨) · Jump.wav (폴더에만)</small></div>
+</div>
+
+<div class="box">
+<h3>읽는 법</h3>
+<ul>
+<li><b>파일 이름</b>은 제안입니다. 이 이름으로 <code>@리소스 추가 N차</code> 폴더에 넣어 주시면 연결은 제가 합니다 (<code>Click.wav</code> 와 같은 방식).</li>
+<li><b>언제</b> 칸의 괄호는 코드에서 그 순간이 일어나는 곳입니다 — 제가 붙일 때 쓰는 메모라 신경 쓰지 않으셔도 됩니다.</li>
+<li><span class="pri p1">1순위</span> 없으면 어색함 · <span class="pri p2">2순위</span> 있으면 좋음 · <span class="pri p3">나중</span> 급하지 않음</li>
+</ul>
+</div>
+
+<h2>0. 만들 때 공통 조건</h2>
+<div class="box">
+<ul>
+<li><b>형식</b> : <code>.wav</code> · 모노 · 44100Hz · 16bit (지금 Click.wav · Jump.wav 와 같음). 배경음만 길어서 <code>.ogg</code> 도 좋습니다.</li>
+<li><b>길이</b> : 효과음은 0.05 ~ 1초. <b>앞에 무음이 있으면 안 됩니다</b> — 누른 순간보다 늦게 들립니다.</li>
+<li><b>자주 나는 소리일수록 짧고 가볍게</b> — 점프 · 착지 · 발사는 한 판에 수백 번 납니다. 크고 긴 소리면 금방 귀가 피곤해집니다.
+  반대로 <b>드문 소리(파괴 · 신기록)는 크고 극적으로</b>.</li>
+<li><b>음량을 비슷하게</b> 맞춰 주세요. 하나만 튀면 제가 코드에서 줄일 수는 있지만, 파일끼리 맞아 있는 편이 낫습니다.</li>
+<li><b>분위기</b> : 픽셀 글꼴 · 픽셀아트라서 <b>8비트(칩튠) 효과음</b>이 잘 어울립니다.
+  무료 도구 <b>jsfxr</b>(sfxr.me)에서 Jump / Hit / Pickup 버튼으로 뽑아 저장하면 바로 이 조건입니다.</li>
+<li><b>저작권</b> : 스토어에 올릴 앱이라 받은 소리는 "상업적 사용 가능"인지 꼭 확인하세요 (Freesound 는 파일마다 다름).</li>
+</ul>
+</div>
+
+<h2>1. 앱 공통 (타이틀 · 로비 · 팝업)</h2>
+<div class="wrap"><table>
+<tr><th></th><th>우선</th><th>파일 이름</th><th>언제</th><th>어떤 소리</th></tr>
+<tr class="have"><td class="ck"><input type="checkbox" data-k="Click" checked disabled></td><td><span class="pri ok">적용됨</span></td><td><code>Click.wav</code></td><td>앱의 모든 버튼을 누를 때</td><td>딸깍. 09-13 에 붙임</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="GameOver"></td><td><span class="pri p1">1순위</span></td><td><code>GameOver.wav</code></td><td>게임이 끝나 종료 화면이 뜰 때 — <b>활쏘기가 씀</b> (점프점프는 아래 따로)<br><small>(각 게임 EndRun)</small></td><td>짧게 내려가는 "뚜루루↓". 0.5~1초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="NewRecord"></td><td><span class="pri p2">2순위</span></td><td><code>NewRecord.wav</code></td><td>게임이 끝났는데 <b>최고 점수를 넘었을 때</b> — GameOver 대신 남<br><small>(Score &gt; BestScore)</small></td><td>밝은 팡파레 "빠밤!". 1초 안팎</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="GameEnter"></td><td><span class="pri p2">2순위</span></td><td><code>GameEnter.wav</code></td><td>타이틀 START · 로비에서 게임 칸 누를 때 — 이 두 버튼만 딸깍 대신</td><td>"슝~" 들어가는 느낌. 0.3초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Popup"></td><td><span class="pri p3">나중</span></td><td><code>Popup.wav</code></td><td>팝업이 열릴 때 (나가기 · 설정 · 랭킹 · 별명)</td><td>"뽁". <small>팝업은 거의 버튼으로 열려서 딸깍과 겹칩니다 — 없어도 됩니다</small></td></tr>
+</table></div>
+
+<h2>2. 점프점프</h2>
+<div class="wrap"><table>
+<tr><th></th><th>우선</th><th>파일 이름</th><th>언제</th><th>어떤 소리</th></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Jump"></td><td><span class="pri p1">1순위</span></td><td><code>Jump.wav</code></td><td>터치해서 점프할 때<br><small>(PlayerController.Jump)</small></td><td>"뿅↑". <b>파일이 이미 <code>@리소스 추가 2차</code> 에 있습니다</b> — 아직 코드 연결은 안 됨</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Land"></td><td><span class="pri p1">1순위</span></td><td><code>Jump_Land.wav</code></td><td><b>새 칸</b>에 착지할 때 (점수가 오르는 순간)<br><small>(GameManager.OnLanded, 새 칸)</small></td><td>짧은 "톡". 0.1초. 가장 자주 나는 소리라 가장 가볍게</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Fall"></td><td><span class="pri p1">1순위</span></td><td><code>Jump_Fall.wav</code></td><td>화면 아래로 떨어져 끝날 때 ("캐릭터가 떨어졌어요!")</td><td>"휘이이↓" 떨어지는 소리. 0.6~1초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="TimeUp"></td><td><span class="pri p1">1순위</span></td><td><code>Jump_TimeUp.wav</code></td><td>타이머가 0 이 되어 끝날 때 ("TIME OVER")</td><td>"삐—" 버저. 0.5초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Combo"></td><td><span class="pri p2">2순위</span></td><td><code>Jump_Combo.wav</code></td><td>콤보가 2 이상으로 이어질 때 (화면에 COMBO 가 뜨는 순간)</td><td>"띵". <b>한 파일로 콤보가 오를수록 음을 높여</b> 재생하면 신납니다 (제가 코드로 처리)</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="TimerWarn"></td><td><span class="pri p2">2순위</span></td><td><code>Jump_Tick.wav</code></td><td>남은 시간이 1초 아래일 때 째깍<br><small>(HUD 타이머가 빨개지는 구간)</small></td><td>아주 작은 "틱". <small>높이 올라가면 타이머 자체가 1초라 계속 날 수 있음 — 붙인 뒤 들어보고 조건 조정</small></td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Stage"></td><td><span class="pri p2">2순위</span></td><td><code>Jump_Stage.wav</code></td><td>배경이 바뀌는 높이 도달 (200m 산 · 500m 우주)</td><td>반짝 "샤라랑". 1초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="ComboBreak"></td><td><span class="pri p3">나중</span></td><td><code>Jump_Miss.wav</code></td><td>같은 칸·아래 칸에 착지해 콤보가 끊길 때</td><td>둔한 "툭". <small>착지음과 헷갈리지 않게 낮은 음</small></td></tr>
+</table></div>
+
+<h2>3. 활쏘기</h2>
+<div class="wrap"><table>
+<tr><th></th><th>우선</th><th>파일 이름</th><th>언제</th><th>어떤 소리</th></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Shoot"></td><td><span class="pri p1">1순위</span></td><td><code>Archery_Shoot.wav</code></td><td>터치해서 화살을 쏠 때<br><small>(ArcheryGame.TryFire)</small></td><td>활시위 "퉁" + 바람 "슉". 0.2초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Hit"></td><td><span class="pri p1">1순위</span></td><td><code>Archery_Hit.wav</code></td><td>과녁에 맞았을 때 (1~4점)<br><small>(OnArrowResolved, 명중)</small></td><td>"퍽" 꽂히는 소리. 0.2초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Bull"></td><td><span class="pri p2">2순위</span></td><td><code>Archery_Bullseye.wav</code></td><td><b>한가운데 5점</b>일 때 — Hit 에 겹쳐서</td><td>"띠링!" 밝은 종소리. 0.4초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="AMiss"></td><td><span class="pri p2">2순위</span></td><td><code>Archery_Miss.wav</code></td><td>화살이 과녁을 비껴 날아가 버렸을 때</td><td>멀어지는 "휘익". 0.3초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="LastArrow"></td><td><span class="pri p3">나중</span></td><td><code>Archery_LastArrow.wav</code></td><td>화살이 1발만 남았을 때 경고</td><td>작은 "삐빅"</td></tr>
+</table></div>
+<p><small>게임 오버는 공통 <code>GameOver.wav</code>(1번 표)를 씁니다. 맞히면 화살이 가득 차는 것은 Hit 소리로 충분해서 따로 두지 않았습니다.</small></p>
+
+<h2>4. 검 강화 — 소리가 가장 중요한 게임</h2>
+<div class="box"><small>강화 게임은 "누르고 → 망치질 → 결과" 를 <b>귀로 기다리는 맛</b>이 핵심이라, 1순위가 가장 많습니다.</small></div>
+<div class="wrap"><table>
+<tr><th></th><th>우선</th><th>파일 이름</th><th>언제</th><th>어떤 소리</th></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Hammer"></td><td><span class="pri p1">1순위</span></td><td><code>Enchant_Hammer.wav</code></td><td>[일반 강화] · [안전 강화] 를 누른 뒤 <b>결과가 나오기 전 0.6초</b><br><small>(Working 상태, EnchantConfig.workSeconds)</small></td><td>"깡 깡 깡" 망치질. <b>0.6초 안에 끝나게</b></td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Success"></td><td><span class="pri p1">1순위</span></td><td><code>Enchant_Success.wav</code></td><td>강화 성공 ("성공!")</td><td>맑게 올라가는 "띠리링↑". 0.5초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="SafeFail"></td><td><span class="pri p1">1순위</span></td><td><code>Enchant_SafeFail.wav</code></td><td>안전 강화 실패 ("실패! 검은 무사합니다")</td><td>튕기는 "팅~" + 살짝 아쉬운 음. 0.4초. <b>파괴보다 훨씬 가볍게</b></td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Destroy"></td><td><span class="pri p1">1순위</span></td><td><code>Enchant_Destroy.wav</code></td><td><b>일반 강화 실패 = 검 파괴</b></td><td>"쨍그랑!" 부서지는 소리. 1초. <b>앱에서 가장 극적인 소리</b></td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Melt"></td><td><span class="pri p1">1순위</span></td><td><code>Enchant_Melt.wav</code></td><td>[분해] 확인 → 검이 녹고 주문서를 받을 때</td><td>"치익~" 녹는 소리 + "촤라락" 종이. 0.8초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Milestone"></td><td><span class="pri p2">2순위</span></td><td><code>Enchant_Milestone.wav</code></td><td>+10 · +20 · +30 … 같은 큰 단계에 성공했을 때 — Success 대신</td><td>더 화려한 "빠바밤!". 1초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="NewSword"></td><td><span class="pri p2">2순위</span></td><td><code>Enchant_NewSword.wav</code></td><td>파괴 뒤 [새 검 받기]</td><td>칼 뽑는 "스릉". 0.4초</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Denied"></td><td><span class="pri p2">2순위</span></td><td><code>Enchant_Denied.wav</code></td><td>누를 수 없는 버튼을 눌렀을 때 — 주문서 0장인데 [안전 강화], +10 전인데 [분해]</td><td>"삐빅" 낮은 거절음. <small>지금은 아무 반응이 없어서 고장처럼 느껴질 수 있음</small></td></tr>
+</table></div>
+<p><small>최고 기록 갱신은 검 강화에서 너무 자주 일어나서(성공할 때마다) 공통 <code>NewRecord.wav</code> 는 쓰지 않는 것을 추천합니다.</small></p>
+
+<h2>5. 배경음 (나중)</h2>
+<div class="wrap"><table>
+<tr><th></th><th>우선</th><th>파일 이름</th><th>언제</th><th>어떤 소리</th></tr>
+<tr><td class="ck"><input type="checkbox" data-k="BgmLobby"></td><td><span class="pri p3">나중</span></td><td><code>BGM_Lobby.ogg</code></td><td>타이틀 + 로비 (씬이 바뀌어도 끊기지 않게)</td><td>느긋한 칩튠 반복곡. 1~2분, 끝과 처음이 이어지게</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Bgm1"></td><td><span class="pri p3">나중</span></td><td><code>BGM_01.ogg</code></td><td>점프점프 플레이 중</td><td>빠르고 경쾌하게</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Bgm2"></td><td><span class="pri p3">나중</span></td><td><code>BGM_02.ogg</code></td><td>활쏘기 플레이 중</td><td>차분하게 (집중하는 게임)</td></tr>
+<tr><td class="ck"><input type="checkbox" data-k="Bgm3"></td><td><span class="pri p3">나중</span></td><td><code>BGM_03.ogg</code></td><td>검 강화</td><td>대장간 분위기, 낮게 깔리는 소리</td></tr>
+</table></div>
+<div class="box">
+<h3>배경음을 넣을 때 같이 필요한 것</h3>
+<ul>
+<li><b>설정 창의 음량 조절</b> — 배경음 / 효과음 두 줄. 설정 창 위쪽 빈 자리가 원래 이 용도로 비워 둔 곳입니다.
+  배경음은 싫어하는 사람이 많아서 <b>끄는 방법 없이 넣으면 안 됩니다.</b></li>
+<li>광고가 뜨는 동안 소리 멈추기 (제 몫).</li>
+<li>이름 규칙 <code>BGM_NN</code> 은 배경 그림 <code>BG_NN</code> 과 같게 맞췄습니다 — 새 게임이 늘어도 번호만 붙이면 됩니다.</li>
+</ul>
+</div>
+
+<h2>6. 추천 순서</h2>
+<div class="box">
+<ol>
+<li><b>검 강화 1순위 5개</b> — 소리 효과가 가장 큰 게임입니다.</li>
+<li><b>점프점프 1순위 4개</b> — Jump.wav 는 이미 있으니 3개만 더.</li>
+<li><b>활쏘기 1순위 2개 + GameOver.wav</b>.</li>
+<li>여기까지 넣고 폰으로 한 번 해 보고 → 2순위 중 아쉬운 것만 추가.</li>
+<li>배경음은 설정 창 음량 조절과 한 묶음으로.</li>
+</ol>
+<p><small>파일이 일부만 있어도 됩니다 — 없는 소리는 조용히 건너뛰게 만들 수 있으니, 만드는 대로 조금씩 넣어 주셔도 됩니다.</small></p>
+</div>
+</main>
+
+<script>
+(function(){
+  var KEY='arcade.soundlist.v1', saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  document.querySelectorAll('input[data-k]:not([disabled])').forEach(function(cb){
+    var tr=cb.closest('tr');
+    cb.checked=!!saved[cb.dataset.k]; tr.classList.toggle('have',cb.checked);
+    cb.addEventListener('change',function(){
+      saved[cb.dataset.k]=cb.checked; tr.classList.toggle('have',cb.checked);
+      try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(e){}
+    });
+  });
+})();
+</script>

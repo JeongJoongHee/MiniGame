@@ -18,6 +18,7 @@ namespace JumpJump
         [SerializeField] CameraRig cameraRig;
         [SerializeField] BackdropTiler backdrop;
         [SerializeField] HudController hud;
+        [SerializeField] LandingLeaves landingLeaves;
 
         const string BestScoreKey = "JumpJump.BestScore";
 
@@ -114,7 +115,7 @@ namespace JumpJump
                     if (meters > HeightMeters) HeightMeters = meters;
                     if (backdrop != null) backdrop.Tick(meters);
 
-                    if (TimeLeft <= 0f) EndRun(Arcade.StringTable.Get("jump.over.timeup", "TIME OVER"));
+                    if (TimeLeft <= 0f) EndRun(Arcade.StringTable.Get("jump.over.timeup", "TIME OVER"), Arcade.Sfx.JumpTimeUp);
                     break;
 
                 case GameState.GameOver:
@@ -125,6 +126,9 @@ namespace JumpJump
                     }
                     break;
             }
+
+            // 착지 풀잎은 상태와 상관없이 굴립니다 — 게임 오버 화면에서도 남은 잎이 마저 떨어지게.
+            if (landingLeaves != null) landingLeaves.Tick(dt);
 
             hud.Refresh(this);
         }
@@ -142,6 +146,7 @@ namespace JumpJump
             LastResultReason = "";
 
             platforms.ResetRun();
+            if (landingLeaves != null) landingLeaves.Clear();
             player.ResetRun();
             cameraRig.ResetRun();
 
@@ -157,11 +162,17 @@ namespace JumpJump
             SetState(GameState.Playing);
         }
 
-        public void EndRun(string reason)
+        /// <param name="sound">끝날 때 나는 소리 (떨어짐 / 시간 초과). 최고 점수를 넘었으면 그 뒤에 NewRecord 가 이어집니다.</param>
+        public void EndRun(string reason, string sound = Arcade.Sfx.GameOver)
         {
             if (State == GameState.GameOver) return;
 
             LastResultReason = reason;
+
+            // 처음 한 판(최고 점수 0)은 무엇을 해도 기록이라 팡파레를 울리지 않습니다.
+            bool newRecord = BestScore > 0 && Score > BestScore;
+            Arcade.Sfx.Play(sound);
+            if (newRecord) Arcade.Sfx.Play(Arcade.Sfx.NewRecord, delay: Arcade.Sfx.Length(sound));
 
             if (Score > BestScore)
             {
@@ -202,6 +213,10 @@ namespace JumpJump
                 TimeLeft = TimeMax;
 
                 TopRow = rowIndex;
+
+                // 소리는 플레이 모드에서만 납니다 (Arcade.Sfx) — 배치 플레이테스트는 그대로.
+                // (콤보 소리는 2026-09-14 사용자 요청으로 뺐다)
+                Arcade.Sfx.Play(Arcade.Sfx.JumpLand);
             }
             else
             {

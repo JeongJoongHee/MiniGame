@@ -15,6 +15,21 @@ namespace JumpJump.EditorTools
         public const string CirclePath = ArtFolder + "/ui_circle.png";
         public const string BackdropPath = ArtFolder + "/bg_gradient.png";
 
+        /// <summary>
+        /// 착지 풀잎 (2026-09-14). 흰색 · 회색으로 그려 두고 GameConfig.leafColors 로 물들입니다.
+        /// **없을 때만 만듭니다** — 사용자가 진짜 그림으로 덮어쓰면 Regenerate 메뉴로도 지우지 않습니다.
+        /// </summary>
+        public const string LeafPath = ArtFolder + "/Effects/Leaf.png";
+
+        // 위 줄부터. # = 테두리(어둡게) · + = 잎 · * = 잎맥(밝게) · . = 투명
+        static readonly string[] LeafRows =
+        {
+            ".....##.",
+            "..###++#",
+            "#++*++#.",
+            ".##++#..",
+        };
+
         const int RoundSize = 96;
         const int RoundRadius = 24;
 
@@ -49,7 +64,37 @@ namespace JumpJump.EditorTools
                 ImportSprite(BackdropPath, Vector4.zero);
             }
 
+            if (!File.Exists(LeafPath))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(LeafPath));
+                int w = LeafRows[0].Length, h = LeafRows.Length;
+                WritePng(LeafPath, LeafPixels(w, h), w, h);
+                ImportSprite(LeafPath, Vector4.zero, FilterMode.Point);
+            }
+
             AssetDatabase.Refresh();
+        }
+
+        static Color[] LeafPixels(int w, int h)
+        {
+            var pixels = new Color[w * h];
+            for (int row = 0; row < h; row++)
+            {
+                int y = h - 1 - row;   // 텍스처는 아래 줄부터
+                for (int x = 0; x < w; x++)
+                {
+                    float v;
+                    switch (LeafRows[row][x])
+                    {
+                        case '#': v = 0.62f; break;
+                        case '+': v = 0.86f; break;
+                        case '*': v = 1f; break;
+                        default: pixels[y * w + x] = Color.clear; continue;
+                    }
+                    pixels[y * w + x] = new Color(v, v, v, 1f);
+                }
+            }
+            return pixels;
         }
 
         static Color[] RoundedRect(int w, int h, float radius)
@@ -94,7 +139,7 @@ namespace JumpJump.EditorTools
             Object.DestroyImmediate(tex);
         }
 
-        static void ImportSprite(string path, Vector4 border)
+        static void ImportSprite(string path, Vector4 border, FilterMode filter = FilterMode.Bilinear)
         {
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
 
@@ -106,7 +151,7 @@ namespace JumpJump.EditorTools
             importer.mipmapEnabled = false;
             importer.alphaIsTransparency = true;
             importer.wrapMode = TextureWrapMode.Clamp;
-            importer.filterMode = FilterMode.Bilinear;
+            importer.filterMode = filter;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.SaveAndReimport();
         }

@@ -80,6 +80,10 @@ namespace Arcade
         [Tooltip("버튼을 누를 때 나는 딸깍 소리 크기 (0 = 끔, 1 = 원본 그대로). 소리 파일은 작업 폴더의 Click.wav (2026-09-13)")]
         [Range(0f, 1f)] public float clickVolume = 1f;
 
+        [Tooltip("게임 효과음 전체 크기 (0 = 끔, 1 = 원본 그대로). 버튼 딸깍 소리에도 곱해집니다. " +
+                 "소리 파일은 작업 폴더의 Sound/ 폴더 (2026-09-14)")]
+        [Range(0f, 1f)] public float sfxVolume = 1f;
+
         [Header("치트 (시험용)")]
         [Tooltip("켜 두면 설정 창의 빈 윗부분을 빠르게 여러 번 눌러 **모든 게임 데이터 초기화** 창을 열 수 있습니다. " +
                  "스토어에 올리는 빌드에서는 끄세요 (useTestAds 와 함께)")]

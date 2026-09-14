@@ -30,16 +30,18 @@ namespace Arcade.EditorTools
         public const string FontFolder = "Assets/Shell/Resources";
 
         /// <summary>
-        /// 소리가 들어가는 곳 (2026-09-13). 실행 중에 <see cref="UiClickSound"/> 가 `Resources.Load` 로 찾습니다.
-        /// 작업 폴더(또는 `@리소스` 폴더)의 같은 이름 파일이 더 새로우면 가져옵니다.
+        /// 소리가 들어가는 곳 (2026-09-13). 실행 중에 <see cref="Sfx"/> 가 `Resources.Load` 로 찾습니다.
         /// </summary>
         public const string SoundFolder = "Assets/Shell/Resources/Sounds";
         public const string ClickSoundPath = SoundFolder + "/Click.wav";
 
-        static readonly (string[] sources, string dest)[] SoundMap =
-        {
-            (new[] { "Click.wav", "@Click.wav" }, ClickSoundPath),
-        };
+        /// <summary>
+        /// 소리 원본을 놓는 폴더 — 작업 폴더 아래 `Sound` (2026-09-14). **여기에 넣기만 하면 됩니다.**
+        /// 파일 이름(확장자 빼고)이 곧 소리 이름이라 `Sfx` 의 상수와 같아야 소리가 납니다.
+        /// 작업 폴더 바로 아래 · `@리소스` 폴더의 소리도 찾지만 **이 폴더가 가장 뒤라 이깁니다.**
+        /// </summary>
+        public const string SoundSourceFolder = "Sound";
+        static readonly string[] SoundExtensions = { ".wav", ".ogg", ".mp3" };
 
         /// <summary>
         /// 글꼴 원본을 놓는 폴더. 작업 폴더 아래 `Font` 입니다.
@@ -637,33 +639,70 @@ namespace Arcade.EditorTools
             }
         }
 
-        /// <summary>작업 폴더 · `@리소스` 폴더의 소리 파일이 더 새로우면 Resources/Sounds 로 가져옵니다.</summary>
+        static bool IsSoundFile(string path)
+        {
+            string ext = Path.GetExtension(path).ToLowerInvariant();
+            return System.Array.IndexOf(SoundExtensions, ext) >= 0;
+        }
+
+        /// <summary>
+        /// 작업 폴더 · `@리소스` 폴더 · **`Sound/` 폴더**의 소리 파일이 더 새로우면 Resources/Sounds 로 가져옵니다.
+        /// 같은 이름이면 뒤 폴더가 이기고(`Sound/` 가 맨 뒤), 확장자가 바뀌면(Jump.wav → Jump.ogg) 옛 파일을 지웁니다.
+        /// </summary>
         static bool SyncSounds(bool force, StringBuilder report)
         {
-            bool changed = false;
-            foreach (var (sources, dest) in SoundMap)
-            {
-                string source = FindSource(sources);
-                if (source == null) continue;
-                if (!force && File.Exists(dest) && File.GetLastWriteTimeUtc(dest) >= File.GetLastWriteTimeUtc(source)) continue;
+            var folders = SourceFolders();
+            folders.Add(Path.Combine(WorkingDir(), SoundSourceFolder));
 
-                Directory.CreateDirectory(Path.GetDirectoryName(dest));
-                File.Copy(source, dest, true);
-                report.Append("  ").Append(Path.GetFileName(source)).Append(" -> ").Append(dest).Append('\n');
+            var chosen = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
+            foreach (var dir in folders)
+            {
+                if (!Directory.Exists(dir)) continue;
+                foreach (var file in Directory.GetFiles(dir))
+                    if (IsSoundFile(file))
+                        chosen[Path.GetFileNameWithoutExtension(file).TrimStart('@')] = file;
+            }
+
+            bool changed = false;
+            foreach (var pair in chosen)
+            {
+                string ext = Path.GetExtension(pair.Value).ToLowerInvariant();
+                string dest = SoundFolder + "/" + pair.Key + ext;
+
+                foreach (var other in SoundExtensions)
+                {
+                    string stale = SoundFolder + "/" + pair.Key + other;
+                    if (other != ext && File.Exists(stale))
+                    {
+                        AssetDatabase.DeleteAsset(stale);
+                        report.Append("  ").Append(stale).Append(" 지움 (확장자가 바뀜)\n");
+                        changed = true;
+                    }
+                }
+
+                if (!force && File.Exists(dest) && File.GetLastWriteTimeUtc(dest) >= File.GetLastWriteTimeUtc(pair.Value)) continue;
+
+                Directory.CreateDirectory(SoundFolder);
+                File.Copy(pair.Value, dest, true);
+                report.Append("  ").Append(Path.GetFileName(pair.Value)).Append(" -> ").Append(dest).Append('\n');
                 changed = true;
             }
             return changed;
         }
 
         /// <summary>
-        /// 버튼 소리는 아주 짧아서 **압축하지 않고(PCM) 불러올 때 풀어 둡니다** — 누르는 순간 늦지 않게.
-        /// 한 채널(모노)로 합칩니다 (화면 UI 소리라 좌우가 필요 없습니다).
+        /// 효과음은 짧아서 **압축하지 않고(PCM) 불러올 때 풀어 둡니다** — 누르는 순간 늦지 않게.
+        /// 한 채널(모노)로 합칩니다 (화면 소리라 좌우가 필요 없습니다).
         /// </summary>
         static void ConfigureSounds()
         {
-            const string marker = "arcade-sound-v1";
-            foreach (var (_, path) in SoundMap)
+            const string marker = "arcade-sound-v2";
+            if (!Directory.Exists(SoundFolder)) return;
+
+            foreach (var file in Directory.GetFiles(SoundFolder))
             {
+                if (!IsSoundFile(file)) continue;
+                string path = file.Replace('\\', '/');
                 var importer = AssetImporter.GetAtPath(path) as AudioImporter;
                 if (importer == null || importer.userData == marker) continue;
 

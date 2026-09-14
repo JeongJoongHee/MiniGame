@@ -463,3 +463,16 @@ Assets/Shell/
 - 로비에서 폰 뒤로 버튼을 누르면 타이틀로 돌아가지 않고 **바로 종료 확인**이 뜹니다.
   (2026-09-08 에 사용자가 그렇게 정했습니다)
 - 로비에서 최고 점수 같은 기록을 보여 주지 않습니다.
+
+## 효과음 (2026-09-14)
+
+- **파일** : 작업 폴더 `Sound/` 에 넣는다. **파일 이름(확장자 빼고) = 소리 이름.** wav / ogg / mp3.
+  Build All Scenes 가 `Assets/Shell/Resources/Sounds/` 로 이름 그대로 가져온다 (`ShellArt.SyncSounds`).
+  작업 폴더 바로 아래 · `@리소스*` 폴더도 찾지만 `Sound/` 가 맨 뒤라 이긴다. 확장자가 바뀌면 옛 파일을 지운다.
+- **부르기** : `Arcade.Sfx.Play(Arcade.Sfx.JumpLand)` — 플레이 모드가 아니면 아무것도 하지 않으므로
+  **게임의 `Step` 안에서 불러도 배치 플레이테스트가 그대로 돈다.** 높이(`pitch`) · 늦게(`delay`) 도 줄 수 있다.
+- **새 소리** : `Sfx` 에 이름 상수 + `All` 배열에 추가 + 부르는 한 줄. 자체 점검이 `All` 의 파일이 전부 들어왔는지 본다
+  (파일 이름을 틀리게 넣으면 거기서 걸린다).
+- **새 미니게임** : 버튼 딸깍 소리는 자동(`UiClickSound`). 게임 소리는 게임 이름을 앞에 붙인 파일(`Archery_Hit.wav` 처럼).
+- **딸깍 대신 다른 소리** : 버튼의 리스너에서 `Sfx.PlayInsteadOfClick(이름)` (타이틀 START · 로비 게임 칸의 `GameEnter`).
+- **크기** : `ArcadeConfig.asset` 의 `sfxVolume`(전체) × `clickVolume`(딸깍만). 설정 창의 음량 조절은 아직 없다.

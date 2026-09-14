@@ -13,6 +13,7 @@ namespace JumpJump
         [SerializeField] PlatformManager platforms;
         [SerializeField] CameraRig cameraRig;
         [SerializeField] CharacterAnimator characterAnimator;
+        [SerializeField] LandingLeaves landingLeaves;
 
         float _vy;
         PlatformRow _row;
@@ -109,7 +110,7 @@ namespace JumpJump
 
             if (allowInput && transform.position.y < screenBottomY - config.deathMargin)
             {
-                GameManager.Instance.EndRun(Arcade.StringTable.Get("jump.over.fell", "FELL DOWN"));
+                GameManager.Instance.EndRun(Arcade.StringTable.Get("jump.over.fell", "FELL DOWN"), Arcade.Sfx.JumpFall);
             }
         }
 
@@ -120,6 +121,7 @@ namespace JumpJump
             _vy = config.JumpVelocity;
             _hasPrevRowX = false;
             if (characterAnimator != null) characterAnimator.OnJump();
+            Arcade.Sfx.Play(Arcade.Sfx.Jump);
         }
 
         void Land(PlatformRow row)
@@ -134,6 +136,7 @@ namespace JumpJump
             transform.position = new Vector3(row.X + _rideOffsetX, row.SurfaceY + HalfHeight, 0f);
 
             if (characterAnimator != null) characterAnimator.OnLand();
+            if (landingLeaves != null) landingLeaves.Burst(transform.position.x, row.SurfaceY);   // 발밑 풀잎
             GameManager.Instance.OnLanded(row.RowIndex);
         }
     }

@@ -116,6 +116,39 @@ namespace JumpJump
         [Tooltip("스쿼시가 원래대로 돌아오는 속도")]
         public float squashRecovery = 11f;
 
+        [Header("착지 풀잎 이펙트 (2026-09-14)")]
+        [Tooltip("한 번 착지할 때 튀는 풀잎 수. 0 이면 이펙트를 끕니다")]
+        [Min(0)] public int leafCount = 9;
+        [Tooltip("풀잎 한 장의 가로 크기 (월드 단위, 발판 한 칸 = 1). 그림 해상도와 상관없이 이 크기로 그립니다")]
+        public float leafSize = 0.16f;
+        [Tooltip("발 가운데에서 좌우로 얼마나 떨어진 곳까지 풀잎이 나올지")]
+        public float leafSpread = 0.28f;
+        [Tooltip("옆으로 퍼지는 최대 속도")]
+        public float leafSpeedX = 1.8f;
+        [Tooltip("위로 튀는 속도 (최소 ~ 최대 사이에서 무작위). 높을수록 높이 튑니다")]
+        public float leafSpeedYMin = 2.0f;
+        public float leafSpeedYMax = 4.0f;
+        [Tooltip("풀잎에 걸리는 중력. 캐릭터(gravity)보다 약해서 살랑 떨어집니다")]
+        public float leafGravity = 14f;
+        [Tooltip("옆으로 퍼지는 속도가 줄어드는 정도 (공기 저항)")]
+        public float leafDrag = 3f;
+        [Tooltip("빙글빙글 도는 최대 속도 (도/초)")]
+        public float leafSpin = 540f;
+        [Tooltip("풀잎이 사라지기까지 걸리는 시간 (초, 최소 ~ 최대)")]
+        public float leafLifeMin = 0.35f;
+        public float leafLifeMax = 0.6f;
+        [Tooltip("수명의 이 비율부터 서서히 투명해집니다")]
+        [Range(0f, 1f)] public float leafFadeStart = 0.5f;
+        [Tooltip("풀잎 색. 흰색·회색으로 그린 Leaf.png 에 곱해집니다. 여러 개면 장마다 무작위 (발판 잔디색에 맞춤)")]
+        public Color[] leafColors =
+        {
+            new Color32(0x78, 0xBE, 0x28, 0xFF),
+            new Color32(0x5A, 0x96, 0x14, 0xFF),
+            new Color32(0x96, 0xD2, 0x3C, 0xFF),
+        };
+        [Tooltip("그리는 순서. 발판(5) · 캐릭터(10) 보다 크면 캐릭터 앞에 보입니다")]
+        public int leafSortingOrder = 11;
+
         [Header("스폰")]
         [Tooltip("화면 위쪽으로 미리 만들어 둘 칸 수")]
         public int rowsAhead = 8;

@@ -238,6 +238,11 @@ namespace Enchant
 
             _working = kind;
             SetState(EnchantState.Working);
+
+            // 망치질 "깡 깡 깡" — 결과가 나오기까지의 시간에 고르게.
+            int hits = Mathf.Max(1, config.hammerHits);
+            for (int i = 0; i < hits; i++)
+                Arcade.Sfx.Play(Arcade.Sfx.EnchantHammer, delay: config.workSeconds * i / hits);
         }
 
         /// <summary>강화 결과. 주문서는 여기서(결과가 날 때) 씁니다 — 도중에 앱을 꺼도 아무 일도 없었던 것이 됩니다.</summary>
@@ -325,6 +330,15 @@ namespace Enchant
         {
             LastOutcome = outcome;
             OutcomeAge = 0f;
+
+            switch (outcome)
+            {
+                case EnchantOutcome.Success: Arcade.Sfx.Play(Arcade.Sfx.EnchantSuccess); break;
+                case EnchantOutcome.SafeFail: Arcade.Sfx.Play(Arcade.Sfx.EnchantSafeFail); break;
+                case EnchantOutcome.Destroyed: Arcade.Sfx.Play(Arcade.Sfx.EnchantDestroy); break;
+                case EnchantOutcome.Melted:
+                case EnchantOutcome.MeltEmpty: Arcade.Sfx.Play(Arcade.Sfx.EnchantMelt); break;
+            }
         }
 
         void SetState(EnchantState next)
