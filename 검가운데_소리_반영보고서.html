@@ -108,8 +108,15 @@ small{color:var(--sub)}
   값은 <code>Archery/ArcheryConfig.asset</code> 의 <b>Fire Cooldown</b>.</li>
 <li><b>풀잎</b> — 착지 한 번에 6장 → <b>9장</b>. 값은 <code>JumpJump/GameConfig.asset</code> 의 <b>Leaf Count</b>.</li>
 <li><b>검 강화 망치질</b> — 3번 → <b>2번</b> ("깡 깡"). 값은 <code>Enchant/EnchantConfig.asset</code> 의 <b>Hammer Hits</b>.</li>
-<li><span class="warn">이때 Unity 에디터가 켜져 있어서 배치 검증을 못 했어요.</span> 설정 값만 바꾼 거라 코드는 그대로예요.
-  에디터에서 Play 로 확인해 주시거나, 에디터를 닫아 주시면 활쏘기 자동 플레이와 풀잎 캡처를 다시 돌릴게요.</li>
+</ul>
+<div class="shots">
+  <figure><img src="보고서_그림/검가운데_소리/leaf9_zoom.png" alt="풀잎 9장 확대"><figcaption>풀잎 9장 — 착지 0.1초 뒤 4배 확대 (막 튀어 올라 캐릭터 앞에 몰린 순간, 곧 옆으로 흩어져요)</figcaption></figure>
+</div>
+<ul>
+<li><span class="ok">검증 끝 (에디터를 닫은 뒤)</span> — 씬 굽기 오류 0 · 자체 점검 55건 · 검 강화 점검 25건 · 캡처 전부 통과.
+  <br>활쏘기 조준 봇은 115발 명중(99.1%)으로 그대로예요. 과녁이 맞을 때만 쏘느라 원래 0.5초보다 느리게 쏘기 때문이에요.
+  마구 쏘는 "빗맞히는 봇"은 30초에 끝낸 판이 <b>7판 → 5판</b>으로 줄었어요. 발사 간격이 실제로 늘어난 거예요.
+  <br>점프점프는 캡처에 풀잎 9장 · 자동 플레이 73칸 (판마다 달라요).</li>
 </ul>
 </div>
 
